@@ -16,10 +16,12 @@ export const registerUser = async ({
   email,
   password,
   clientId,
+  redirect_uri,
 }: {
   email: string;
   password: string;
   clientId: string;
+  redirect_uri: string;
 }) => {
   const app = await App.findOne({ clientId });
   if (!app) throw new AppError("App does not exists", 404);
@@ -46,18 +48,19 @@ export const registerUser = async ({
     passwordHash: hashed,
   });
 
-  const accessToken = generateAccessToken();
-
-  const refreshToken = generateRefreshToken();
-
-  await Session.create({
+  const code = crypto.randomBytes(32).toString("hex");
+  await AuthorizationCode.create({
+    code,
+    clientId,
     userId: globalUser._id,
-    accessToken,
-    refreshToken,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+    redirectUri: redirect_uri,
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
   });
 
-  return { accessToken, refreshToken };
+  const redirectUrl = new URL(redirect_uri);
+  redirectUrl.searchParams.set("code", code);
+
+  return redirectUrl;
 };
 
 export const loginUser = async ({
@@ -115,13 +118,19 @@ export const getTokens = async ({
   if (!app) throw new AppError("App does not exists", 404);
 
   const authorizationCode = await AuthorizationCode.findOne({ code, clientId });
-  if (!authorizationCode || authorizationCode.expiresAt > new Date())
+  if (!authorizationCode || authorizationCode.expiresAt < new Date())
     throw new AppError("Authorization code has expired", 400);
 
   await AuthorizationCode.findByIdAndDelete(authorizationCode._id);
 
-  const accessToken = generateAccessToken();
-  const refreshToken = generateRefreshToken();
+  const accessToken = generateAccessToken(
+    authorizationCode.userId.toString(),
+    clientId,
+  );
+  const refreshToken = generateRefreshToken(
+    authorizationCode.userId.toString(),
+    clientId,
+  );
 
   await Session.create({
     userId: authorizationCode.userId,
@@ -129,19 +138,32 @@ export const getTokens = async ({
     refreshToken,
     expiresAt: new Date(Date.now() + 1000 * 60 * 60),
   });
+
+  return { accessToken, refreshToken };
 };
 
 export const refreshToken = async ({
   refreshToken,
+  clientId,
 }: {
   refreshToken: string;
+  clientId: string;
 }) => {
   const session = await Session.findOne({ refreshToken });
   if (!session) throw new AppError("Invalid refresh token", 401);
 
-  session.accessToken = generateAccessToken();
+  session.accessToken = generateAccessToken(
+    session.userId.toString(),
+    clientId,
+  );
   session.expiresAt = new Date(Date.now() + 1000 * 60 * 60);
   await session.save();
 
   return { accessToken: session.accessToken };
+};
+
+export const verify = async ({ userId }: { userId: string }) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("user not found", 404);
+  return user;
 };

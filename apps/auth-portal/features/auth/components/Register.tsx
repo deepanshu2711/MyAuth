@@ -2,19 +2,70 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useRegisterMutation } from "../hooks/mutation/useRegisterMutation";
 
-import { useLoginMutation } from "../hooks/mutation/useLoginMutation";
-import Link from "next/link";
+const Register = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
-const Login = () => {
   const searchParams = useSearchParams();
   const clientId = searchParams.get("clientId");
   const redirected_uri = searchParams.get("redirect_uri");
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { mutate: register, isPending } = useRegisterMutation();
 
-  const { mutate: login, isPending: isLoading } = useLoginMutation();
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    setAlert(null);
+
+    // Basic validation
+    if (!name || !email || !password || !confirmPassword) {
+      setIsLoading(false);
+      setAlert({ type: "error", message: "Please fill in all fields." });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setIsLoading(false);
+      setAlert({ type: "error", message: "Passwords do not match." });
+      return;
+    }
+
+    if (password.length < 8) {
+      setIsLoading(false);
+      setAlert({
+        type: "error",
+        message: "Password must be at least 8 characters.",
+      });
+      return;
+    }
+
+    register({
+      email,
+      password,
+      clientId: clientId as string,
+      redirect_uri: redirected_uri as string,
+    });
+    // Simulate API call
+  };
+
+  const handleOAuthSignUp = (provider: string) => {
+    console.log(`Sign up with ${provider}`);
+    // OAuth flow would be triggered here
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -24,31 +75,55 @@ const Login = () => {
 
       {/* Main Content */}
       <div className="w-full max-w-md relative z-10">
-        {/* Sign-in Card */}
+        {/* Sign-up Card */}
         <div className="bg-slate-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl shadow-2xl p-8">
           {/* Logo and Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl mb-4">
               <span className="text-2xl font-bold text-white">M</span>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome back to MyAuth
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent mb-2">
+              Create your MyAuth account
             </h1>
-            <p className="text-slate-400">Sign in to continue</p>
+            <p className="text-slate-400">
+              Start building secure authentication in minutes
+            </p>
           </div>
 
-          {/* Sign-in Form */}
-          <form
-            onSubmit={() => {
-              login({
-                email,
-                password,
-                clientId: clientId as string,
-                redirect_uri: redirected_uri as string,
-              });
-            }}
-            className="space-y-5"
-          >
+          {/* Alert Messages */}
+          {alert && (
+            <div
+              className={`mb-6 p-4 rounded-lg border ${
+                alert.type === "success"
+                  ? "bg-green-500/10 border-green-500/30 text-green-400"
+                  : "bg-red-500/10 border-red-500/30 text-red-400"
+              }`}
+            >
+              {alert.message}
+            </div>
+          )}
+
+          {/* Sign-up Form */}
+          <div className="space-y-4">
+            {/* Name Input */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-slate-300 mb-2"
+              >
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="w-full px-4 py-3 bg-slate-950/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                placeholder="John Doe"
+              />
+            </div>
+
             {/* Email Input */}
             <div>
               <label
@@ -62,9 +137,9 @@ const Login = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onKeyPress={handleKeyPress}
                 className="w-full px-4 py-3 bg-slate-950/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 placeholder="you@example.com"
-                required
               />
             </div>
 
@@ -81,27 +156,64 @@ const Login = () => {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
                 className="w-full px-4 py-3 bg-slate-950/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 placeholder="••••••••"
-                required
               />
-              <div className="mt-2 text-right">
-                <a
-                  href="#"
-                  className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
-                >
-                  Forgot password?
-                </a>
-              </div>
             </div>
 
-            {/* Sign In Button */}
+            {/* Confirm Password Input */}
+            <div>
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-slate-300 mb-2"
+              >
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="w-full px-4 py-3 bg-slate-950/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {/* Terms Checkbox */}
+            <div className="flex items-start gap-3 pt-2">
+              <input
+                type="checkbox"
+                id="terms"
+                className="mt-1 w-4 h-4 rounded border-purple-500/30 bg-slate-950/50 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-0"
+              />
+              <label htmlFor="terms" className="text-sm text-slate-400">
+                I agree to the{" "}
+                <a
+                  href="#"
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a
+                  href="#"
+                  className="text-purple-400 hover:text-purple-300 transition-colors"
+                >
+                  Privacy Policy
+                </a>
+              </label>
+            </div>
+
+            {/* Create Account Button */}
             <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              type="button"
+              onClick={handleSubmit}
+              disabled={isPending}
+              className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 mt-6"
             >
-              {isLoading ? (
+              {isPending ? (
                 <>
                   <svg
                     className="animate-spin h-5 w-5 text-white"
@@ -123,13 +235,13 @@ const Login = () => {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  <span>Signing in...</span>
+                  <span>Creating account...</span>
                 </>
               ) : (
-                "Sign In"
+                "Create Account"
               )}
             </button>
-          </form>
+          </div>
 
           {/* Divider */}
           <div className="relative my-6">
@@ -147,6 +259,7 @@ const Login = () => {
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
+              onClick={() => handleOAuthSignUp("Google")}
               className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -172,6 +285,7 @@ const Login = () => {
 
             <button
               type="button"
+              onClick={() => handleOAuthSignUp("GitHub")}
               className="flex items-center justify-center gap-3 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -185,16 +299,16 @@ const Login = () => {
             </button>
           </div>
 
-          {/* Sign Up Link */}
+          {/* Sign In Link */}
           <div className="mt-6 text-center">
             <p className="text-slate-400 text-sm">
-              Don't have an account?{" "}
-              <Link
-                href={`/register?clientId=${clientId}&redirect_uri=${redirected_uri}`}
+              Already have an account?{" "}
+              <a
+                href="#"
                 className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
               >
-                Sign up
-              </Link>
+                Sign in
+              </a>
             </p>
           </div>
         </div>
@@ -219,4 +333,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

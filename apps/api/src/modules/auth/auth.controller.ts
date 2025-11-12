@@ -5,21 +5,25 @@ import { asyncHandler } from "../../utils/helpers.js";
 import { successResponse } from "../../utils/responses.js";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password, clientId } = req.body;
-  const data = await AuthService.registerUser({ email, password, clientId });
-  return successResponse(res, data);
+  const { email, password, clientId, redirect_uri } = req.body;
+  const redirectUrl = await AuthService.registerUser({
+    email,
+    password,
+    clientId,
+    redirect_uri,
+  });
+  return successResponse(res, redirectUrl);
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const { clientId, redirect_uri } = req.query;
+  const { email, password, clientId, redirect_uri } = req.body;
   const redirectUrl = await AuthService.loginUser({
     email,
     password,
     clientId: clientId as string,
     redirect_uri: redirect_uri as string,
   });
-  return res.redirect(redirectUrl.toString());
+  return successResponse(res, redirectUrl);
 });
 
 export const getTokens = asyncHandler(async (req: Request, res: Response) => {
@@ -30,8 +34,14 @@ export const getTokens = asyncHandler(async (req: Request, res: Response) => {
 
 export const refreshToken = asyncHandler(
   async (req: Request, res: Response) => {
-    const { refreshToken } = req.body;
-    const data = await AuthService.refreshToken({ refreshToken });
+    const { refreshToken, clientId } = req.body;
+    const data = await AuthService.refreshToken({ refreshToken, clientId });
     return successResponse(res, data);
   },
 );
+
+export const verify = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user;
+  const data = await AuthService.verify({ userId: user?.userId! });
+  return successResponse(res, data);
+});

@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
 export type AsyncRouteHandler = (...args: any[]) => Promise<any> | any;
 
@@ -21,10 +22,14 @@ export function generateClientSecret(prefix = "sh_") {
   return prefix + crypto.randomBytes(32).toString("base64url");
 }
 
-export function generateAccessToken(prefix = "atk_") {
-  return prefix + crypto.randomBytes(32).toString("base64url");
-}
+export const generateAccessToken = (userId: string, appId: string) => {
+  return jwt.sign({ userId, appId }, "access-token-secret", {
+    expiresIn: "15m",
+  });
+};
 
-export function generateRefreshToken(prefix = "rtk_") {
-  return prefix + crypto.randomBytes(64).toString("base64url");
-}
+export const generateRefreshToken = (userId: string, appId: string) => {
+  return jwt.sign({ userId, appId }, "refresh-token-secret", {
+    expiresIn: "7d",
+  });
+};
