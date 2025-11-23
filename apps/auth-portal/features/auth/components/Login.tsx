@@ -39,7 +39,8 @@ const Login = () => {
 
           {/* Sign-in Form */}
           <form
-            onSubmit={() => {
+            onSubmit={(e) => {
+              e.preventDefault();
               login({
                 email,
                 password,

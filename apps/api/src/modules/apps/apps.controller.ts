@@ -10,10 +10,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   return successResponse(res, data);
 });
 
-// {
-//     "message": "success",
-//     "data": {
-//         "clientId": "app_PL3hxNa-ZLRGSn6g",
-//         "clientSecret": "sh_0lq2qWaS8FC2iaZEu2P7hblBBwXiApJp3NFNDBRWHbc"
-//     }
-// }
+export const getApps = asyncHandler(async (req: Request, res: Response) => {
+  //const user = req.user;
+  const userId = "69088ec11250e70387748e2a";
+
+  // const data = await AppService.getUserApps({ userId: user?.userId! });
+  const data = await AppService.getUserApps({ userId });
+  return successResponse(res, data);
+});

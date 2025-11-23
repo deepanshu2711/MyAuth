@@ -6,7 +6,6 @@ const Dashboard = () => {
   const [appName, setAppName] = useState("");
   const [redirectUri, setRedirectUri] = useState("");
 
-  // Mock data for applications
   const [applications, setApplications] = useState([
     {
       id: "1",
