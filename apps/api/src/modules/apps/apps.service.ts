@@ -1,7 +1,6 @@
-import { Types } from "mongoose";
-
 import { App } from "../../models/app.model.js";
 import { generateClientId, generateClientSecret } from "../../utils/helpers.js";
+import * as AppPipeline from "./pipelines/index.js";
 
 export const registerApp = async ({
   name,
@@ -25,36 +24,11 @@ export const registerApp = async ({
 };
 
 export const getUserApps = async ({ userId }: { userId: string }) => {
-  const data = await App.aggregate([
-    {
-      $match: {
-        ownerId: new Types.ObjectId(userId),
-      },
-    },
-    {
-      $lookup: {
-        from: "memberships",
-        localField: "_id",
-        foreignField: "appId",
-        as: "userCount",
-        pipeline: [{ $count: "count" }],
-      },
-    },
-    {
-      $set: {
-        userCount: {
-          $ifNull: [{ $arrayElemAt: ["$userCount.count", 0] }, 0],
-        },
-      },
-    },
-    {
-      $project: {
-        name: 1,
-        clientId: 1,
-        createdAt: 1,
-        userCount: 1,
-      },
-    },
-  ]);
+  const data = await App.aggregate(AppPipeline.getUserApps(userId));
+  return data;
+};
+
+export const getAppUsers = async ({ appId }: { appId: string }) => {
+  const data = await App.aggregate(AppPipeline.getAppUsers(appId));
   return data;
 };

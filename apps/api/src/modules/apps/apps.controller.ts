@@ -11,10 +11,12 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getApps = asyncHandler(async (req: Request, res: Response) => {
-  //const user = req.user;
-  const userId = "69088ec11250e70387748e2a";
+  const user = req.user;
+  const data = await AppService.getUserApps({ userId: user?.userId! });
+  return successResponse(res, data);
+});
 
-  // const data = await AppService.getUserApps({ userId: user?.userId! });
-  const data = await AppService.getUserApps({ userId });
+export const getAppUsers = asyncHandler(async (req: Request, res: Response) => {
+  const data = await AppService.getAppUsers({ appId: req.params.appId! });
   return successResponse(res, data);
 });

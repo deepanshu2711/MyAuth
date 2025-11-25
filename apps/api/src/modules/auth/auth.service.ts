@@ -26,8 +26,6 @@ export const registerUser = async ({
   const app = await App.findOne({ clientId });
   if (!app) throw new AppError("App does not exists", 404);
 
-  const hashed = await bcrypt.hash(password, 10);
-
   let globalUser = await User.findOne({ email });
   if (!globalUser) {
     globalUser = await User.create({ email });
@@ -41,6 +39,8 @@ export const registerUser = async ({
   if (existingMembership) {
     throw new AppError("User with this email already exists in this app", 400);
   }
+
+  const hashed = await bcrypt.hash(password, 10);
 
   await MemberShip.create({
     userId: globalUser._id,
@@ -163,6 +163,12 @@ export const refreshToken = async ({
 };
 
 export const verify = async ({ userId }: { userId: string }) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("user not found", 404);
+  return user;
+};
+
+export const me = async ({ userId }: { userId: string }) => {
   const user = await User.findById(userId);
   if (!user) throw new AppError("user not found", 404);
   return user;

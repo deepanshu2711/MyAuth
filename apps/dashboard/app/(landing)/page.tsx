@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 export default function Page() {
+  const router = useRouter();
   const handleClick = () => {
-    console.log("reach here");
-    window.location.href = `http://localhost:3001/login?clientId=${process.env.NEXT_PUBLIC_CLIENT_ID}&redirect_uri=http://localhost:3000/callback`;
+    router.push("/dashboard");
   };
 
   return (

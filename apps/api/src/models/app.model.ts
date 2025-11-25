@@ -11,6 +11,7 @@ const appSchema = new Schema(
     clientId: { type: String, required: true },
     clientSecret: { type: String, required: true },
     redirectUris: { type: [String], default: [] },
+    status: { type: String, default: "active" },
   },
   { timestamps: true },
 );

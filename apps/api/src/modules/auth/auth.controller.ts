@@ -45,3 +45,11 @@ export const verify = asyncHandler(async (req: Request, res: Response) => {
   const data = await AuthService.verify({ userId: user?.userId! });
   return successResponse(res, data);
 });
+
+export const getCurrentLoggedInUser = async (req: Request, res: Response) => {
+  const user = req.user;
+  const data = await AuthService.me({
+    userId: user?.userId!,
+  });
+  return successResponse(res, data);
+};

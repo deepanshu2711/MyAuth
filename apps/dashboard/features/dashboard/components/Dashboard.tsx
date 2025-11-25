@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
+import { useGetUserAppsQuery } from "../hooks/query/useGetUserAppsQuery";
 
 const Dashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [appName, setAppName] = useState("");
   const [redirectUri, setRedirectUri] = useState("");
+  const { data: userApps, isLoading } = useGetUserAppsQuery();
 
   const [applications, setApplications] = useState([
     {
