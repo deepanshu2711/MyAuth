@@ -11,6 +11,9 @@ import {
 import { App } from "../../models/app.model.js";
 import { MemberShip } from "../../models/membership.model.js";
 import { AuthorizationCode } from "../../models/authorizationCode.model.js";
+import { RabbitMQPublisher } from "../../utils/rabbitmq/publisher.js";
+
+const publisher = new RabbitMQPublisher();
 
 export const registerUser = async ({
   email,
@@ -29,6 +32,7 @@ export const registerUser = async ({
   let globalUser = await User.findOne({ email });
   if (!globalUser) {
     globalUser = await User.create({ email });
+    await publisher.publishCreateUser({ data: globalUser });
   }
 
   const existingMembership = await MemberShip.findOne({
