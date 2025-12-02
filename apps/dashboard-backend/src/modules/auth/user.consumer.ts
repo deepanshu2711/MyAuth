@@ -34,10 +34,20 @@ export const userConsumer = async () => {
     }
   });
 
-  channel.consume(updateQueue, (msg: ConsumeMessage | null) => {
+  channel.consume(updateQueue, async (msg: ConsumeMessage | null) => {
     if (!msg) return;
-    console.log("Update User:", msg.content.toString());
-    channel.ack(msg);
+    try {
+      const data = JSON.parse(msg.content.toString());
+      await User.findOneAndUpdate(
+        { globalUserId: data.data.globalUserId },
+        { $set: { email: data.data.email } },
+        { new: true },
+      );
+      channel.ack(msg);
+    } catch (error) {
+      console.error("Failed to process update user message:", error);
+      channel.nack(msg, false, true);
+    }
   });
 
   console.log("User consumers started...");

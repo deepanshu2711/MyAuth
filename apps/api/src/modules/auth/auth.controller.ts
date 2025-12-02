@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import * as AuthService from "./auth.service.js";
 import { asyncHandler } from "../../utils/helpers.js";
 import { successResponse } from "../../utils/responses.js";
+import { AppError } from "../../utils/appError.js";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { email, password, clientId, redirect_uri } = req.body;
@@ -53,3 +54,11 @@ export const getCurrentLoggedInUser = async (req: Request, res: Response) => {
   });
   return successResponse(res, data);
 };
+
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+  if (!refreshToken) throw new AppError("No refresh token provided", 400);
+  const data = await AuthService.logout({ refreshToken });
+  res.clearCookie("refreshToken");
+  return successResponse(res, data);
+});

@@ -177,3 +177,9 @@ export const me = async ({ userId }: { userId: string }) => {
   if (!user) throw new AppError("user not found", 404);
   return user;
 };
+
+export const logout = async ({ refreshToken }: { refreshToken: string }) => {
+  const session = await Session.findOneAndDelete({ refreshToken });
+  if (!session) throw new AppError("session not found", 404);
+  return;
+};
