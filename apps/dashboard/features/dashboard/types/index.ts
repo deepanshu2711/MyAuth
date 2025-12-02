@@ -1,0 +1,12 @@
+export interface UserApp {
+  id: string;
+  name: string;
+  clientId: string;
+  userCount: number;
+  createdAt: string;
+  redirectUri: string;
+}
+
+export interface GetUserAppsResponse {
+  data: UserApp[];
+}

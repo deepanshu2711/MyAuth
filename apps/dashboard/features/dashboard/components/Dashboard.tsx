@@ -93,7 +93,7 @@ const Dashboard = () => {
 
         {/* Applications Grid */}
         <div className="grid grid-cols-1 gap-4">
-          {applications.map((app) => (
+          {userApps?.data?.map((app) => (
             <div
               key={app.id}
               className="border border-white/10 rounded-lg p-6 hover:border-white/20 transition-colors"
@@ -127,18 +127,21 @@ const Dashboard = () => {
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div>
                   <div className="text-2xl font-bold">
-                    {app.users.toLocaleString()}
+                    {app.userCount.toLocaleString()}
                   </div>
                   <div className="text-xs text-gray-400">Users</div>
                 </div>
                 <div className="opacity-50 line-through">
                   <div className="text-2xl font-bold">
-                    {app.requests.toLocaleString()}
+                    {/* {app.requests.toLocaleString()} */}
+                    2400
                   </div>
                   <div className="text-xs text-gray-400">Requests (30d)</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold">{app.createdAt}</div>
+                  <div className="text-2xl font-bold">
+                    {app.createdAt.slice(0, 10)}
+                  </div>
                   <div className="text-xs text-gray-400">Created</div>
                 </div>
               </div>

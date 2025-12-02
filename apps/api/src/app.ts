@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 
 import { authRouter } from "./modules/auth/routes.js";
 import { appsRouter } from "./modules/apps/apps.routes.js";
+import { authMiddleware } from "./middlewares/auth.middleware.js";
 
 export const app = express();
 
@@ -25,4 +26,4 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
-app.use("/api/app", appsRouter);
+app.use("/api/app", authMiddleware, appsRouter);

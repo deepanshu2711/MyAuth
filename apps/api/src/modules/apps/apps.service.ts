@@ -24,11 +24,17 @@ export const registerApp = async ({
 };
 
 export const getUserApps = async ({ userId }: { userId: string }) => {
+  console.log("userID", userId);
   const data = await App.aggregate(AppPipeline.getUserApps(userId));
   return data;
 };
 
 export const getAppUsers = async ({ appId }: { appId: string }) => {
   const data = await App.aggregate(AppPipeline.getAppUsers(appId));
+  return data;
+};
+
+export const getSummary = async ({ userId }: { userId: string }) => {
+  const data = await App.aggregate(AppPipeline.getUserAppsSummary(userId));
   return data;
 };

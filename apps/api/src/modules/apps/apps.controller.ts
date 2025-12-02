@@ -20,3 +20,9 @@ export const getAppUsers = asyncHandler(async (req: Request, res: Response) => {
   const data = await AppService.getAppUsers({ appId: req.params.appId! });
   return successResponse(res, data);
 });
+
+export const getSummary = asyncHandler(async (req: Request, res: Response) => {
+  const user = req.user;
+  const data = await AppService.getSummary({ userId: user?.userId! });
+  return successResponse(res, data);
+});
