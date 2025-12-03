@@ -14,3 +14,5 @@ app.listen(5005, () => {
 //5. View active sessions of users for a particular app
 //6. Force Logout user for a specific app
 //7. App specific rate-limit
+//8. Integrate Google Auth
+//7. Integrate Github Auth

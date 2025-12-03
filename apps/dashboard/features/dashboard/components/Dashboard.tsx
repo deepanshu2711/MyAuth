@@ -1,51 +1,28 @@
 "use client";
 import { useState } from "react";
 import { useGetUserAppsQuery } from "../hooks/query/useGetUserAppsQuery";
+import { useGetUserAppsSummaryQuery } from "../hooks/query/useGetUserAppsSummaryQuery";
+import { useRegisterAppMutation } from "../hooks/mutation/useRegisterAppMutation";
 
 const Dashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [appName, setAppName] = useState("");
   const [redirectUri, setRedirectUri] = useState("");
+
+  //Query
   const { data: userApps, isLoading } = useGetUserAppsQuery();
+  const { data: summary } = useGetUserAppsSummaryQuery();
 
-  const [applications, setApplications] = useState([
-    {
-      id: "1",
-      name: "Portfolio Website",
-      clientId: "port_2f8d9a1b3c4e5f6g",
-      users: 1243,
-      requests: 8456,
-      status: "active",
-      createdAt: "2024-11-15",
-      redirectUri: "https://portfolio.com/callback",
-    },
-    {
-      id: "2",
-      name: "Blog Platform",
-      clientId: "blog_7h8i9j0k1l2m3n4o",
-      users: 856,
-      requests: 5234,
-      status: "active",
-      createdAt: "2024-10-22",
-      redirectUri: "https://blog.com/auth/callback",
-    },
-    {
-      id: "3",
-      name: "Dev Playground",
-      clientId: "dev_5p6q7r8s9t0u1v2w",
-      users: 12,
-      requests: 145,
-      status: "active",
-      createdAt: "2024-11-20",
-      redirectUri: "http://localhost:3000/callback",
-    },
-  ]);
+  //Mutations
+  const { mutate: registerApp, isPending: isRegisteringApp } =
+    useRegisterAppMutation();
 
-  const totalUsers = applications.reduce((sum, app) => sum + app.users, 0);
-  const totalRequests = applications.reduce(
-    (sum, app) => sum + app.requests,
-    0,
-  );
+  const handleRegisterApp = async () => {
+    registerApp({ name: appName, redirectUris: [redirectUri] });
+    setShowCreateModal(false);
+    setAppName("");
+    setRedirectUri("");
+  };
 
   return (
     <div className="min-h-screen mt-16 bg-black text-white">
@@ -64,19 +41,19 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="border border-white/10 rounded-lg p-6">
             <div className="text-sm text-gray-400 mb-1">Total Applications</div>
-            <div className="text-3xl font-bold">{applications.length}</div>
+            <div className="text-3xl font-bold">
+              {summary?.data[0]?.totalApps}
+            </div>
           </div>
           <div className="border border-white/10 rounded-lg p-6">
             <div className="text-sm text-gray-400 mb-1">Total Users</div>
             <div className="text-3xl font-bold">
-              {totalUsers.toLocaleString()}
+              {summary?.data[0]?.totalUsers}
             </div>
           </div>
           <div className="border border-white/10 opacity-50 line-through rounded-lg p-6">
             <div className="text-sm text-gray-400 mb-1">API Requests (30d)</div>
-            <div className="text-3xl font-bold">
-              {totalRequests.toLocaleString()}
-            </div>
+            <div className="text-3xl font-bold">21,920</div>
           </div>
         </div>
 
@@ -134,7 +111,7 @@ const Dashboard = () => {
                 <div className="opacity-50 line-through">
                   <div className="text-2xl font-bold">
                     {/* {app.requests.toLocaleString()} */}
-                    2400
+                    2,400
                   </div>
                   <div className="text-xs text-gray-400">Requests (30d)</div>
                 </div>
@@ -219,7 +196,11 @@ const Dashboard = () => {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button className="flex-1 px-4 py-2 bg-white text-black font-medium rounded hover:bg-gray-200 transition-colors">
+                <button
+                  onClick={handleRegisterApp}
+                  className="flex-1  disabled:animate-pulse px-4 py-2  bg-white text-black font-medium rounded hover:bg-gray-200 transition-colors"
+                  disabled={isRegisteringApp}
+                >
                   Create
                 </button>
                 <button
