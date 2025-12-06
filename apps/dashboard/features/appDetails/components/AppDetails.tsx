@@ -1,0 +1,484 @@
+"use client";
+import React, { useState } from "react";
+import {
+  Copy,
+  Eye,
+  EyeOff,
+  Plus,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  Edit,
+  Trash2,
+  RefreshCw,
+  Upload,
+  X,
+} from "lucide-react";
+
+export default function AppDetails() {
+  const [showSecret, setShowSecret] = useState(false);
+  const [showAddUriModal, setShowAddUriModal] = useState(false);
+  const [showRegenerateModal, setShowRegenerateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [newUri, setNewUri] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [copiedItem, setCopiedItem] = useState("");
+
+  const appData = {
+    name: "Production Web App",
+    clientId: "app_prod_8x9k2m4n5p",
+    status: "Active",
+    createdAt: "Jan 15, 2024",
+    totalUsers: 1247,
+    requests30d: 45832,
+    redirectUris: [
+      "https://app.example.com/callback",
+      "https://app.example.com/auth/callback",
+      "http://localhost:3000/callback",
+    ],
+    allowedDomains: ["example.com", "app.example.com"],
+  };
+
+  const users = [
+    {
+      id: "usr_001",
+      email: "alice@example.com",
+      signupDate: "Jan 10, 2024",
+      lastActive: "2 hours ago",
+      status: "Active",
+    },
+    {
+      id: "usr_002",
+      email: "bob@example.com",
+      signupDate: "Jan 12, 2024",
+      lastActive: "1 day ago",
+      status: "Active",
+    },
+    {
+      id: "usr_003",
+      email: "charlie@example.com",
+      signupDate: "Jan 15, 2024",
+      lastActive: "3 days ago",
+      status: "Active",
+    },
+    {
+      id: "usr_004",
+      email: "diana@example.com",
+      signupDate: "Jan 18, 2024",
+      lastActive: "5 days ago",
+      status: "Inactive",
+    },
+    {
+      id: "usr_005",
+      email: "eve@example.com",
+      signupDate: "Jan 20, 2024",
+      lastActive: "1 week ago",
+      status: "Active",
+    },
+  ];
+
+  const handleCopy = () => {};
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.id.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <div className="max-w-6xl mx-auto p-6">
+        {/* App Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-semibold mb-2">{appData.name}</h1>
+              <div className="flex items-center gap-4 text-sm">
+                <span className="text-gray-400">{appData.clientId}</span>
+                <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">
+                  {appData.status}
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <button className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors flex items-center gap-2">
+                <Edit className="w-4 h-4" />
+                Edit
+              </button>
+              <button
+                onClick={() => setShowRegenerateModal(true)}
+                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Regenerate Secret
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="px-4 py-2 border border-red-500/50 text-red-400 rounded hover:bg-red-500/10 transition-colors flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete App
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Summary Metrics */}
+        <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="border border-white/10 rounded-lg p-6 bg-white/5 hover:border-white/20 transition-colors">
+            <div className="text-gray-400 text-sm mb-2">Total Users</div>
+            <div className="text-3xl font-semibold">
+              {appData.totalUsers.toLocaleString()}
+            </div>
+          </div>
+          <div className="border border-white/10 rounded-lg p-6 bg-white/5 opacity-50">
+            <div className="text-gray-400 text-sm mb-2">Requests (30d)</div>
+            <div className="text-3xl font-semibold">
+              {appData.requests30d.toLocaleString()}
+            </div>
+          </div>
+          <div className="border border-white/10 rounded-lg p-6 bg-white/5 hover:border-white/20 transition-colors">
+            <div className="text-gray-400 text-sm mb-2">App Created At</div>
+            <div className="text-3xl font-semibold">{appData.createdAt}</div>
+          </div>
+        </div>
+
+        {/* Application Settings */}
+        <div className="border border-white/10 rounded-lg p-6 bg-white/5 mb-8">
+          <h2 className="text-xl font-semibold mb-6">Application Settings</h2>
+
+          {/* Redirect URIs */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <label className="text-gray-400 text-sm">Redirect URIs</label>
+              <button
+                onClick={() => setShowAddUriModal(true)}
+                className="px-3 py-1 bg-white text-black rounded hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Add URI
+              </button>
+            </div>
+            <div className="space-y-2">
+              {appData.redirectUris.map((uri, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-3 border border-white/10 rounded bg-white/5"
+                >
+                  <span className="text-sm">{uri}</span>
+                  <button className="text-gray-400 hover:text-red-400 transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Allowed Domains */}
+          <div className="mb-6">
+            <label className="text-gray-400 text-sm mb-3 block">
+              Allowed Domains (Optional)
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {appData.allowedDomains.map((domain, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 border border-white/10 rounded bg-white/5 text-sm flex items-center gap-2"
+                >
+                  {domain}
+                  <button className="text-gray-400 hover:text-red-400 transition-colors">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+              <button className="px-3 py-1 border border-white/20 rounded hover:bg-white/5 transition-colors text-sm text-gray-400">
+                + Add Domain
+              </button>
+            </div>
+          </div>
+
+          {/* App Logo */}
+          <div>
+            <label className="text-gray-400 text-sm mb-3 block">
+              App Logo (Optional)
+            </label>
+            <div className="border border-white/10 border-dashed rounded-lg p-8 bg-white/5 hover:border-white/20 transition-colors cursor-pointer text-center">
+              <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+              <p className="text-sm text-gray-400">
+                Click to upload or drag and drop
+              </p>
+              <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Users Table */}
+        <div className="border border-white/10 rounded-lg p-6 bg-white/5 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold">Users</h2>
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 transition-colors"
+              />
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                    User ID
+                  </th>
+                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                    Email
+                  </th>
+                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                    Sign-up Date
+                  </th>
+                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                    Last Active
+                  </th>
+                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedUsers.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                  >
+                    <td className="py-3 px-4 text-sm">{user.id}</td>
+                    <td className="py-3 px-4 text-sm">{user.email}</td>
+                    <td className="py-3 px-4 text-sm text-gray-400">
+                      {user.signupDate}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-400">
+                      {user.lastActive}
+                    </td>
+                    <td className="py-3 px-4 text-sm">
+                      <span
+                        className={`px-2 py-1 rounded text-xs ${
+                          user.status === "Active"
+                            ? "bg-green-500/20 text-green-400"
+                            : "bg-gray-500/20 text-gray-400"
+                        }`}
+                      >
+                        {user.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          <div className="flex items-center justify-between mt-6">
+            <div className="text-sm text-gray-400">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of{" "}
+              {filteredUsers.length} users
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-3 py-1 border rounded transition-colors ${
+                      currentPage === page
+                        ? "bg-white text-black border-white"
+                        : "border-white/10 hover:bg-white/5"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* API Keys Section */}
+        <div className="border border-white/10 rounded-lg p-6 bg-white/5">
+          <h2 className="text-xl font-semibold mb-6">API Keys</h2>
+
+          {/* Client ID */}
+          <div className="mb-4">
+            <label className="text-gray-400 text-sm mb-2 block">
+              Client ID
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={appData.clientId}
+                readOnly
+                className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
+              />
+              <button
+                onClick={() => handleCopy()}
+                className="px-4 py-2 border border-white/20 rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+              >
+                <Copy className="w-4 h-4" />
+                {copiedItem === "clientId" ? "Copied!" : "Copy"}
+              </button>
+            </div>
+          </div>
+
+          {/* Client Secret */}
+          <div>
+            <label className="text-gray-400 text-sm mb-2 block">
+              Client Secret
+            </label>
+            <div className="flex gap-2">
+              <input
+                type={showSecret ? "text" : "password"}
+                value={"***********************"}
+                readOnly
+                className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
+              />
+              <button
+                onClick={() => setShowSecret(!showSecret)}
+                className="px-4 py-2 border border-white/20 rounded hover:bg-white/5 transition-colors"
+              >
+                {showSecret ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+              <button
+                onClick={() => handleCopy()}
+                className="px-4 py-2 border border-white/20 rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+              >
+                <Copy className="w-4 h-4" />
+                {copiedItem === "clientSecret" ? "Copied!" : "Copy"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add URI Modal */}
+      {showAddUriModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-black border border-white/20 rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4">Add Redirect URI</h3>
+            <input
+              type="text"
+              value={newUri}
+              onChange={(e) => setNewUri(e.target.value)}
+              placeholder="https://example.com/callback"
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 mb-4"
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowAddUriModal(false)}
+                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddUriModal(false);
+                  setNewUri("");
+                }}
+                className="px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors"
+              >
+                Add URI
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Regenerate Secret Modal */}
+      {showRegenerateModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-black border border-white/20 rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4">
+              Regenerate Client Secret
+            </h3>
+            <p className="text-gray-400 text-sm mb-6">
+              This will invalidate your current client secret. Any applications
+              using the old secret will stop working until updated.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowRegenerateModal(false)}
+                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowRegenerateModal(false)}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+              >
+                Regenerate Secret
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete App Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-black border border-white/20 rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4">Delete Application</h3>
+            <p className="text-gray-400 text-sm mb-6">
+              This action cannot be undone. This will permanently delete the
+              application and all associated data.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+              >
+                Delete Application
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

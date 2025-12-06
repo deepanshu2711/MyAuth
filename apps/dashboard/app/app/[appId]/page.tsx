@@ -1,7 +1,5 @@
+import { AppDetails } from "../../../features/appDetails";
+
 export default function Page() {
-  return (
-    <div>
-      <p>this is app page</p>
-    </div>
-  );
+  return <AppDetails />;
 }
