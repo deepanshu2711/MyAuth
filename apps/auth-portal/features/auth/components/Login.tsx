@@ -151,9 +151,13 @@ const Login = () => {
             <GoogleLogin
               size={"large"}
               onSuccess={async (credentialResponse) => {
-                await api.post("/auth/google", {
+                const response = await api.post("/auth/google", {
                   idToken: credentialResponse.credential,
+                  clientId: clientId,
+                  redirect_uri: redirected_uri,
                 });
+
+                window.location.href = response.data.data;
               }}
               onError={() => console.log("Login failed")}
             />

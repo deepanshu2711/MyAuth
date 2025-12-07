@@ -13,6 +13,12 @@ const membershipSchema = new Schema(
       required: true,
     },
     passwordHash: { type: String, required: true, trim: true },
+    provider: {
+      type: [String],
+      required: true,
+      enum: ["password", "google", "github"],
+      default: ["password"],
+    },
   },
   { timestamps: true },
 );

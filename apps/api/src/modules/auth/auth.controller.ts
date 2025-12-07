@@ -65,8 +65,12 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
 
 export const verifyGoogleToken = asyncHandler(
   async (req: Request, res: Response) => {
-    const { idToken } = req.body;
-    const data = await AuthService.verifyGoogleTokenAndGetPayload(idToken);
-    return successResponse(res, data);
+    const { idToken, clientId, redirect_uri } = req.body;
+    const redirectUrl = await AuthService.googleLogin(
+      idToken,
+      clientId,
+      redirect_uri,
+    );
+    return successResponse(res, redirectUrl);
   },
 );

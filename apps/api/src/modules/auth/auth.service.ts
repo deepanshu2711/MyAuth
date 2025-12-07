@@ -42,16 +42,28 @@ export const registerUser = async ({
   });
 
   if (existingMembership) {
-    throw new AppError("User with this email already exists in this app", 400);
+    if (existingMembership.provider.includes("password"))
+      throw new AppError(
+        "User with this email already exists in this app",
+        400,
+      );
+    const hashed = await bcrypt.hash(password, 10);
+    await MemberShip.updateOne(
+      { _id: existingMembership._id },
+      {
+        $set: { passwordHash: hashed },
+        $addToSet: { provider: "password" },
+      },
+    );
+  } else {
+    const hashed = await bcrypt.hash(password, 10);
+    await MemberShip.create({
+      userId: globalUser._id,
+      appId: app._id,
+      passwordHash: hashed,
+      provider: ["password"],
+    });
   }
-
-  const hashed = await bcrypt.hash(password, 10);
-
-  await MemberShip.create({
-    userId: globalUser._id,
-    appId: app._id,
-    passwordHash: hashed,
-  });
 
   const code = crypto.randomBytes(32).toString("hex");
   await AuthorizationCode.create({
@@ -90,6 +102,20 @@ export const loginUser = async ({
     appId: app._id,
   });
   if (!membership) throw new AppError("User not found in this app", 401);
+
+  if (!membership.provider.includes("password")) {
+    throw new AppError(
+      "This account does not use password login. Use Google/GitHub login.",
+      400,
+    );
+  }
+
+  if (!membership.passwordHash) {
+    throw new AppError(
+      "Password login not available for this account. Use Social Login.",
+      400,
+    );
+  }
 
   const validPassword = await bcrypt.compare(password, membership.passwordHash);
   if (!validPassword) throw new AppError("Invalid email or password", 401);
@@ -185,10 +211,61 @@ export const logout = async ({ refreshToken }: { refreshToken: string }) => {
   return;
 };
 
-export const verifyGoogleTokenAndGetPayload = async (idToken: string) => {
+export const googleLogin = async (
+  idToken: string,
+  clientId: string,
+  redirect_uri: string,
+) => {
+  const app = await App.findOne({ clientId });
+  if (!app) throw new AppError("App does not exists", 404);
+
   const ticket = await OAuthClient.verifyIdToken({
     idToken,
     audience: process.env.GOOGLE_CLIENT_ID!,
   });
-  return ticket.getPayload();
+  const OAuthUser = ticket.getPayload();
+  if (!OAuthUser)
+    throw new AppError("Error While getting User Data from OAuth", 400);
+
+  let globalUser = await User.findOne({ email: OAuthUser.email });
+  if (!globalUser) {
+    globalUser = await User.create({ email: OAuthUser.email });
+    await publisher.publishCreateUser({ data: globalUser });
+  }
+
+  const existingMembership = await MemberShip.findOne({
+    userId: globalUser._id,
+    appId: app._id,
+  });
+
+  if (existingMembership) {
+    if (!existingMembership.provider.includes("google")) {
+      await MemberShip.updateOne(
+        { _id: existingMembership._id },
+        {
+          $addToSet: { provider: "google" },
+        },
+      );
+    }
+  } else {
+    await MemberShip.create({
+      userId: globalUser._id,
+      appId: app._id,
+      provider: ["google"],
+    });
+  }
+
+  const code = crypto.randomBytes(32).toString("hex");
+  await AuthorizationCode.create({
+    code,
+    clientId,
+    userId: globalUser._id,
+    redirectUri: redirect_uri,
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+  });
+
+  const redirectUrl = new URL(redirect_uri);
+  redirectUrl.searchParams.set("code", code);
+
+  return redirectUrl;
 };
