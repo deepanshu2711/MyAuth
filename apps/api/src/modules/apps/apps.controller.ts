@@ -31,3 +31,11 @@ export const getSummary = asyncHandler(async (req: Request, res: Response) => {
   const data = await AppService.getSummary({ userId: user?.userId! });
   return successResponse(res, data);
 });
+
+export const getAppDetails = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { appId } = req.params;
+    const data = await AppService.getAppDetails({ appId: appId! });
+    return successResponse(res, data);
+  },
+);

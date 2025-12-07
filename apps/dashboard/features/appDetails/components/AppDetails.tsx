@@ -14,8 +14,10 @@ import {
   Upload,
   X,
 } from "lucide-react";
+import { useGetAppDetailsQuery } from "../hooks/query/useGetAppDetailsQuery";
+import { useGetAppUsersQuery } from "../hooks/query/useGetAppUsersQuery";
 
-export default function AppDetails() {
+export default function AppDetails({ appId }: { appId: string }) {
   const [showSecret, setShowSecret] = useState(false);
   const [showAddUriModal, setShowAddUriModal] = useState(false);
   const [showRegenerateModal, setShowRegenerateModal] = useState(false);
@@ -25,66 +27,76 @@ export default function AppDetails() {
   const [currentPage, setCurrentPage] = useState(1);
   const [copiedItem, setCopiedItem] = useState("");
 
-  const appData = {
-    name: "Production Web App",
-    clientId: "app_prod_8x9k2m4n5p",
-    status: "Active",
-    createdAt: "Jan 15, 2024",
-    totalUsers: 1247,
-    requests30d: 45832,
-    redirectUris: [
-      "https://app.example.com/callback",
-      "https://app.example.com/auth/callback",
-      "http://localhost:3000/callback",
-    ],
-    allowedDomains: ["example.com", "app.example.com"],
-  };
+  const { data: appData, isLoading } = useGetAppDetailsQuery(appId);
+  const { data: appUsers, isLoading: isLoadingUsers } =
+    useGetAppUsersQuery(appId);
 
-  const users = [
-    {
-      id: "usr_001",
-      email: "alice@example.com",
-      signupDate: "Jan 10, 2024",
-      lastActive: "2 hours ago",
-      status: "Active",
-    },
-    {
-      id: "usr_002",
-      email: "bob@example.com",
-      signupDate: "Jan 12, 2024",
-      lastActive: "1 day ago",
-      status: "Active",
-    },
-    {
-      id: "usr_003",
-      email: "charlie@example.com",
-      signupDate: "Jan 15, 2024",
-      lastActive: "3 days ago",
-      status: "Active",
-    },
-    {
-      id: "usr_004",
-      email: "diana@example.com",
-      signupDate: "Jan 18, 2024",
-      lastActive: "5 days ago",
-      status: "Inactive",
-    },
-    {
-      id: "usr_005",
-      email: "eve@example.com",
-      signupDate: "Jan 20, 2024",
-      lastActive: "1 week ago",
-      status: "Active",
-    },
-  ];
+  console.log("appUsers", appUsers);
+
+  // const appData = {
+  //   name: "Production Web App",
+  //   clientId: "app_prod_8x9k2m4n5p",
+  //   status: "Active",
+  //   createdAt: "Jan 15, 2024",
+  //   totalUsers: 1247,
+  //   requests30d: 45832,
+  //   redirectUris: [
+  //     "https://app.example.com/callback",
+  //     "https://app.example.com/auth/callback",
+  //     "http://localhost:3000/callback",
+  //   ],
+  // };
+
+  // const users = [
+  //   {
+  //     id: "usr_001",
+  //     email: "alice@example.com",
+  //     signupDate: "Jan 10, 2024",
+  //     lastActive: "2 hours ago",
+  //     status: "Active",
+  //   },
+  //   {
+  //     id: "usr_002",
+  //     email: "bob@example.com",
+  //     signupDate: "Jan 12, 2024",
+  //     lastActive: "1 day ago",
+  //     status: "Active",
+  //   },
+  //   {
+  //     id: "usr_003",
+  //     email: "charlie@example.com",
+  //     signupDate: "Jan 15, 2024",
+  //     lastActive: "3 days ago",
+  //     status: "Active",
+  //   },
+  //   {
+  //     id: "usr_004",
+  //     email: "diana@example.com",
+  //     signupDate: "Jan 18, 2024",
+  //     lastActive: "5 days ago",
+  //     status: "Inactive",
+  //   },
+  //   {
+  //     id: "usr_005",
+  //     email: "eve@example.com",
+  //     signupDate: "Jan 20, 2024",
+  //     lastActive: "1 week ago",
+  //     status: "Active",
+  //   },
+  // ];
 
   const handleCopy = () => {};
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.id.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredUsers =
+    appUsers?.data?.filter(
+      (user) =>
+        user.userDetails.email
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        user.userDetails._id.toLowerCase().includes(searchQuery.toLowerCase()),
+    ) || [];
+
+  console.log(filteredUsers);
 
   const itemsPerPage = 5;
   const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
@@ -93,23 +105,33 @@ export default function AppDetails() {
     currentPage * itemsPerPage,
   );
 
+  if (isLoading) return null;
+  if (!appData?.data?.[0]) return <div>No App Found</div>;
+
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen mt-16 bg-black text-white">
       <div className="max-w-6xl mx-auto p-6">
         {/* App Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-semibold mb-2">{appData.name}</h1>
+              <h1 className="text-3xl font-semibold mb-2">
+                {appData.data[0].name}
+              </h1>
               <div className="flex items-center gap-4 text-sm">
-                <span className="text-gray-400">{appData.clientId}</span>
+                <span className="text-gray-400">
+                  {appData.data[0].clientId}
+                </span>
                 <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">
-                  {appData.status}
+                  {appData.data[0].status || "Active"}
                 </span>
               </div>
             </div>
             <div className="flex gap-3">
-              <button className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors flex items-center gap-2">
+              <button
+                disabled={true}
+                className="px-4 disabled:opacity-50 disabled:cursor-not-allowed py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+              >
                 <Edit className="w-4 h-4" />
                 Edit
               </button>
@@ -136,18 +158,21 @@ export default function AppDetails() {
           <div className="border border-white/10 rounded-lg p-6 bg-white/5 hover:border-white/20 transition-colors">
             <div className="text-gray-400 text-sm mb-2">Total Users</div>
             <div className="text-3xl font-semibold">
-              {appData.totalUsers.toLocaleString()}
+              {appData.data[0].totalCount.toLocaleString()}
             </div>
           </div>
           <div className="border border-white/10 rounded-lg p-6 bg-white/5 opacity-50">
             <div className="text-gray-400 text-sm mb-2">Requests (30d)</div>
-            <div className="text-3xl font-semibold">
-              {appData.requests30d.toLocaleString()}
+            <div className="text-3xl font-semibold line-through">
+              {/* {appData.requests30d.toLocaleString()} */}
+              27,212
             </div>
           </div>
           <div className="border border-white/10 rounded-lg p-6 bg-white/5 hover:border-white/20 transition-colors">
             <div className="text-gray-400 text-sm mb-2">App Created At</div>
-            <div className="text-3xl font-semibold">{appData.createdAt}</div>
+            <div className="text-3xl font-semibold">
+              {appData.data[0].createdAt.slice(0, 10)}
+            </div>
           </div>
         </div>
 
@@ -168,7 +193,7 @@ export default function AppDetails() {
               </button>
             </div>
             <div className="space-y-2">
-              {appData.redirectUris.map((uri, idx) => (
+              {appData.data[0].redirectUris.map((uri, idx) => (
                 <div
                   key={idx}
                   className="flex items-center justify-between p-3 border border-white/10 rounded bg-white/5"
@@ -183,27 +208,27 @@ export default function AppDetails() {
           </div>
 
           {/* Allowed Domains */}
-          <div className="mb-6">
-            <label className="text-gray-400 text-sm mb-3 block">
-              Allowed Domains (Optional)
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {appData.allowedDomains.map((domain, idx) => (
-                <span
-                  key={idx}
-                  className="px-3 py-1 border border-white/10 rounded bg-white/5 text-sm flex items-center gap-2"
-                >
-                  {domain}
-                  <button className="text-gray-400 hover:text-red-400 transition-colors">
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-              <button className="px-3 py-1 border border-white/20 rounded hover:bg-white/5 transition-colors text-sm text-gray-400">
-                + Add Domain
-              </button>
-            </div>
-          </div>
+          {/* <div className="mb-6"> */}
+          {/*   <label className="text-gray-400 text-sm mb-3 block"> */}
+          {/*     Allowed Domains (Optional) */}
+          {/*   </label> */}
+          {/*   <div className="flex flex-wrap gap-2"> */}
+          {/*     {appData.allowedDomains.map((domain, idx) => ( */}
+          {/*       <span */}
+          {/*         key={idx} */}
+          {/*         className="px-3 py-1 border border-white/10 rounded bg-white/5 text-sm flex items-center gap-2" */}
+          {/*       > */}
+          {/*         {domain} */}
+          {/*         <button className="text-gray-400 hover:text-red-400 transition-colors"> */}
+          {/*           <X className="w-3 h-3" /> */}
+          {/*         </button> */}
+          {/*       </span> */}
+          {/*     ))} */}
+          {/*     <button className="px-3 py-1 border border-white/20 rounded hover:bg-white/5 transition-colors text-sm text-gray-400"> */}
+          {/*       + Add Domain */}
+          {/*     </button> */}
+          {/*   </div> */}
+          {/* </div> */}
 
           {/* App Logo */}
           <div>
@@ -246,13 +271,13 @@ export default function AppDetails() {
                   <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
                     Email
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                  <th className="text-left opacity-50 line-through py-3 px-4 text-gray-400 text-sm font-normal">
                     Sign-up Date
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                  <th className="text-left py-3 px-4 text-gray-400 opacity-50 line-through text-sm font-normal">
                     Last Active
                   </th>
-                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal opacity-50 line-through">
                     Status
                   </th>
                 </tr>
@@ -260,26 +285,33 @@ export default function AppDetails() {
               <tbody>
                 {paginatedUsers.map((user) => (
                   <tr
-                    key={user.id}
+                    key={user.userDetails._id}
                     className="border-b border-white/5 hover:bg-white/5 transition-colors"
                   >
-                    <td className="py-3 px-4 text-sm">{user.id}</td>
-                    <td className="py-3 px-4 text-sm">{user.email}</td>
-                    <td className="py-3 px-4 text-sm text-gray-400">
-                      {user.signupDate}
+                    <td className="py-3 px-4 text-sm">
+                      {user.userDetails._id}
                     </td>
-                    <td className="py-3 px-4 text-sm text-gray-400">
-                      {user.lastActive}
+                    <td className="py-3 px-4 text-sm">
+                      {user.userDetails.email}
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
+                      {/* {user.signupDate} */}
+                      27-11-2001
+                    </td>
+                    <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
+                      {/* {user.lastActive} */}
+                      27-11-2001
                     </td>
                     <td className="py-3 px-4 text-sm">
                       <span
-                        className={`px-2 py-1 rounded text-xs ${
-                          user.status === "Active"
+                        className={`px-2 py-1 rounded text-xs opacity-50 line-through ${
+                          "Active" === "Active"
                             ? "bg-green-500/20 text-green-400"
                             : "bg-gray-500/20 text-gray-400"
                         }`}
                       >
-                        {user.status}
+                        {/* {user.status} */}
+                        Active
                       </span>
                     </td>
                   </tr>
@@ -343,7 +375,7 @@ export default function AppDetails() {
             <div className="flex gap-2">
               <input
                 type="text"
-                value={appData.clientId}
+                value={appData.data[0].clientId}
                 readOnly
                 className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
               />
@@ -367,11 +399,13 @@ export default function AppDetails() {
                 type={showSecret ? "text" : "password"}
                 value={"***********************"}
                 readOnly
-                className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
+                className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed text-sm focus:outline-none"
+                disabled={true}
               />
               <button
                 onClick={() => setShowSecret(!showSecret)}
-                className="px-4 py-2 border border-white/20 rounded hover:bg-white/5 transition-colors"
+                className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed border border-white/20 rounded hover:bg-white/5 transition-colors"
+                disabled={true}
               >
                 {showSecret ? (
                   <EyeOff className="w-4 h-4" />
@@ -381,7 +415,8 @@ export default function AppDetails() {
               </button>
               <button
                 onClick={() => handleCopy()}
-                className="px-4 py-2 border border-white/20 rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+                className="px-4 disabled:opacity-50 disabled:cursor-not-allowed py-2 border border-white/20 rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+                disabled={true}
               >
                 <Copy className="w-4 h-4" />
                 {copiedItem === "clientSecret" ? "Copied!" : "Copy"}

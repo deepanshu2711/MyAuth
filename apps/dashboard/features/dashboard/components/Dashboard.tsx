@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useGetUserAppsQuery } from "../hooks/query/useGetUserAppsQuery";
 import { useGetUserAppsSummaryQuery } from "../hooks/query/useGetUserAppsSummaryQuery";
 import { useRegisterAppMutation } from "../hooks/mutation/useRegisterAppMutation";
+import Link from "next/link";
 
 const Dashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -72,12 +73,17 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 gap-4">
           {userApps?.data?.map((app) => (
             <div
-              key={app.id}
+              key={app._id}
               className="border border-white/10 rounded-lg p-6 hover:border-white/20 transition-colors"
             >
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">{app.name}</h3>
+                  <Link
+                    href={`/app/${app._id}`}
+                    className="hover:text-blue-500"
+                  >
+                    <h3 className="text-lg font-semibold mb-1">{app.name}</h3>
+                  </Link>
                   <div className="flex items-center gap-2 text-sm text-gray-400">
                     <span>Client ID: {app.clientId}</span>
                     <span>•</span>

@@ -1,5 +1,5 @@
 export interface UserApp {
-  id: string;
+  _id: string;
   name: string;
   clientId: string;
   userCount: number;

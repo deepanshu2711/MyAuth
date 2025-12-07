@@ -38,3 +38,8 @@ export const getSummary = async ({ userId }: { userId: string }) => {
   const data = await App.aggregate(AppPipeline.getUserAppsSummary(userId));
   return data;
 };
+
+export const getAppDetails = async ({ appId }: { appId: string }) => {
+  const data = await App.aggregate(AppPipeline.getAppDetails(appId));
+  return data;
+};
