@@ -12,6 +12,7 @@ import { App } from "../../models/app.model.js";
 import { MemberShip } from "../../models/membership.model.js";
 import { AuthorizationCode } from "../../models/authorizationCode.model.js";
 import { RabbitMQPublisher } from "../../utils/rabbitmq/publisher.js";
+import { OAuthClient } from "../../lib/OAuthClient.js";
 
 const publisher = new RabbitMQPublisher();
 
@@ -182,4 +183,12 @@ export const logout = async ({ refreshToken }: { refreshToken: string }) => {
   const session = await Session.findOneAndDelete({ refreshToken });
   if (!session) throw new AppError("session not found", 404);
   return;
+};
+
+export const verifyGoogleTokenAndGetPayload = async (idToken: string) => {
+  const ticket = await OAuthClient.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID!,
+  });
+  return ticket.getPayload();
 };

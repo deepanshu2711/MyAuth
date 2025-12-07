@@ -62,3 +62,11 @@ export const logout = asyncHandler(async (req: Request, res: Response) => {
   res.clearCookie("refreshToken");
   return successResponse(res, data);
 });
+
+export const verifyGoogleToken = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { idToken } = req.body;
+    const data = await AuthService.verifyGoogleTokenAndGetPayload(idToken);
+    return successResponse(res, data);
+  },
+);

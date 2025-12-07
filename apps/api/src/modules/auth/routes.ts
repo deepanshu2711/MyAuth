@@ -11,3 +11,5 @@ authRouter.post("/register", AuthController.register);
 authRouter.post("/login", AuthController.login);
 authRouter.post("/token", AuthController.getTokens);
 authRouter.post("/logout", authMiddleware, AuthController.logout);
+
+authRouter.post("/google", AuthController.verifyGoogleToken);

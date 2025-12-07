@@ -1,11 +1,14 @@
 import { Toaster } from "sonner";
 import { TanstackQueryProvider } from "./TanstackQueryProvider";
+import { GoogleProvider } from "./GoogleProvider";
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
-    <TanstackQueryProvider>
-      <Toaster />
-      {children}
-    </TanstackQueryProvider>
+    <GoogleProvider>
+      <TanstackQueryProvider>
+        <Toaster />
+        {children}
+      </TanstackQueryProvider>
+    </GoogleProvider>
   );
 };
