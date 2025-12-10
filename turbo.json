@@ -17,5 +17,12 @@
       "cache": false,
       "persistent": true
     }
-  }
+  },
+  "globalEnv": [
+    "GOOGLE_CLIENT_ID",
+    "PORT",
+    "ALLOWED_ORIGINS",
+    "MONGO_URI",
+    "RABBITMQ_URL"
+  ]
 }
