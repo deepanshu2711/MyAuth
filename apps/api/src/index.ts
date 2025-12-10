@@ -1,7 +1,10 @@
+import dotenv from "dotenv";
 import { app } from "./app.js";
 import { connectDB } from "./db.js";
 
-app.listen(5005, () => {
+dotenv.config();
+
+app.listen(process.env.PORT, () => {
   console.log("Backend running on 5005 port");
   connectDB();
 });

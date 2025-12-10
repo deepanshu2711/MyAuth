@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -5,10 +6,14 @@ import cookieParser from "cookie-parser";
 import { authRouter } from "./modules/auth/routes.js";
 import { appsRouter } from "./modules/apps/apps.routes.js";
 import { authMiddleware } from "./middlewares/auth.middleware.js";
+dotenv.config();
 
 export const app = express();
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
+  : [];
+
 app.use(
   cors({
     origin: (origin, callback) => {
