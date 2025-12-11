@@ -7,7 +7,9 @@ dotenv.config();
 
 userConsumer().catch(console.error);
 
-app.listen(5006, () => {
+const PORT = process.env.PORT;
+
+app.listen(PORT, () => {
   console.log("Backend running on 5006 port");
   connectDB();
 });

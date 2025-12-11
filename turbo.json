@@ -22,6 +22,7 @@
     "GOOGLE_CLIENT_ID",
     "PORT",
     "ALLOWED_ORIGINS",
+    "ALLOWED_ORIGIN",
     "MONGO_URI",
     "RABBITMQ_URL"
   ]
