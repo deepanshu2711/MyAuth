@@ -1,9 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return (
-    <div>
-      <p>This is auth portal</p>
-    </div>
-  );
+  return redirect("/login");
 }
