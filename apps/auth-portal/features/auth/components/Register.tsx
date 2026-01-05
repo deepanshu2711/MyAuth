@@ -9,7 +9,6 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const [alert, setAlert] = useState<{
     type: "success" | "error";
     message: string;
@@ -22,24 +21,20 @@ const Register = () => {
   const { mutate: register, isPending } = useRegisterMutation();
 
   const handleSubmit = async () => {
-    setIsLoading(true);
     setAlert(null);
 
     // Basic validation
     if (!name || !email || !password || !confirmPassword) {
-      setIsLoading(false);
       setAlert({ type: "error", message: "Please fill in all fields." });
       return;
     }
 
     if (password !== confirmPassword) {
-      setIsLoading(false);
       setAlert({ type: "error", message: "Passwords do not match." });
       return;
     }
 
     if (password.length < 8) {
-      setIsLoading(false);
       setAlert({
         type: "error",
         message: "Password must be at least 8 characters.",
@@ -53,7 +48,6 @@ const Register = () => {
       clientId: clientId as string,
       redirect_uri: redirected_uri as string,
     });
-    // Simulate API call
   };
 
   const handleOAuthSignUp = (provider: string) => {

@@ -180,7 +180,7 @@ const Login = () => {
           {/* Sign Up Link */}
           <div className="mt-6 text-center">
             <p className="text-slate-400 text-sm">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link
                 href={`/register?clientId=${clientId}&redirect_uri=${redirected_uri}`}
                 className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
