@@ -10,6 +10,6 @@ userConsumer().catch(console.error);
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-  console.log("Backend running on 5006 port");
+  console.log(`Backend running on ${PORT} port`);
   connectDB();
 });

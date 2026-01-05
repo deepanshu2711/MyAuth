@@ -5,7 +5,7 @@ import { connectDB } from "./db.js";
 dotenv.config();
 
 app.listen(process.env.PORT, () => {
-  console.log("Backend running on 5005 port");
+  console.log(`Backend running on ${process.env.PORT} port`);
   connectDB();
 });
 
