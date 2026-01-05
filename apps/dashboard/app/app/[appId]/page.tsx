@@ -1,4 +1,4 @@
-import { AppDetails } from "../../../features/appDetails";
+import { AppDetails } from "@/features/appDetails";
 
 export default async function Page({
   params,
