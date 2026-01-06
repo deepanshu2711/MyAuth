@@ -39,7 +39,7 @@ EXPOSE 5006
 
 # Automatically leverage output traces to reduce image size
 COPY --from=builder --chown=nextjs:nodejs /app/apps/dashboard/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/dashboard/.next/static ./apps/auth-portal/.next/static
-COPY --from=builder --chown=nextjs:nodejs /app/apps/dashboard/public ./apps/auth-portal/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/dashboard/.next/static ./apps/dashboard/.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/dashboard/public ./apps/dashboard/public
 
 CMD ["node", "apps/dashboard/server.js"]
