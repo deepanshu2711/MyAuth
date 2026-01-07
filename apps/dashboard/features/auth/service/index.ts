@@ -7,7 +7,9 @@ export const AuthService = {
   },
 
   logout: async () => {
-    const response = await api.post("http://localhost:5005/api/auth/logout");
+    const response = await api.post(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/auth/logout`,
+    );
     return response.data;
   },
 };

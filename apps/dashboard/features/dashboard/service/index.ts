@@ -1,17 +1,21 @@
-import api from "../../../lib/api";
+import api from "@/lib/api";
 
 export const DashboardService = {
   getUserApps: async () => {
-    const response = await api.get("http://localhost:5005/api/app");
+    const response = await api.get(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/app`,
+    );
     return response.data;
   },
   getUserAppsSummary: async () => {
-    const response = await api.get("http://localhost:5005/api/app/summary");
+    const response = await api.get(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/app/summary`,
+    );
     return response.data;
   },
   registerApp: async (data: { name: string; redirectUris: [string] }) => {
     const response = await api.post(
-      "http://localhost:5005/api/app/register",
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/app/register`,
       data,
     );
     return response.data;
