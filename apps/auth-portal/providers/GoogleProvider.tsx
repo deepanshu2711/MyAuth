@@ -1,3 +1,4 @@
+"use client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export const GoogleProvider = ({ children }: { children: React.ReactNode }) => {

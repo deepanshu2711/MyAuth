@@ -12,7 +12,7 @@ const membershipSchema = new Schema(
       ref: "app",
       required: true,
     },
-    passwordHash: { type: String, required: true, trim: true },
+    passwordHash: { type: String, trim: true },
     provider: {
       type: [String],
       required: true,

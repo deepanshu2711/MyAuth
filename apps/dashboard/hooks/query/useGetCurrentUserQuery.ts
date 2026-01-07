@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import api from "../../lib/api";
+import axios from "axios";
 
 const getCurrentUser = async () => {
-  const response = await api.get(`http://localhost:5005/api/auth/me`, {
-    withCredentials: true,
-  });
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/auth/me`,
+    {
+      withCredentials: true,
+    },
+  );
   return response.data;
 };
 

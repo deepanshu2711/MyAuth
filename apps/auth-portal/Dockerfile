@@ -12,6 +12,13 @@ RUN npx turbo prune auth-portal --docker
 
 # ---
 FROM base AS builder
+
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
+
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 # First install the dependencies (as they change less often)
 COPY --from=prepare /app/out/json/ ./
 RUN npm install

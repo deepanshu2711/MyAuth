@@ -1,3 +1,4 @@
+"use client";
 import { Toaster } from "sonner";
 import { TanstackQueryProvider } from "./TanstackQueryProvider";
 import { GoogleProvider } from "./GoogleProvider";

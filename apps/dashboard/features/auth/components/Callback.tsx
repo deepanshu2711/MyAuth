@@ -13,6 +13,10 @@ const Callback = () => {
     const code = searchParams.get("code");
     const clientId = process.env.NEXT_PUBLIC_CLIENT_ID;
 
+    console.log("clientId", clientId);
+    console.log("code", code);
+    console.log("isPending", isPending);
+
     if (!code || !clientId || isPending) return;
 
     exchangeToken({ code, clientId });
