@@ -7,6 +7,8 @@ import { useLoginMutation } from "../hooks/mutation/useLoginMutation";
 import Link from "next/link";
 import { GoogleLogin } from "@react-oauth/google";
 import api from "../../../lib/api";
+import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
+import { Vortex } from "@/components/ui/vortex";
 
 const Login = () => {
   const searchParams = useSearchParams();
@@ -19,18 +21,20 @@ const Login = () => {
   const { mutate: login, isPending: isLoading } = useLoginMutation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen  flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      <BackgroundRippleEffect />
+
       {/* Background decorative elements */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
+      {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div> */}
+      {/* <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse"></div> */}
 
       {/* Main Content */}
       <div className="w-full max-w-md relative z-10">
         {/* Sign-in Card */}
-        <div className="bg-slate-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl shadow-2xl p-8">
+        <div className="bg-black/5 backdrop-blur-2xl border   border-gray-500/10 rounded-2xl shadow-2xl p-8">
           {/* Logo and Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl mb-4">
+            <div className="inline-flex items-center justify-center w-12 h-12 border border-gray-500/50 rounded-xl mb-4">
               <span className="text-2xl font-bold text-white">M</span>
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">
@@ -56,7 +60,7 @@ const Login = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-slate-300 mb-2"
+                className="block text-xs font-medium text-slate-300 mb-2"
               >
                 Email
               </label>
@@ -65,7 +69,7 @@ const Login = () => {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-950/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full px-2 py-1 border border-gray-500/50 text-sm  rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 placeholder="you@example.com"
                 required
               />
@@ -75,7 +79,7 @@ const Login = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-slate-300 mb-2"
+                className="block text-xs font-medium text-slate-300 mb-2"
               >
                 Password
               </label>
@@ -84,14 +88,14 @@ const Login = () => {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-950/50 border border-purple-500/30 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                className="w-full px-2 text-sm py-1 border border-gray-500/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 placeholder="••••••••"
                 required
               />
               <div className="mt-2 text-right">
                 <a
                   href="#"
-                  className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                  className="text-xs text-[#846bff]  transition-colors "
                 >
                   Forgot password?
                 </a>
@@ -102,7 +106,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              className="w-full px-2 py-2 text-sm border border-gray-600 bg-[#846bff]  text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -147,9 +151,9 @@ const Login = () => {
           </div>
 
           {/* OAuth Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3">
             <GoogleLogin
-              size={"large"}
+              size={"medium"}
               onSuccess={async (credentialResponse) => {
                 const response = await api.post("/auth/google", {
                   idToken: credentialResponse.credential,
@@ -164,7 +168,7 @@ const Login = () => {
 
             <button
               type="button"
-              className="flex items-center justify-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-sm text-white font-medium hover:bg-white/10 hover:border-white/20 transition-all"
+              className="flex text-sm w-full items-center justify-center gap-3 px-2 py-1 bg-white/5 border border-white/10 rounded-sm text-white font-normal hover:bg-white/10 hover:border-white/20 transition-all"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -173,7 +177,8 @@ const Login = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              <span>GitHub</span>
+
+              <span className="w-full">Sign in with GitHub</span>
             </button>
           </div>
 
@@ -183,7 +188,7 @@ const Login = () => {
               Don&apos;t have an account?{" "}
               <Link
                 href={`/register?clientId=${clientId}&redirect_uri=${redirected_uri}`}
-                className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
+                className="text-[#846bff] font-medium transition-colors"
               >
                 Sign up
               </Link>

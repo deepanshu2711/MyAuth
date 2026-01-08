@@ -3,6 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useRegisterMutation } from "../hooks/mutation/useRegisterMutation";
+import { Vortex } from "@/components/ui/vortex";
+import Link from "next/link";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -62,12 +64,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Background decorative elements */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse"></div>
-
-      {/* Main Content */}
+    <div className="min-h-screen  flex flex-col items-center justify-center p-4 relative overflow-hidden">
       <div className="w-full max-w-md relative z-10">
         {/* Sign-up Card */}
         <div className="bg-slate-900/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl shadow-2xl p-8">
@@ -297,12 +294,12 @@ const Register = () => {
           <div className="mt-6 text-center">
             <p className="text-slate-400 text-sm">
               Already have an account?{" "}
-              <a
-                href="#"
+              <Link
+                href="/login"
                 className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
               >
                 Sign in
-              </a>
+              </Link>
             </p>
           </div>
         </div>
@@ -323,6 +320,8 @@ const Register = () => {
           </p>
         </footer>
       </div>
+
+      {/* Main Content */}
     </div>
   );
 };
