@@ -50,7 +50,7 @@ const Login = () => {
           {/* Logo and Header */}
           <div className="p-8">
             <div className="text-center mb-4">
-              <div className="flex items-center justify-center mb-2">
+              <div className="flex mb-4 items-center justify-center ">
                 <Image
                   src="/logo.png"
                   alt="logo"
