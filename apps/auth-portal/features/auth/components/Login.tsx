@@ -5,10 +5,9 @@ import { useState } from "react";
 
 import { useLoginMutation } from "../hooks/mutation/useLoginMutation";
 import Link from "next/link";
-import { useGoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import api from "../../../lib/api";
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
-import { Vortex } from "@/components/ui/vortex";
 import Image from "next/image";
 
 const Login = () => {
@@ -22,10 +21,10 @@ const Login = () => {
   const { mutate: login, isPending: isLoading } = useLoginMutation();
 
   const googleLogin = useGoogleLogin({
-    flow: "implicit",
-    onSuccess: async (credentialResponse: any) => {
+    flow: "auth-code",
+    onSuccess: async ({ code }: any) => {
       const response = await api.post("/auth/google", {
-        idToken: credentialResponse.credential,
+        idToken: code,
         clientId: clientId,
         redirect_uri: redirected_uri,
       });
@@ -67,6 +66,19 @@ const Login = () => {
               <p className="text-slate-400 text-xs">Sign in to continue</p>
             </div>
             <div className="flex items-center gap-3 mt-6">
+              {/* <GoogleLogin */}
+              {/*   onSuccess={(credentialResponse) => { */}
+              {/*     api.post("/auth/google", { */}
+              {/*       idToken: credentialResponse.credential, */}
+              {/*     }); */}
+              {/*   }} */}
+              {/*   onError={() => console.log("Login Failed")} */}
+              {/*   theme="outline" // "outline" | "filled_blue" | "filled_black" */}
+              {/*   size="large" // "small" | "medium" | "large" */}
+              {/*   text="continue_with" // "signin_with" | "signup_with" | "continue_with" */}
+              {/*   shape="pill" // "rectangular" | "pill" */}
+              {/*   width="320" */}
+              {/* /> */}
               <button
                 onClick={() => googleLogin()}
                 type="button"

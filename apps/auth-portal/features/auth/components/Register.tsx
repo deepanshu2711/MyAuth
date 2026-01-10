@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useRegisterMutation } from "../hooks/mutation/useRegisterMutation";
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
-import { Vortex } from "@/components/ui/vortex";
 import Link from "next/link";
 import Image from "next/image";
 

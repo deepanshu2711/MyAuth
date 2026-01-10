@@ -219,8 +219,17 @@ export const googleLogin = async (
   const app = await App.findOne({ clientId });
   if (!app) throw new AppError("App does not exists", 404);
 
+  const { tokens } = await OAuthClient.getToken({
+    code: idToken,
+    redirect_uri: "postmessage",
+  });
+
+  if (!tokens.id_token) {
+    throw new AppError("Google ID token not received", 400);
+  }
+
   const ticket = await OAuthClient.verifyIdToken({
-    idToken,
+    idToken: tokens.id_token,
     audience: process.env.GOOGLE_CLIENT_ID!,
   });
   const OAuthUser = ticket.getPayload();
