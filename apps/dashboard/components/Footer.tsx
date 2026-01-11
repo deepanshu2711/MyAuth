@@ -1,14 +1,18 @@
+import Image from "next/image";
+
 export const Footer = () => {
   return (
-    <footer className="border-t bg-black  border-white/10 py-12 px-6 ">
+    <footer className="border-t bg-black  border-white/10 py-12  px-6 ">
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 bg-white rounded flex items-center justify-center">
-              <span className="text-black text-sm font-bold">M</span>
-            </div>
-            <span className="text-lg font-medium">MyAuth</span>
-          </div>
+          <Image
+            src={"/logo.png"}
+            alt="logo"
+            width={200}
+            height={200}
+            priority
+            style={{ width: "120px", height: "auto" }}
+          />
 
           <div className="flex gap-8 text-sm text-gray-400">
             <a href="#" className="hover:text-white transition-colors">

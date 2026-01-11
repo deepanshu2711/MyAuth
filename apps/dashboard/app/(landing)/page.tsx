@@ -1,5 +1,7 @@
 "use client";
 
+import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
+import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
@@ -9,27 +11,25 @@ export default function Page() {
   };
 
   return (
-    <div className=" bg-black min-h-screen text-white flex flex-col items-center justify-center">
-      <section className=" px-6">
+    <div className="bg-black text-white gap-10 flex flex-col items-center justify-center">
+      <BackgroundRippleEffect />
+
+      {/* HERO SECRION */}
+      <section className="px-6 min-h-screen z-10 flex items-center justify-center">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 tracking-tight">
+          <h1 className="text-5xl md:text-6xl  mb-6 tracking-tight font-sans">
             Simple Authentication
           </h1>
-          <p className="text-lg md:text-xl text-gray-400 mb-10 leading-relaxed">
+          <p className="text-xs md:text-sm text-gray-400 mb-10 leading-relaxed">
             A personal OAuth 2.0 service for my applications.
             <br />
             Clean, secure, and straightforward.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={handleClick}
-              className="px-7 py-3 bg-white text-black font-medium rounded hover:bg-gray-200 transition-colors"
-            >
+            <Button variant={"secondary"} onClick={handleClick}>
               Get Started
-            </button>
-            <button className="px-7 py-3 border border-white/20 rounded hover:bg-white/5 transition-colors">
-              Documentation
-            </button>
+            </Button>
+            <Button>Documentation</Button>
           </div>
         </div>
       </section>
