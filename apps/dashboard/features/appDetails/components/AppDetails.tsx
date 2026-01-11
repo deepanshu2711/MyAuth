@@ -16,6 +16,9 @@ import {
 } from "lucide-react";
 import { useGetAppDetailsQuery } from "../hooks/query/useGetAppDetailsQuery";
 import { useGetAppUsersQuery } from "../hooks/query/useGetAppUsersQuery";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function AppDetails({ appId }: { appId: string }) {
   const [showSecret, setShowSecret] = useState(false);
@@ -30,60 +33,6 @@ export default function AppDetails({ appId }: { appId: string }) {
   const { data: appData, isLoading } = useGetAppDetailsQuery(appId);
   const { data: appUsers, isLoading: isLoadingUsers } =
     useGetAppUsersQuery(appId);
-
-  console.log("appUsers", appUsers);
-
-  // const appData = {
-  //   name: "Production Web App",
-  //   clientId: "app_prod_8x9k2m4n5p",
-  //   status: "Active",
-  //   createdAt: "Jan 15, 2024",
-  //   totalUsers: 1247,
-  //   requests30d: 45832,
-  //   redirectUris: [
-  //     "https://app.example.com/callback",
-  //     "https://app.example.com/auth/callback",
-  //     "http://localhost:3000/callback",
-  //   ],
-  // };
-
-  // const users = [
-  //   {
-  //     id: "usr_001",
-  //     email: "alice@example.com",
-  //     signupDate: "Jan 10, 2024",
-  //     lastActive: "2 hours ago",
-  //     status: "Active",
-  //   },
-  //   {
-  //     id: "usr_002",
-  //     email: "bob@example.com",
-  //     signupDate: "Jan 12, 2024",
-  //     lastActive: "1 day ago",
-  //     status: "Active",
-  //   },
-  //   {
-  //     id: "usr_003",
-  //     email: "charlie@example.com",
-  //     signupDate: "Jan 15, 2024",
-  //     lastActive: "3 days ago",
-  //     status: "Active",
-  //   },
-  //   {
-  //     id: "usr_004",
-  //     email: "diana@example.com",
-  //     signupDate: "Jan 18, 2024",
-  //     lastActive: "5 days ago",
-  //     status: "Inactive",
-  //   },
-  //   {
-  //     id: "usr_005",
-  //     email: "eve@example.com",
-  //     signupDate: "Jan 20, 2024",
-  //     lastActive: "1 week ago",
-  //     status: "Active",
-  //   },
-  // ];
 
   const handleCopy = () => {};
 
@@ -115,315 +64,297 @@ export default function AppDetails({ appId }: { appId: string }) {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-semibold mb-2">
+              <h1 className="text-3xl font-sans mb-2">
                 {appData.data[0].name}
               </h1>
               <div className="flex items-center gap-4 text-sm">
                 <span className="text-gray-400">
                   {appData.data[0].clientId}
                 </span>
-                <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">
+                <Badge variant={"secondary"}>
                   {appData.data[0].status || "Active"}
-                </span>
+                </Badge>
               </div>
             </div>
             <div className="flex gap-3">
-              <button
-                disabled={true}
-                className="px-4 disabled:opacity-50 disabled:cursor-not-allowed py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors flex items-center gap-2"
-              >
+              <Button disabled={true}>
                 <Edit className="w-4 h-4" />
                 Edit
-              </button>
-              <button
-                onClick={() => setShowRegenerateModal(true)}
-                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors flex items-center gap-2"
-              >
+              </Button>
+              <Button onClick={() => setShowRegenerateModal(true)}>
                 <RefreshCw className="w-4 h-4" />
                 Regenerate Secret
-              </button>
-              <button
+              </Button>
+              <Button
+                variant={"destructive"}
                 onClick={() => setShowDeleteModal(true)}
-                className="px-4 py-2 border border-red-500/50 text-red-400 rounded hover:bg-red-500/10 transition-colors flex items-center gap-2"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete App
-              </button>
+              </Button>
             </div>
           </div>
         </div>
 
         {/* Summary Metrics */}
         <div className="grid grid-cols-3 gap-6 mb-8">
-          <div className="border border-white/10 rounded-lg p-6 bg-white/5 hover:border-white/20 transition-colors">
-            <div className="text-gray-400 text-sm mb-2">Total Users</div>
-            <div className="text-3xl font-semibold">
-              {appData.data[0].totalCount.toLocaleString()}
-            </div>
-          </div>
-          <div className="border border-white/10 rounded-lg p-6 bg-white/5 opacity-50">
-            <div className="text-gray-400 text-sm mb-2">Requests (30d)</div>
-            <div className="text-3xl font-semibold line-through">
-              {/* {appData.requests30d.toLocaleString()} */}
-              27,212
-            </div>
-          </div>
-          <div className="border border-white/10 rounded-lg p-6 bg-white/5 hover:border-white/20 transition-colors">
-            <div className="text-gray-400 text-sm mb-2">App Created At</div>
-            <div className="text-3xl font-semibold">
-              {appData.data[0].createdAt.slice(0, 10)}
-            </div>
-          </div>
+          <Card className="border border-white/10 bg-transparent text-white transition-colors">
+            <CardContent>
+              <div className="text-gray-400 text-sm mb-2 font-sans">
+                Total Users
+              </div>
+              <div className="text-3xl font-sans">
+                {appData.data[0].totalCount.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border border-white/10 bg-transparent text-white opacity-50">
+            <CardContent>
+              <div className="text-gray-400 text-sm mb-2">Requests (30d)</div>
+              <div className="text-3xl font-sans line-through">
+                {/* {appData.requests30d.toLocaleString()} */}
+                27,212
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border border-white/10 bg-transparent text-white transition-colors">
+            <CardContent>
+              <div className="text-gray-400 text-sm mb-2 font-sans">
+                App Created At
+              </div>
+              <div className="text-3xl font-sans">
+                {appData.data[0].createdAt.slice(0, 10)}
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Application Settings */}
-        <div className="border border-white/10 rounded-lg p-6 bg-white/5 mb-8">
-          <h2 className="text-xl font-semibold mb-6">Application Settings</h2>
-
-          {/* Redirect URIs */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-gray-400 text-sm">Redirect URIs</label>
-              <button
-                onClick={() => setShowAddUriModal(true)}
-                className="px-3 py-1 bg-white text-black rounded hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm"
-              >
-                <Plus className="w-4 h-4" />
-                Add URI
-              </button>
-            </div>
-            <div className="space-y-2">
-              {appData.data[0].redirectUris.map((uri, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-3 border border-white/10 rounded bg-white/5"
+        <Card className="border border-white/10 bg-transparent text-white mb-8">
+          <CardHeader>
+            <h2 className="text-white font-sans ">Application Settings</h2>
+          </CardHeader>
+          <CardContent>
+            {/* Redirect URIs */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-gray-400 text-sm">Redirect URIs</label>
+                <button
+                  onClick={() => setShowAddUriModal(true)}
+                  className="px-3 py-1 bg-white text-black rounded hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm"
                 >
-                  <span className="text-sm">{uri}</span>
-                  <button className="text-gray-400 hover:text-red-400 transition-colors">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
+                  <Plus className="w-4 h-4" />
+                  Add URI
+                </button>
+              </div>
+              <div className="space-y-2">
+                {appData.data[0].redirectUris.map((uri, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-3 border border-white/10 rounded bg-white/5"
+                  >
+                    <span className="text-sm">{uri}</span>
+                    <button className="text-gray-400 hover:text-red-400 transition-colors">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-
-          {/* Allowed Domains */}
-          {/* <div className="mb-6"> */}
-          {/*   <label className="text-gray-400 text-sm mb-3 block"> */}
-          {/*     Allowed Domains (Optional) */}
-          {/*   </label> */}
-          {/*   <div className="flex flex-wrap gap-2"> */}
-          {/*     {appData.allowedDomains.map((domain, idx) => ( */}
-          {/*       <span */}
-          {/*         key={idx} */}
-          {/*         className="px-3 py-1 border border-white/10 rounded bg-white/5 text-sm flex items-center gap-2" */}
-          {/*       > */}
-          {/*         {domain} */}
-          {/*         <button className="text-gray-400 hover:text-red-400 transition-colors"> */}
-          {/*           <X className="w-3 h-3" /> */}
-          {/*         </button> */}
-          {/*       </span> */}
-          {/*     ))} */}
-          {/*     <button className="px-3 py-1 border border-white/20 rounded hover:bg-white/5 transition-colors text-sm text-gray-400"> */}
-          {/*       + Add Domain */}
-          {/*     </button> */}
-          {/*   </div> */}
-          {/* </div> */}
-
-          {/* App Logo */}
-          <div>
-            <label className="text-gray-400 text-sm mb-3 block">
-              App Logo (Optional)
-            </label>
-            <div className="border border-white/10 border-dashed rounded-lg p-8 bg-white/5 hover:border-white/20 transition-colors cursor-pointer text-center">
-              <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-              <p className="text-sm text-gray-400">
-                Click to upload or drag and drop
-              </p>
-              <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
+            <div>
+              <label className="text-gray-400 text-sm mb-3 block">
+                App Logo (Optional)
+              </label>
+              <div className="border border-white/10 border-dashed rounded-lg p-8 bg-white/5 hover:border-white/20 transition-colors cursor-pointer text-center">
+                <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                <p className="text-sm text-gray-400">
+                  Click to upload or drag and drop
+                </p>
+                <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Users Table */}
-        <div className="border border-white/10 rounded-lg p-6 bg-white/5 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold">Users</h2>
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 transition-colors"
-              />
+        <Card className="border border-white/10 bg-transparent text-white mb-8">
+          <CardHeader>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className=" font-sans">Users</h2>
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 transition-colors"
+                />
+              </div>
             </div>
-          </div>
+          </CardHeader>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                    User ID
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                    Email
-                  </th>
-                  <th className="text-left opacity-50 line-through py-3 px-4 text-gray-400 text-sm font-normal">
-                    Sign-up Date
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-400 opacity-50 line-through text-sm font-normal">
-                    Last Active
-                  </th>
-                  <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal opacity-50 line-through">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedUsers.map((user) => (
-                  <tr
-                    key={user.userDetails._id}
-                    className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                  >
-                    <td className="py-3 px-4 text-sm">
-                      {user.userDetails._id}
-                    </td>
-                    <td className="py-3 px-4 text-sm">
-                      {user.userDetails.email}
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
-                      {/* {user.signupDate} */}
-                      27-11-2001
-                    </td>
-                    <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
-                      {/* {user.lastActive} */}
-                      27-11-2001
-                    </td>
-                    <td className="py-3 px-4 text-sm">
-                      <span
-                        className={`px-2 py-1 rounded text-xs opacity-50 line-through ${
-                          "Active" === "Active"
-                            ? "bg-green-500/20 text-green-400"
-                            : "bg-gray-500/20 text-gray-400"
-                        }`}
-                      >
-                        {/* {user.status} */}
-                        Active
-                      </span>
-                    </td>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                      User ID
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                      Email
+                    </th>
+                    <th className="text-left opacity-50 line-through py-3 px-4 text-gray-400 text-sm font-normal">
+                      Sign-up Date
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 opacity-50 line-through text-sm font-normal">
+                      Last Active
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal opacity-50 line-through">
+                      Status
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {paginatedUsers.map((user) => (
+                    <tr
+                      key={user.userDetails._id}
+                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                    >
+                      <td className="py-3 px-4 text-sm">
+                        {user.userDetails._id}
+                      </td>
+                      <td className="py-3 px-4 text-sm">
+                        {user.userDetails.email}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
+                        {/* {user.signupDate} */}
+                        27-11-2001
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
+                        {/* {user.lastActive} */}
+                        27-11-2001
+                      </td>
+                      <td className="py-3 px-4 text-sm">
+                        <span
+                          className={`px-2 py-1 rounded text-xs opacity-50 line-through ${
+                            "Active" === "Active"
+                              ? "bg-green-500/20 text-green-400"
+                              : "bg-gray-500/20 text-gray-400"
+                          }`}
+                        >
+                          {/* {user.status} */}
+                          Active
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="flex items-center justify-between mt-6">
+              <div className="text-sm text-gray-400">
+                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of{" "}
+                {filteredUsers.length} users
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`px-3 py-1 border rounded transition-colors ${
+                        currentPage === page
+                          ? "bg-white text-black border-white"
+                          : "border-white/10 hover:bg-white/5"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </CardContent>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between mt-6">
-            <div className="text-sm text-gray-400">
-              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-              {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of{" "}
-              {filteredUsers.length} users
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-1 border rounded transition-colors ${
-                      currentPage === page
-                        ? "bg-white text-black border-white"
-                        : "border-white/10 hover:bg-white/5"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ),
-              )}
-              <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(totalPages, p + 1))
-                }
-                disabled={currentPage === totalPages}
-                className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
+        </Card>
 
         {/* API Keys Section */}
-        <div className="border border-white/10 rounded-lg p-6 bg-white/5">
-          <h2 className="text-xl font-semibold mb-6">API Keys</h2>
+        <Card className="border border-white/10 bg-transparent text-white">
+          <CardHeader>
+            <h2 className=" font-sans mb-6">API Keys</h2>
+          </CardHeader>
 
-          {/* Client ID */}
-          <div className="mb-4">
-            <label className="text-gray-400 text-sm mb-2 block">
-              Client ID
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={appData.data[0].clientId}
-                readOnly
-                className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
-              />
-              <button
-                onClick={() => handleCopy()}
-                className="px-4 py-2 border border-white/20 rounded hover:bg-white/5 transition-colors flex items-center gap-2"
-              >
-                <Copy className="w-4 h-4" />
-                {copiedItem === "clientId" ? "Copied!" : "Copy"}
-              </button>
+          <CardContent>
+            {/* Client ID */}
+            <div className="mb-4">
+              <label className="text-gray-400 text-sm mb-2 block">
+                Client ID
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={appData.data[0].clientId}
+                  readOnly
+                  className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
+                />
+                <Button onClick={() => handleCopy()}>
+                  <Copy className="w-4 h-4" />
+                  {copiedItem === "clientId" ? "Copied!" : "Copy"}
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {/* Client Secret */}
-          <div>
-            <label className="text-gray-400 text-sm mb-2 block">
-              Client Secret
-            </label>
-            <div className="flex gap-2">
-              <input
-                type={showSecret ? "text" : "password"}
-                value={"***********************"}
-                readOnly
-                className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed text-sm focus:outline-none"
-                disabled={true}
-              />
-              <button
-                onClick={() => setShowSecret(!showSecret)}
-                className="px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed border border-white/20 rounded hover:bg-white/5 transition-colors"
-                disabled={true}
-              >
-                {showSecret ? (
-                  <EyeOff className="w-4 h-4" />
-                ) : (
-                  <Eye className="w-4 h-4" />
-                )}
-              </button>
-              <button
-                onClick={() => handleCopy()}
-                className="px-4 disabled:opacity-50 disabled:cursor-not-allowed py-2 border border-white/20 rounded hover:bg-white/5 transition-colors flex items-center gap-2"
-                disabled={true}
-              >
-                <Copy className="w-4 h-4" />
-                {copiedItem === "clientSecret" ? "Copied!" : "Copy"}
-              </button>
+            {/* Client Secret */}
+            <div>
+              <label className="text-gray-400 text-sm mb-2 block">
+                Client Secret
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type={showSecret ? "text" : "password"}
+                  value={"***********************"}
+                  readOnly
+                  className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed text-sm focus:outline-none"
+                  disabled={true}
+                />
+                <Button
+                  onClick={() => setShowSecret(!showSecret)}
+                  disabled={true}
+                >
+                  {showSecret ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </Button>
+                <Button onClick={() => handleCopy()} disabled={true}>
+                  <Copy className="w-4 h-4" />
+                  {copiedItem === "clientSecret" ? "Copied!" : "Copy"}
+                </Button>
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Add URI Modal */}

@@ -4,6 +4,9 @@ import { useGetUserAppsQuery } from "../hooks/query/useGetUserAppsQuery";
 import { useGetUserAppsSummaryQuery } from "../hooks/query/useGetUserAppsSummaryQuery";
 import { useRegisterAppMutation } from "../hooks/mutation/useRegisterAppMutation";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Dashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -32,115 +35,97 @@ const Dashboard = () => {
       <div className="max-w-7xl  mx-auto px-6 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-gray-400">
+          <h1 className="text-3xl font-sans mb-2">Dashboard</h1>
+          <p className="text-gray-400 text-sm font-sans">
             Manage your authentication applications
           </p>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="border border-white/10 rounded-lg p-6">
-            <div className="text-sm text-gray-400 mb-1">Total Applications</div>
-            <div className="text-3xl font-bold">
-              {summary?.data[0]?.totalApps}
-            </div>
-          </div>
-          <div className="border border-white/10 rounded-lg p-6">
-            <div className="text-sm text-gray-400 mb-1">Total Users</div>
-            <div className="text-3xl font-bold">
-              {summary?.data[0]?.totalUsers}
-            </div>
-          </div>
-          <div className="border border-white/10 opacity-50 line-through rounded-lg p-6">
-            <div className="text-sm text-gray-400 mb-1">API Requests (30d)</div>
-            <div className="text-3xl font-bold">21,920</div>
-          </div>
+        <div className="grid grid-cols-1  md:grid-cols-3 gap-6 mb-8">
+          <Card className="border bg-transparent text-white border-white/10 ">
+            <CardContent>
+              <div className="text-sm text-gray-400 mb-1 font-sans">
+                Total Applications
+              </div>
+              <div className="text-3xl font-sans">
+                {summary?.data[0]?.totalApps}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border border-white/10 text-white bg-transparent font-sans">
+            <CardContent>
+              <div className="text-sm text-gray-400 mb-1">Total Users</div>
+              <div className="text-3xl font-sans">
+                {summary?.data[0]?.totalUsers}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border border-white/10 opacity-50 line-through text-white bg-transparent">
+            <CardContent>
+              <div className=" font-sans text-sm text-gray-400 mb-1">
+                API Requests (30d)
+              </div>
+              <div className="text-3xl font-sans">21,920</div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Applications Section */}
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Applications</h2>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-white text-black text-sm font-medium rounded hover:bg-gray-200 transition-colors"
-          >
-            + Create Application
-          </button>
+          <h2 className="text-xl font-sans">Applications</h2>
+          <Button onClick={() => setShowCreateModal(true)}>
+            <Plus /> Create Application
+          </Button>
         </div>
 
         {/* Applications Grid */}
         <div className="grid grid-cols-1 gap-4">
           {userApps?.data?.map((app) => (
-            <div
+            <Card
               key={app._id}
-              className="border border-white/10 rounded-lg p-6 hover:border-white/20 transition-colors"
+              className="bg-transparent text-white border-white/10"
             >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <Link
-                    href={`/app/${app._id}`}
-                    className="hover:text-blue-500"
-                  >
-                    <h3 className="text-lg font-semibold mb-1">{app.name}</h3>
-                  </Link>
-                  <div className="flex items-center gap-2 text-sm text-gray-400">
-                    <span>Client ID: {app.clientId}</span>
-                    <span>•</span>
-                    <span className="text-green-500">Active</span>
+              <CardContent>
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <Link
+                      href={`/app/${app._id}`}
+                      className="hover:text-blue-500"
+                    >
+                      <h3 className="text-lg font-sans mb-1">{app.name}</h3>
+                    </Link>
+                    <div className="flex items-center gap-2 text-sm text-gray-400">
+                      <span>Client ID: {app.clientId}</span>
+                      <span>•</span>
+                      <span className="text-green-500">Active</span>
+                    </div>
                   </div>
                 </div>
-                <button className="p-2 hover:bg-white/5 rounded transition-colors">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                    />
-                  </svg>
-                </button>
-              </div>
 
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div>
-                  <div className="text-2xl font-bold">
-                    {app.userCount.toLocaleString()}
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div>
+                    <div className="text-2xl font-sans">
+                      {app.userCount.toLocaleString()}
+                    </div>
+                    <div className="text-xs text-gray-400">Users</div>
                   </div>
-                  <div className="text-xs text-gray-400">Users</div>
-                </div>
-                <div className="opacity-50 line-through">
-                  <div className="text-2xl font-bold">
-                    {/* {app.requests.toLocaleString()} */}
-                    2,400
+                  <div className="opacity-50 line-through">
+                    <div className="text-2xl font-sans">
+                      {/* {app.requests.toLocaleString()} */}
+                      2,400
+                    </div>
+                    <div className="text-xs text-gray-400">Requests (30d)</div>
                   </div>
-                  <div className="text-xs text-gray-400">Requests (30d)</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold">
-                    {app.createdAt.slice(0, 10)}
+                  <div>
+                    <div className="text-2xl font-sans">
+                      {app.createdAt.slice(0, 10)}
+                    </div>
+                    <div className="text-xs text-gray-400">Created</div>
                   </div>
-                  <div className="text-xs text-gray-400">Created</div>
                 </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button className="px-3 py-1.5 text-sm border border-white/20 rounded hover:bg-white/5 transition-colors">
-                  View Details
-                </button>
-                <button className="px-3 py-1.5 text-sm border border-white/20 rounded hover:bg-white/5 transition-colors">
-                  Settings
-                </button>
-                <button className="px-3 py-1.5 text-sm border border-white/20 rounded hover:bg-white/5 transition-colors">
-                  Analytics
-                </button>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>

@@ -2,6 +2,7 @@
 import { useGetCurrentUserQuery } from "../hooks/query/useGetCurrentUserQuery";
 import { useLogoutMutation } from "../features/auth/hooks/mutation/useLogoutMutation";
 import Image from "next/image";
+import Link from "next/link";
 
 export const Navbar = () => {
   const { data: user } = useGetCurrentUserQuery();
@@ -14,7 +15,7 @@ export const Navbar = () => {
   return (
     <nav className="fixed top-0 w-full z-50 bg-black backdrop-blur-sm border-b border-white/10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <Link href={"/"} className="flex items-center gap-2">
           <Image
             src={"/logo.png"}
             alt="logo"
@@ -24,7 +25,7 @@ export const Navbar = () => {
             style={{ width: "120px", height: "auto" }}
           />
           <span className="text-lg font-medium">MyAuth</span>
-        </div>
+        </Link>
         {/* <button */}
         {/*   onClick={user ? handleLogout : undefined} */}
         {/*   disabled={isLoggingOut} */}
