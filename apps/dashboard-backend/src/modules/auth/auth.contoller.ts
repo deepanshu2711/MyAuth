@@ -1,14 +1,12 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../../utils/helpers.js";
-import * as AuthService from "./auth.service.js";
 import { successResponse } from "../../utils/responses.js";
+import { myAuth } from "../../lib/myAuth.js";
 
 export const token = asyncHandler(async (req: Request, res: Response) => {
-  const { code, clientId } = req.body;
-  const { refreshToken, accessToken } = await AuthService.getToken({
-    code,
-    clientId,
-  });
+  const { code } = req.body;
+
+  const { refreshToken, accessToken } = await myAuth.handleCallback(code);
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,

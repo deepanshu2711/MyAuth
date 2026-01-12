@@ -19,3 +19,22 @@ app.listen(process.env.PORT, () => {
 //7. App specific rate-limit
 //8. Integrate Google Auth
 //7. Integrate Github Auth
+
+// 4️⃣ The BIG win: Provide a Backend SDK (this matters most)
+//
+// If you do only one thing, do this.
+//
+// Example: Node.js SDK
+// import { MyAuth } from "@myauth/node";
+//
+// const myAuth = new MyAuth({
+//   clientId: process.env.MYAUTH_CLIENT_ID,
+//   clientSecret: process.env.MYAUTH_CLIENT_SECRET
+// });
+//
+// // callback route
+// app.get("/auth/callback", async (req, res) => {
+//   const session = await myAuth.handleCallback(req.query.code);
+//   res.cookie("session", session.accessToken, { httpOnly: true });
+//   res.redirect("/");
+// });

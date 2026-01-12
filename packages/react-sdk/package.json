@@ -1,0 +1,45 @@
+{
+  "name": "@myauth/react",
+  "version": "1.0.0",
+  "description": "React SDK for MyAuth authentication service",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w"
+  },
+  "keywords": [
+    "authentication",
+    "sdk",
+    "react",
+    "oauth"
+  ],
+  "author": "Deepanshu Saini",
+  "license": "ISC",
+  "type": "module",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "rollup": "^4.0.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.2"
+  }
+}
