@@ -39,3 +39,9 @@ export const getAppDetails = asyncHandler(
     return successResponse(res, data);
   },
 );
+
+export const deleteApp = asyncHandler(async (req, res) => {
+  const { appId } = req.parmas;
+  const data = await AppService.deleteApp({ appId });
+  return successResponse(res, data);
+});

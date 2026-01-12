@@ -1,4 +1,5 @@
 import { App } from "../../models/app.model.js";
+import { MemberShip } from "../../models/membership.model.js";
 import { generateClientId, generateClientSecret } from "../../utils/helpers.js";
 import * as AppPipeline from "./pipelines/index.js";
 
@@ -41,5 +42,11 @@ export const getSummary = async ({ userId }: { userId: string }) => {
 
 export const getAppDetails = async ({ appId }: { appId: string }) => {
   const data = await App.aggregate(AppPipeline.getAppDetails(appId));
+  return data;
+};
+
+export const deleteApp = async ({ appId }: { appId: string }) => {
+  const data = await App.findByIdAndDelete(appId);
+  await MemberShip.deleteMany({ appId });
   return data;
 };

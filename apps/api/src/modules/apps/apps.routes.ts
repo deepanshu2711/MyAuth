@@ -9,3 +9,5 @@ appsRouter.get("/users/:appId", AppsController.getAppUsers);
 appsRouter.get("/:appId", AppsController.getAppDetails);
 
 appsRouter.post("/register", AppsController.register);
+
+appsRouter.delete("/:appId", AppsController.deleteApp);

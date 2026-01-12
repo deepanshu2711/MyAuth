@@ -33,3 +33,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+//NOTE: crete a dashboard integration page or lab in landing page

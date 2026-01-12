@@ -19,6 +19,17 @@ import { useGetAppUsersQuery } from "../hooks/query/useGetAppUsersQuery";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function AppDetails({ appId }: { appId: string }) {
   const [showSecret, setShowSecret] = useState(false);
@@ -85,13 +96,30 @@ export default function AppDetails({ appId }: { appId: string }) {
                 <RefreshCw className="w-4 h-4" />
                 Regenerate Secret
               </Button>
-              <Button
-                variant={"destructive"}
-                onClick={() => setShowDeleteModal(true)}
-              >
-                <Trash2 className="w-4 h-4" />
-                Delete App
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant={"destructive"}
+                    // onClick={() => setShowDeleteModal(true)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete App
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete Application</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      the application and all associated data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </div>
         </div>
@@ -413,33 +441,6 @@ export default function AppDetails({ appId }: { appId: string }) {
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
               >
                 Regenerate Secret
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete App Modal */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-black border border-white/20 rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4">Delete Application</h3>
-            <p className="text-gray-400 text-sm mb-6">
-              This action cannot be undone. This will permanently delete the
-              application and all associated data.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-              >
-                Delete Application
               </button>
             </div>
           </div>
