@@ -5,7 +5,8 @@ export const exchangeCode = async (data: ExchangeCodeType) => {
   const res = await axios.post(`${data.apiBaseUrl}/api/auth/token`, {
     code: data.code,
     clientId: data.clientId,
+    clientSecret: data.clientSecret,
   });
 
-  return res.data;
+  return res.data.data;
 };

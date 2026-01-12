@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import { MyAuth } from "@myauth/node";
 
 export const myAuth = new MyAuth({

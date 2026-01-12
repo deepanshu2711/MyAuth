@@ -1,8 +1,8 @@
-import dotenv from "dotenv";
 import { app } from "./app.js";
 import { connectDB } from "./db.js";
 import { userConsumer } from "./modules/auth/user.consumer.js";
 
+import dotenv from "dotenv";
 dotenv.config();
 
 userConsumer().catch(console.error);
