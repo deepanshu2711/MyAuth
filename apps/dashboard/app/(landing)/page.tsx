@@ -8,6 +8,9 @@ import { Cover } from "@/components/ui/cover";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Box, Lock, Search, Settings, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { FeaturesSectionDemo } from "./features";
+import { BentoGrid } from "@/components/ui/bento-grid";
+import { BentoGridDemo } from "./grid";
 
 interface GridItemProps {
   area: string;
@@ -141,46 +144,47 @@ export default function Page() {
           manage tokens, and protect your APIs — without reinventing auth.
         </p>
 
-        <div className="mt-4 w-full">
-          <HoverEffect
-            items={[
-              {
-                title: "Create Application",
-                description:
-                  "Register your app and generate client credentials.",
-                link: "/docs/register-app",
-              },
-              {
-                title: "Configure Redirect URI",
-                description: "Set the callback URL to receive auth responses.",
-                link: "/docs/redirect-uri",
-              },
-              {
-                title: "Redirect User to Login",
-                description: "Send users to the MyAuth secure login portal.",
-                link: "/docs/login-redirect",
-              },
-              {
-                title: "Receive Authorization Code",
-                description: "Get redirected back with a temporary auth code.",
-                link: "/docs/auth-code",
-              },
-              {
-                title: "Exchange Tokens",
-                description:
-                  "Convert the auth code into access & refresh tokens.",
-                link: "/docs/token-exchange",
-              },
-              {
-                title: "Authenticate Requests",
-                description:
-                  "Use access tokens to securely call protected APIs.",
-                link: "/docs/use-access-token",
-              },
-            ]}
-          />
-        </div>
+        {/* <div className="mt-4 w-full"> */}
+        {/*   <HoverEffect */}
+        {/*     items={[ */}
+        {/*       { */}
+        {/*         title: "Create Application", */}
+        {/*         description: */}
+        {/*           "Register your app and generate client credentials.", */}
+        {/*         link: "/docs/register-app", */}
+        {/*       }, */}
+        {/*       { */}
+        {/*         title: "Configure Redirect URI", */}
+        {/*         description: "Set the callback URL to receive auth responses.", */}
+        {/*         link: "/docs/redirect-uri", */}
+        {/*       }, */}
+        {/*       { */}
+        {/*         title: "Redirect User to Login", */}
+        {/*         description: "Send users to the MyAuth secure login portal.", */}
+        {/*         link: "/docs/login-redirect", */}
+        {/*       }, */}
+        {/*       { */}
+        {/*         title: "Receive Authorization Code", */}
+        {/*         description: "Get redirected back with a temporary auth code.", */}
+        {/*         link: "/docs/auth-code", */}
+        {/*       }, */}
+        {/*       { */}
+        {/*         title: "Exchange Tokens", */}
+        {/*         description: */}
+        {/*           "Convert the auth code into access & refresh tokens.", */}
+        {/*         link: "/docs/token-exchange", */}
+        {/*       }, */}
+        {/*       { */}
+        {/*         title: "Authenticate Requests", */}
+        {/*         description: */}
+        {/*           "Use access tokens to securely call protected APIs.", */}
+        {/*         link: "/docs/use-access-token", */}
+        {/*       }, */}
+        {/*     ]} */}
+        {/*   /> */}
+        {/* </div> */}
       </section>
+      <FeaturesSectionDemo />
     </div>
   );
 }
