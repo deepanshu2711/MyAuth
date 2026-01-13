@@ -4,3 +4,8 @@ export type ExchangeCodeType = {
   clientSecret: string;
   apiBaseUrl?: string;
 };
+
+export type VerifyTokenType = {
+  token: string;
+  apiBaseUrl?: string;
+};

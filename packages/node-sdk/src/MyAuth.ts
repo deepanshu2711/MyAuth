@@ -1,4 +1,4 @@
-import { exchangeCode } from "./http.js";
+import { exchangeCode, verifyToken } from "./http.js";
 
 export class MyAuth {
   constructor(
@@ -17,5 +17,13 @@ export class MyAuth {
       code,
       ...this.config,
     });
+  }
+
+  async verifyToken(token: string) {
+    if (!token) {
+      throw new Error("Token missing");
+    }
+
+    return verifyToken({ token, apiBaseUrl: this.config.apiBaseUrl! });
   }
 }

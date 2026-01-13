@@ -1,0 +1,36 @@
+{
+  "name": "@myauth/sdk",
+  "version": "1.0.0",
+  "description": "SDK for MyAuth authentication service",
+  "main": "dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "authentication",
+    "sdk",
+    "node",
+    "next",
+    "react",
+    "oauth"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@myauth/next": "^1.0.0",
+    "@myauth/node": "^1.0.0",
+    "@myauth/react": "^1.0.0"
+  }
+}

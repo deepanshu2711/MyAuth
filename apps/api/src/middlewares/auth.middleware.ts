@@ -18,20 +18,27 @@ export const authMiddleware = async (
   next: NextFunction,
 ) => {
   try {
-    const refreshToken = req.cookies?.refreshToken;
-    if (!refreshToken) {
+    let token: string | undefined;
+    if (req.cookies?.refreshToken) {
+      token = req.cookies.refreshToken;
+    }
+    if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+
+    if (!token) {
       return errorResponse(res, "Unauthorized", 401);
     }
 
     const activeSession = await Session.findOne({
-      refreshToken,
+      refreshToken: token,
       expiresAt: {
         $gt: new Date(),
       },
     });
     if (!activeSession) throw new AppError("Expired Session", 401);
 
-    const decoded = jwt.verify(refreshToken, "refresh-token-secret") as {
+    const decoded = jwt.verify(token, "refresh-token-secret") as {
       userId: string;
       appId: string;
     };

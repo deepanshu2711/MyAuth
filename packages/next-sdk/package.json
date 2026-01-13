@@ -1,0 +1,45 @@
+{
+  "name": "@myauth/next",
+  "version": "1.0.0",
+  "description": "Next.js SDK for MyAuth authentication service",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "lint": "eslint src --ext .ts,.tsx",
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+  },
+  "keywords": [
+    "auth",
+    "nextjs",
+    "middleware",
+    "authentication",
+    "sdk"
+  ],
+  "author": "MyAuth Team",
+  "license": "ISC",
+  "dependencies": {
+    "@myauth/node": "^1.0.0"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
