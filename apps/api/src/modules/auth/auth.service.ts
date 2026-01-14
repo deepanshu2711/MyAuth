@@ -211,11 +211,7 @@ export const logout = async ({ refreshToken }: { refreshToken: string }) => {
   return;
 };
 
-export const googleLogin = async (
-  idToken: string,
-  clientId: string,
-  redirect_uri: string,
-) => {
+export const googleLogin = async (idToken: string, clientId: string) => {
   const app = await App.findOne({ clientId });
   if (!app) throw new AppError("App does not exists", 404);
 
@@ -269,11 +265,11 @@ export const googleLogin = async (
     code,
     clientId,
     userId: globalUser._id,
-    redirectUri: redirect_uri,
+    redirectUri: app.redirectUris[0],
     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
   });
 
-  const redirectUrl = new URL(redirect_uri);
+  const redirectUrl = new URL(app.redirectUris[0]!);
   redirectUrl.searchParams.set("code", code);
 
   return redirectUrl;
