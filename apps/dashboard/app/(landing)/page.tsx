@@ -9,6 +9,7 @@ import { Box, Lock, Search, Settings, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FeaturesSectionDemo } from "./features";
 import { InfiniteMovingCardsDemo } from "./Testimonials";
+import Example from "./Pricing";
 
 interface GridItemProps {
   area: string;
@@ -139,6 +140,8 @@ export default function Page() {
         </p>
         <FeaturesSectionDemo />
       </section>
+
+      <Example />
 
       <section className="flex flex-col items-center max-w-7xl mx-auto mt-24 px-6 rounded-md text-center">
         <h2 className="text-3xl md:text-4xl font-sans tracking-tight text-neutral-900 dark:text-white">
