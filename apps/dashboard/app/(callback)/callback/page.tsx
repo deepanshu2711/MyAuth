@@ -1,10 +1,5 @@
-import Callback from "@/features/auth/components/Callback";
-import { Suspense } from "react";
+import { AuthenticateWithRedirectCallback } from "@myauth/sdk";
 
 export default function Page() {
-  return (
-    <Suspense>
-      <Callback />
-    </Suspense>
-  );
+  return <AuthenticateWithRedirectCallback />;
 }
