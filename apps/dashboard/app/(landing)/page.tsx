@@ -3,14 +3,12 @@
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { HoverEffect } from "@/components/ui/card-hover-effect";
 import { Cover } from "@/components/ui/cover";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { Box, Lock, Search, Settings, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FeaturesSectionDemo } from "./features";
-import { BentoGrid } from "@/components/ui/bento-grid";
-import { BentoGridDemo } from "./grid";
+import { InfiniteMovingCardsDemo } from "./Testimonials";
 
 interface GridItemProps {
   area: string;
@@ -85,7 +83,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="max-w-7xl">
+      <section className="max-w-7xl mt-16 px-6">
         <ul className="grid grid-cols-1 grid-rows-none gap-4 md:grid-cols-12 md:grid-rows-3 lg:gap-4 xl:max-h-[34rem] xl:grid-rows-2">
           <GridItem
             area="md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
@@ -130,61 +128,28 @@ export default function Page() {
         </ul>
       </section>
 
-      <section className="flex flex-col items-center max-w-7xl mx-auto mt-32  rounded-md  text-center">
-        {/* <h2 className="text-3xl md:text-4xl font-sans tracking-tight bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent "> */}
-        {/*   Integrate MyAuth into Your Application */}
-        {/* </h2> */}
-
+      <section className="flex flex-col items-center max-w-7xl mx-auto mt-24 px-6 rounded-md text-center">
         <h2 className="text-3xl md:text-4xl font-sans tracking-tight text-neutral-900 dark:text-white">
           Auth That <Cover>Integrates Fast</Cover>
         </h2>
 
-        <p className="mt-4 max-w-2xl text-xs md:text-sm text-gray-400">
+        <p className="my-4 max-w-2xl text-xs md:text-sm text-gray-400">
           Follow a simple OAuth-style flow to securely authenticate users,
           manage tokens, and protect your APIs — without reinventing auth.
         </p>
-
-        {/* <div className="mt-4 w-full"> */}
-        {/*   <HoverEffect */}
-        {/*     items={[ */}
-        {/*       { */}
-        {/*         title: "Create Application", */}
-        {/*         description: */}
-        {/*           "Register your app and generate client credentials.", */}
-        {/*         link: "/docs/register-app", */}
-        {/*       }, */}
-        {/*       { */}
-        {/*         title: "Configure Redirect URI", */}
-        {/*         description: "Set the callback URL to receive auth responses.", */}
-        {/*         link: "/docs/redirect-uri", */}
-        {/*       }, */}
-        {/*       { */}
-        {/*         title: "Redirect User to Login", */}
-        {/*         description: "Send users to the MyAuth secure login portal.", */}
-        {/*         link: "/docs/login-redirect", */}
-        {/*       }, */}
-        {/*       { */}
-        {/*         title: "Receive Authorization Code", */}
-        {/*         description: "Get redirected back with a temporary auth code.", */}
-        {/*         link: "/docs/auth-code", */}
-        {/*       }, */}
-        {/*       { */}
-        {/*         title: "Exchange Tokens", */}
-        {/*         description: */}
-        {/*           "Convert the auth code into access & refresh tokens.", */}
-        {/*         link: "/docs/token-exchange", */}
-        {/*       }, */}
-        {/*       { */}
-        {/*         title: "Authenticate Requests", */}
-        {/*         description: */}
-        {/*           "Use access tokens to securely call protected APIs.", */}
-        {/*         link: "/docs/use-access-token", */}
-        {/*       }, */}
-        {/*     ]} */}
-        {/*   /> */}
-        {/* </div> */}
+        <FeaturesSectionDemo />
       </section>
-      <FeaturesSectionDemo />
+
+      <section className="flex flex-col items-center max-w-7xl mx-auto mt-24 px-6 rounded-md text-center">
+        <h2 className="text-3xl md:text-4xl font-sans tracking-tight text-neutral-900 dark:text-white">
+          Join the community
+        </h2>
+        <p className="my-4 max-w-2xl text-xs md:text-sm text-gray-400">
+          Discover what our community has to say about their MyAuth experience.
+        </p>
+        <Badge>Join us on discord</Badge>
+        <InfiniteMovingCardsDemo />
+      </section>
     </div>
   );
 }
