@@ -1,11 +1,12 @@
 "use client";
-import { useGetCurrentUserQuery } from "../hooks/query/useGetCurrentUserQuery";
 import { useLogoutMutation } from "../features/auth/hooks/mutation/useLogoutMutation";
 import Image from "next/image";
 import Link from "next/link";
+import { useAuth } from "@myauth/sdk";
 
 export const Navbar = () => {
-  const { data: user } = useGetCurrentUserQuery();
+  const user = useAuth();
+  console.log("user", user);
   const { mutate: logout, isPending: isLoggingOut } = useLogoutMutation();
 
   const handleLogout = () => {

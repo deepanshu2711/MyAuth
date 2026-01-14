@@ -1,11 +1,18 @@
 import { Toaster } from "sonner";
 import { TanstackQueryProvider } from "./TanstackQueryProvider";
+import { AuthProvider } from "@myauth/sdk";
 
-export const Providers = ({ children }: { children: React.ReactNode }) => {
+export const Providers = ({
+  children,
+  initialSession,
+}: {
+  children: React.ReactNode;
+  initialSession: any;
+}) => {
   return (
     <TanstackQueryProvider>
       <Toaster />
-      {children}
+      <AuthProvider initialSession={initialSession}>{children}</AuthProvider>
     </TanstackQueryProvider>
   );
 };

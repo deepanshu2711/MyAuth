@@ -12,8 +12,6 @@ export const exchangeCode = async (data: ExchangeCodeType) => {
 };
 
 export const verifyToken = async (data: VerifyTokenType) => {
-  console.log(data.apiBaseUrl, data.token);
-
   const res = await axios.get(`${data.apiBaseUrl}/api/auth/verify`, {
     headers: {
       Authorization: `Bearer ${data.token}`,
