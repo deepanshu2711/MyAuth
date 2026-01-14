@@ -84,7 +84,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="max-w-7xl mt-16 px-6">
+      <section className="max-w-7xl mt-0 px-6">
         <ul className="grid grid-cols-1 grid-rows-none gap-4 md:grid-cols-12 md:grid-rows-3 lg:gap-4 xl:max-h-[34rem] xl:grid-rows-2">
           <GridItem
             area="md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
