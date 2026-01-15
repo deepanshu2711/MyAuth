@@ -65,3 +65,58 @@ webhook create a seperate table for it
 "events": ["user.created", "user.login"],
 "secret": "whsec_8k29sldk"
 }
+
+Integrating steps for nextjs
+
+## Setup
+
+1. Create a Next.js app
+2. Install the SDK
+3. Configure environment variables
+
+## Protect Routes
+
+4. Add middleware
+
+## Handle Authentication
+
+5. Add AuthProvider
+6. Create callback page
+7. Create token exchange route
+
+8. Create a Next.js application (using npx create-next-app@latest or similar, with App Router enabled for Next.js 13+).
+9. Install the MyAuth package: npm i @myauth/next
+10. Add client ID and client secret to environment variables:
+    - Get or create an app from the MyAuth dashboard after logging in.
+    - Set NEXT_PUBLIC_CLIENT_ID (public), CLIENT_ID, and CLIENT_SECRET in your .env.local file.
+11. Create a middleware.ts file in the root of your app:
+    import { withAuthMiddleware } from "@myauth/next";
+    export default withAuthMiddleware(process.env.NEXT_PUBLIC_CLIENT_ID!);
+    export const config = {
+    matcher: ["/dashboard/:path*"],
+    };
+12. Wrap your root layout with AuthProvider and pass the initial session:
+    import { AuthProvider } from "@myauth/next";
+    export default async function RootLayout({ children }) {
+    const session = await auth(); // Assuming auth function from @myauth/next
+    return (
+    <html>
+    <body>
+    <AuthProvider initialSession={session}>
+    {children}
+    </AuthProvider>
+    </body>
+    </html>
+    );
+    }
+13. Add a /callback page at app/callback/page.tsx:
+    import { AuthenticateWithRedirectCallback } from "@myauth/next";
+    export default function Page() {
+    return <AuthenticateWithRedirectCallback />;
+    }
+14. Create an API route at app/api/auth/token/route.ts:
+    import { createAuthCallbackHandler } from "@myauth/next";
+    export const POST = createAuthCallbackHandler({
+    clientId: process.env.CLIENT_ID!,
+    clientSecret: process.env.CLIENT_SECRET!,
+    });
