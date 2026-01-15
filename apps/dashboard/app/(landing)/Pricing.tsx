@@ -6,55 +6,106 @@ const tiers = [
   {
     name: "Free",
     id: "tier-free",
-    href: "#",
-    priceMonthly: "$0",
-    description: "Get started with basic authentication and SDK access.",
+    priceLabel: "Free during beta",
+    description: "Everything you need to get started with MyAuth.",
     features: [
-      "3 app per account",
+      "Up to 3 apps",
       "Up to 100 users per app",
-      "Multiple login methods (Email, OAuth, OTP)",
-      "Basic JWT tokens",
+      "Email, OAuth, and OTP login",
+      "JWT-based sessions",
       "Standard hashing & token refresh",
-      "Rate limits: 1k requests/day",
+      "Community support",
     ],
+    cta: "Get started",
     mostPopular: false,
   },
   {
     name: "Basic",
     id: "tier-basic",
-    href: "#",
-    priceMonthly: "$9",
-    description: "Everything you need to scale small projects.",
+    priceLabel: "Coming soon",
+    description: "For growing projects that need more control and scale.",
     features: [
-      "10 apps per account",
+      "Up to 10 apps",
       "Up to 1,000 users per app",
       "All Free features",
-      "Webhook support",
-      "Token expiration settings",
-      "Enhanced analytics",
-      "Rate limits: 10k requests/day",
+      "Webhooks",
+      "Custom token expiration",
+      "Basic analytics",
     ],
+    cta: "Join waitlist",
     mostPopular: true,
   },
   {
     name: "Pro",
     id: "tier-pro",
-    href: "#",
-    priceMonthly: "$29",
-    description: "Advanced security, integrations, and priority support.",
+    priceLabel: "Coming later",
+    description: "Advanced security, observability, and enterprise features.",
     features: [
-      "Unlimited apps",
-      "Unlimited users per app",
+      "Unlimited apps & users",
       "All Basic features",
-      "Advanced OAuth scopes",
-      "Enterprise SDK integrations",
       "Audit logs",
-      "Real-time analytics & exportable reports",
+      "Advanced OAuth scopes",
+      "Priority support",
       "No rate limits",
     ],
+    cta: "Contact us",
     mostPopular: false,
   },
 ];
+
+// const tiers = [
+//   {
+//     name: "Free",
+//     id: "tier-free",
+//     href: "#",
+//     priceMonthly: "$0",
+//     description: "Get started with basic authentication and SDK access.",
+//     features: [
+//       "3 app per account",
+//       "Up to 100 users per app",
+//       "Multiple login methods (Email, OAuth, OTP)",
+//       "Basic JWT tokens",
+//       "Standard hashing & token refresh",
+//       "Rate limits: 1k requests/day",
+//     ],
+//     mostPopular: false,
+//   },
+//   {
+//     name: "Basic",
+//     id: "tier-basic",
+//     href: "#",
+//     priceMonthly: "$9",
+//     description: "Everything you need to scale small projects.",
+//     features: [
+//       "10 apps per account",
+//       "Up to 1,000 users per app",
+//       "All Free features",
+//       "Webhook support",
+//       "Token expiration settings",
+//       "Enhanced analytics",
+//       "Rate limits: 10k requests/day",
+//     ],
+//     mostPopular: true,
+//   },
+//   {
+//     name: "Pro",
+//     id: "tier-pro",
+//     href: "#",
+//     priceMonthly: "$29",
+//     description: "Advanced security, integrations, and priority support.",
+//     features: [
+//       "Unlimited apps",
+//       "Unlimited users per app",
+//       "All Basic features",
+//       "Advanced OAuth scopes",
+//       "Enterprise SDK integrations",
+//       "Audit logs",
+//       "Real-time analytics & exportable reports",
+//       "No rate limits",
+//     ],
+//     mostPopular: false,
+//   },
+// ];
 
 //@ts-expect-error type error
 function classNames(...classes) {
@@ -66,15 +117,16 @@ export default function Example() {
     <div className="bg-transparent pt-20">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-base/7 font-sans text-cyan-600">Pricing</h2>
+          <h2 className="text-base/7 font-sans text-cyan-600">Plans</h2>
           <p className="mt-2 text-4xl font-sans tracking-tight text-balance text-neutral-900 sm:text-4xl dark:text-white">
-            Pricing that grows with you
+            Simple plans, transparent limits
           </p>
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-xs font-sans text-pretty text-gray-600 sm:text-sm">
-          Choose an affordable plan that’s packed with the best features for
-          engaging your audience, creating customer loyalty, and driving sales.
+          MyAuth is free during beta. Paid hosted plans will be introduced once
+          the platform is production-hardened.
         </p>
+
         <div className="isolate mx-auto  grid max-w-md grid-cols-1 gap-y-8 sm:mt-10 lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {tiers.map((tier, tierIdx) => (
             <div
@@ -102,14 +154,10 @@ export default function Example() {
                   {tier.mostPopular ? <Badge>Most popular</Badge> : null}
                 </div>
                 <p className="mt-4 text-sm text-gray-600">{tier.description}</p>
-                <p className="mt-6 flex items-baseline gap-x-1">
-                  <span className="text-4xl font-sans tracking-tight text-white">
-                    {tier.priceMonthly}
-                  </span>
-                  <span className="text-sm font-sans text-neutral-600 dark:text-white">
-                    /month
-                  </span>
+                <p className="mt-6 text-lg font-medium text-cyan-600">
+                  {tier.priceLabel}
                 </p>
+
                 <ul
                   role="list"
                   className="mt-8 space-y-3 text-sm/6 text-neutral-600 dark:text-white"
@@ -130,7 +178,7 @@ export default function Example() {
                 variant={tier.mostPopular ? "secondary" : "default"}
                 className="mt-8"
               >
-                Buy plan
+                {tier.cta}
               </Button>
             </div>
           ))}
