@@ -18,11 +18,22 @@ export function AuthProvider({
   const [loading, setLoading] = useState(false);
 
   const logout = async () => {
-    setLoading(true);
-    await logOut({ token: token!, apiBaseUrl: process.env.API_BASE_URL! });
-    setUser(null);
-    setToken(null);
-    setLoading(false);
+    try {
+      setLoading(true);
+
+      if (token) {
+        await logOut({
+          token,
+          apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL!,
+        });
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      setUser(null);
+      setToken(null);
+      setLoading(false);
+    }
   };
 
   return (
