@@ -46,7 +46,7 @@
 //   }
 // }
 
-import { withAuthMiddleware } from "@myauth/sdk";
+import { withAuthMiddleware } from "@myauth/next";
 import { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {

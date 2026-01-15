@@ -1,6 +1,6 @@
 1. Integrate Github OAuth
 2. For nextjs integration include everything in @myauth/nextjs
-3. Make a pricing section in landing page
+3. Make a pricing section in landing page (DONE)
 4. Implement Email login with OTP on email
 5. webhook logic
 
@@ -38,3 +38,30 @@ Pro Plan ($29/month)
 - Support: Priority email/phone support (4-hour response), dedicated account manager
 - Analytics: Full dashboards (real-time monitoring, exportable reports)
 - Extras: White-labeling (custom branding), API rate limits removed, SLA guarantees
+
+WEBHOOK LOGIC
+
+webhook must be async
+
+Ask user to configure a webhook url for there app in app settings
+In app settings → Webhooks
+Webhook URL
+Select events (checkboxes)
+
+user.created (signup / register)
+user.updated
+user.deleted
+user.login
+user.logout
+password.changed
+email.verified
+
+You generate a webhook secret (very important) => api backend will
+webhook create a seperate table for it
+{
+"\_id": "wh_123",
+"appId": "app_123",
+"url": "https://example.com/webhooks/auth",
+"events": ["user.created", "user.login"],
+"secret": "whsec_8k29sldk"
+}

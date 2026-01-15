@@ -1,6 +1,6 @@
 import { Toaster } from "sonner";
 import { TanstackQueryProvider } from "./TanstackQueryProvider";
-import { AuthProvider } from "@myauth/sdk";
+import { AuthProvider } from "@myauth/next";
 
 export const Providers = ({
   children,

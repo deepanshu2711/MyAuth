@@ -2,7 +2,7 @@
 import { useLogoutMutation } from "../features/auth/hooks/mutation/useLogoutMutation";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "@myauth/sdk";
+import { useAuth } from "@myauth/next";
 
 export const Navbar = () => {
   const user = useAuth();
