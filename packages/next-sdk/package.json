@@ -28,7 +28,8 @@
   "author": "MyAuth Team",
   "license": "ISC",
   "dependencies": {
-    "@myauth/node": "^1.0.0"
+    "@myauth/node": "^1.0.0",
+    "dotenv": "^16.0.3"
   },
   "peerDependencies": {
     "next": ">=14.0.0"

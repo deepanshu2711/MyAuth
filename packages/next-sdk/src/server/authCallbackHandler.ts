@@ -5,9 +5,10 @@ export function createAuthCallbackHandler(config: {
   clientId: string;
   clientSecret: string;
 }) {
+  const API_BASE_URL = "http://localhost:5005";
   const myAuth = new MyAuth({
     ...config,
-    apiBaseUrl: process.env.API_BASE_URL!,
+    apiBaseUrl: API_BASE_URL,
   });
 
   return async function POST(req: NextRequest) {

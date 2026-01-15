@@ -2,8 +2,11 @@ import { verifyToken } from "@myauth/node";
 import { NextResponse, type NextRequest } from "next/server.js";
 
 export function withAuthMiddleware(clientId: String) {
-  const redirectTo = `${process.env.AUTH_PORTAL_BASE_URL}?clientId=${clientId}`;
-  const apiBaseUrl = process.env.API_BASE_URL!;
+  const AUTH_PORTAL_BASE_URL = "http://localhost:3001";
+  const API_BASE_URL = "http://localhost:5005";
+
+  const redirectTo = `${AUTH_PORTAL_BASE_URL}/login?clientId=${clientId}`;
+  const apiBaseUrl = API_BASE_URL;
 
   return async function proxy(req: NextRequest) {
     const token = req.cookies.get("refreshToken")?.value;
@@ -11,6 +14,7 @@ export function withAuthMiddleware(clientId: String) {
     if (!token) {
       return redirect(req, redirectTo);
     }
+
     try {
       await verifyToken({ token, apiBaseUrl });
       return NextResponse.next();
