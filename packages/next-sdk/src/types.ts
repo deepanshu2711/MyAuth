@@ -7,4 +7,5 @@ export type AuthState = {
   token: string | null;
   loading: boolean;
   logout: () => Promise<void>;
+  login: () => Promise<void>;
 };
