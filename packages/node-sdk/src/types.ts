@@ -9,3 +9,8 @@ export type VerifyTokenType = {
   token: string;
   apiBaseUrl?: string;
 };
+
+export type LogoutType = {
+  token: string;
+  apiBaseUrl?: string;
+};

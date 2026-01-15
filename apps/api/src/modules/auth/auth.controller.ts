@@ -56,7 +56,7 @@ export const getCurrentLoggedInUser = async (req: Request, res: Response) => {
 };
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const { refreshToken } = req.cookies;
+  const { refreshToken } = req.body;
   if (!refreshToken) throw new AppError("No refresh token provided", 400);
   const data = await AuthService.logout({ refreshToken });
   res.clearCookie("refreshToken");

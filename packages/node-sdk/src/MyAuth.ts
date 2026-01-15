@@ -1,4 +1,4 @@
-import { exchangeCode, verifyToken } from "./http.js";
+import { exchangeCode, logOut, verifyToken } from "./http.js";
 
 export class MyAuth {
   constructor(
@@ -25,5 +25,13 @@ export class MyAuth {
     }
 
     return verifyToken({ token, apiBaseUrl: this.config.apiBaseUrl! });
+  }
+
+  async logOut(token: string) {
+    if (!token) {
+      throw new Error("Token missing");
+    }
+
+    return logOut({ token, apiBaseUrl: this.config.apiBaseUrl! });
   }
 }

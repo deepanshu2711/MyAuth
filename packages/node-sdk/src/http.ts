@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ExchangeCodeType, VerifyTokenType } from "./types.js";
+import type { ExchangeCodeType, LogoutType, VerifyTokenType } from "./types.js";
 
 export const exchangeCode = async (data: ExchangeCodeType) => {
   const res = await axios.post(`${data.apiBaseUrl}/api/auth/token`, {
@@ -17,6 +17,22 @@ export const verifyToken = async (data: VerifyTokenType) => {
       Authorization: `Bearer ${data.token}`,
     },
   });
+
+  return res.data.data;
+};
+
+export const logOut = async (data: LogoutType) => {
+  const res = await axios.post(
+    `${data.apiBaseUrl}/api/auth/logout`,
+    {
+      refreshToken: data.token,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${data.token}`,
+      },
+    },
+  );
 
   return res.data.data;
 };
