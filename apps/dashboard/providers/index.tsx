@@ -12,7 +12,12 @@ export const Providers = ({
   return (
     <TanstackQueryProvider>
       <Toaster />
-      <AuthProvider initialSession={initialSession}>{children}</AuthProvider>
+      <AuthProvider
+        clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
+        initialSession={initialSession}
+      >
+        {children}
+      </AuthProvider>
     </TanstackQueryProvider>
   );
 };
