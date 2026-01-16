@@ -1,9 +1,10 @@
 "use client";
 
-import React, { createContext, useState } from "react";
-import type { AuthState, User } from "../types.js";
+import React, { createContext, useEffect, useState } from "react";
+import type { AuthState, Session, User } from "../types.js";
 import { logOut } from "@myauth/node";
 import { useRouter } from "next/navigation.js";
+import { setSessionToken } from "../internal/session.js";
 
 export const AuthContext = createContext<AuthState | null>(null);
 
@@ -13,13 +14,16 @@ export function AuthProvider({
   clientId,
 }: {
   children: React.ReactNode;
-  initialSession: User;
+  initialSession: Session;
   clientId: string;
 }) {
-  const [user, setUser] = useState<User | null>(initialSession);
-  const [token, setToken] = useState<string | null>(null);
+  console.log(initialSession);
+  const [user, setUser] = useState<User | null>(initialSession?.user);
+  const [token, setToken] = useState<string | null>(initialSession?.token);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  //  const API_BASE_URL = "http://localhost:5005";
+  const API_BASE_URL = "https://auth-api.deepxdev.com";
 
   const logout = async () => {
     try {
@@ -28,7 +32,7 @@ export function AuthProvider({
       if (token) {
         await logOut({
           token,
-          apiBaseUrl: process.env.NEXT_PUBLIC_API_BASE_URL!,
+          apiBaseUrl: API_BASE_URL,
         });
       }
     } catch (error) {
@@ -39,6 +43,10 @@ export function AuthProvider({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    setSessionToken(token ?? null);
+  }, [token]);
 
   const login = async () => {
     if (user && token) return;

@@ -2,8 +2,10 @@ import { verifyToken } from "@myauth/node";
 import { NextResponse, type NextRequest } from "next/server.js";
 
 export function withAuthMiddleware(clientId: String) {
-  const AUTH_PORTAL_BASE_URL = "http://localhost:3001";
-  const API_BASE_URL = "http://localhost:5005";
+  //const AUTH_PORTAL_BASE_URL = "http://localhost:3001";
+  const AUTH_PORTAL_BASE_URL = "https://auth.deepxdev.com";
+  const API_BASE_URL = "https://auth-api.deepxdev.com";
+  //const API_BASE_URL = "http://localhost:5005";
 
   const redirectTo = `${AUTH_PORTAL_BASE_URL}/login?clientId=${clientId}`;
   const apiBaseUrl = API_BASE_URL;

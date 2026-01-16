@@ -9,3 +9,8 @@ export type AuthState = {
   logout: () => Promise<void>;
   login: () => Promise<void>;
 };
+
+export type Session = {
+  user: User | null;
+  token: string | null;
+};

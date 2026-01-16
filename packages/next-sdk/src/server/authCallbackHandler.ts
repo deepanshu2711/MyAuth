@@ -5,7 +5,9 @@ export function createAuthCallbackHandler(config: {
   clientId: string;
   clientSecret: string;
 }) {
-  const API_BASE_URL = "http://localhost:5005";
+  //  const API_BASE_URL = "http://localhost:5005";
+  const API_BASE_URL = "https://auth-api.deepxdev.com";
+
   const myAuth = new MyAuth({
     ...config,
     apiBaseUrl: API_BASE_URL,
@@ -25,9 +27,8 @@ export function createAuthCallbackHandler(config: {
 
       res.cookies.set("refreshToken", refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60,
+        secure: true,
+        sameSite: "none",
         path: "/",
       });
 

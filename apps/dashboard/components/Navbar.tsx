@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useAuth } from "@myauth/next";
 
 export const Navbar = () => {
-  const { user, logout } = useAuth();
-  console.log("user", user);
+  const { user, logout, token } = useAuth();
+  console.log("user", user, token);
 
   const handleLogout = () => {
     logout();
