@@ -1,8 +1,9 @@
 1. Integrate Github OAuth
-2. For nextjs integration include everything in @myauth/nextjs
-3. Make a pricing section in landing page (DONE)
-4. Implement Email login with OTP on email
-5. webhook logic
+2. add public and private SigningKey logic for each app signingKeyId: ObjectId /
+3. For nextjs integration include everything in @myauth/nextjs (DONE)
+4. Make a pricing section in landing page (DONE)
+5. Implement Email login with OTP on email
+6. webhook logic
 
 PRICING PLANS
 
@@ -120,3 +121,16 @@ Integrating steps for nextjs
     clientId: process.env.CLIENT_ID!,
     clientSecret: process.env.CLIENT_SECRET!,
     });
+
+//signing key logic
+SigningKey {
+name: "Primary JWT signing key",
+algorithm: "RS256",
+
+publicKey: "-----BEGIN PUBLIC KEY-----...",
+privateKey: "-----BEGIN PRIVATE KEY-----...",
+
+isActive: true,
+createdAt,
+rotatedAt
+}
