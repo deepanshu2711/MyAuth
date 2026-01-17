@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import { authRouter } from "./modules/auth/routes.js";
 import { appsRouter } from "./modules/apps/apps.routes.js";
 import { authMiddleware } from "./middlewares/auth.middleware.js";
+import { SignInKey } from "./models/signingkey.model.js";
+import { pemTOJwk } from "./utils/pemToJwk.js";
 dotenv.config();
 
 export const app = express();
@@ -32,3 +34,17 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/app", authMiddleware, appsRouter);
+
+app.use("/.well-known/jwks.json", async (req, res) => {
+  const keys = await SignInKey.find({ isActive: true });
+
+  const jwks = await Promise.all(
+    keys.map((key) => pemTOJwk(key.publicKey, key._id.toString())),
+  );
+
+  res.setHeader(
+    "Cache-Control",
+    "public, max-age=300, stale-while-revalidate=300",
+  );
+  res.json({ keys: jwks });
+});
