@@ -3,99 +3,96 @@ import { atomDark as oneDark } from "react-syntax-highlighter/dist/esm/styles/pr
 
 export default function Docs() {
   return (
-    <div className="text-white max-w-4xl mx-auto px-8 py-7 ">
-      <h1 id="quickstart" className="text-3xl font-sans mb-6">
-        Quickstart Guide: Integrating MyAuth with Next.js
+    <div className="text-white max-w-4xl mx-auto px-8 py-7">
+      <h1 id="quickstart" className="text-3xl font-bold mb-8">
+        Quickstart: Integrating MyAuth with Next.js (App Router)
       </h1>
 
-      <section className="mb-8">
-        <h2 id="setup" className="text-2xl font-sans mb-4">
+      <section className="mb-12">
+        <h2 id="setup" className="text-2xl font-bold mb-6">
           Setup
         </h2>
 
-        <h3 id="create-nextjs" className="text-xl font-sans mb-2">
-          1. Create a Next.js Application
-        </h3>
-        <p className="mb-4  text-muted-foreground">
-          Create a new Next.js application using the App Router (recommended for
-          Next.js 13+):
+        <h3 className="text-xl mb-4">1. Create Next.js Project</h3>
+        <p className="mb-4 text-gray-300">
+          Use the App Router (Next.js 13+ / 14 recommended):
         </p>
-        <SyntaxHighlighter language="bash" style={oneDark}>
+        <SyntaxHighlighter
+          language="bash"
+          style={oneDark}
+          customStyle={{ padding: "1rem", borderRadius: "0.5rem" }}
+        >
           npx create-next-app@latest myauth-app
         </SyntaxHighlighter>
 
-        <h3 id="install-sdk" className="text-xl font-sans mb-2 mt-6">
-          2. Install the SDK
-        </h3>
-        <p className="mb-4 text-muted-foreground">
-          Install the MyAuth package:
+        <h3 className="text-xl mt-8 mb-4">2. Install MyAuth SDK</h3>
+        <SyntaxHighlighter language="bash" style={oneDark}>
+          npm install @myauth/next
+        </SyntaxHighlighter>
+
+        <h3 className="text-xl mt-8 mb-4">3. Environment Variables</h3>
+        <p className="mb-4 text-gray-300">
+          Create/get your application in the <strong>MyAuth Dashboard</strong>.
+          <br />
+          Add these variables to <code>.env.local</code> (never commit them!):
         </p>
         <SyntaxHighlighter language="bash" style={oneDark}>
-          npm i @myauth/next
+          {`NEXT_PUBLIC_CLIENT_ID=your_client_id_here
+NEXT_PUBLIC_CLIENT_SECRET=your_client_secret_here
+`}
         </SyntaxHighlighter>
-
-        <h3 id="env-vars" className="text-xl font-sans mb-2 mt-6">
-          3. Configure Environment Variables
-        </h3>
-        <ul className="list-disc list-inside mb-4 text-muted-foreground">
-          <li>
-            Get or create an app from the MyAuth dashboard after logging in.
-          </li>
-          <li>
-            Set the following environment variables in your <code>.env</code>{" "}
-            file:
-          </li>
-        </ul>
-        <SyntaxHighlighter language="env" style={oneDark}>
-          {`NEXT_PUBLIC_CLIENT_ID=your_public_client_id
-NEXT_PUBLIC_CLIENT_SECRET=your_client_secret`}
-        </SyntaxHighlighter>
+        <p className="mt-3 text-sm text-gray-400">
+          <strong>Important:</strong> Keep{" "}
+          <code>NEXT_PUBLIC_CLIENT_SECRET</code> server-only — never use{" "}
+          <code>NEXT_PUBLIC_</code> prefix for it!
+        </p>
       </section>
 
-      <section className="mb-8">
-        <h2 id="protect-routes" className="text-2xl font-sans mb-4">
+      <section className="mb-12">
+        <h2 id="protect-routes" className="text-2xl font-bold mb-6">
           Protect Routes
         </h2>
 
-        <h3 id="middleware" className="text-xl font-sans mb-2">
-          4. Add Middleware
-        </h3>
-        <p className="mb-4 text-muted-foreground">
-          Create a <code>middleware.ts</code> file in the root of your app to
-          protect routes:
+        <h3 className="text-xl mb-4">4. Middleware (recommended)</h3>
+        <p className="mb-4 text-gray-300">
+          Create <code>middleware.ts</code> in project root:
         </p>
         <SyntaxHighlighter language="typescript" style={oneDark}>
           {`import { withAuthMiddleware } from "@myauth/next";
 
-export default withAuthMiddleware(process.env.NEXT_PUBLIC_CLIENT_ID!);
+export default withAuthMiddleware({
+  clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
+});
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/profile/:path*"],
 };`}
         </SyntaxHighlighter>
       </section>
 
-      <section className="mb-8">
-        <h2 id="handle-auth" className="text-2xl font-sans mb-4">
-          Handle Authentication
-        </h2>
+      <section className="mb-12">
+        <h2 className="text-xl font-bold mb-6">Handle Authentication</h2>
 
-        <h3 id="auth-provider" className="text-xl font-sans mb-2">
-          5. Add AuthProvider
-        </h3>
-        <p className="mb-4 text-muted-foreground">
-          Wrap your root layout with <code>AuthProvider</code> and pass the
-          initial session:
+        <h3 className="text-xl mb-4">5. Root Layout + AuthProvider</h3>
+        <p className="mb-4 text-gray-300">
+          You need an <code>auth()</code> helper (usually exported from{" "}
+          <code>lib/auth.ts</code> or similar).
         </p>
         <SyntaxHighlighter language="typescript" style={oneDark}>
-          {`import { AuthProvider } from "@myauth/next";
+          {`// app/layout.tsx
+import { AuthProvider } from "@myauth/next";
+import { auth } from "@myauth/next"; 
 
-export default async function RootLayout({ children }) {
-  const session = await auth(); 
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+
   return (
-    <html>
+    <html lang="en">
       <body>
-        <AuthProvider initialSession={session}>
+        <AuthProvider 
+           initialSession={session}           
+           clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
+        >
           {children}
         </AuthProvider>
       </body>
@@ -104,34 +101,28 @@ export default async function RootLayout({ children }) {
 }`}
         </SyntaxHighlighter>
 
-        <h3 id="callback-page" className="text-xl font-sans mb-2 mt-6">
-          6. Create Callback Page
-        </h3>
-        <p className="mb-4 text-muted-foreground">
-          Add a <code>/callback</code> page at{" "}
-          <code>app/callback/page.tsx</code>:
+        <h3 className="text-xl mt-10 mb-4">6. Callback Page</h3>
+        <p className="mb-3 text-gray-300">
+          Create <code>app/callback/page.tsx</code>:
         </p>
         <SyntaxHighlighter language="typescript" style={oneDark}>
           {`import { AuthenticateWithRedirectCallback } from "@myauth/next";
 
-export default function Page() {
+export default function CallbackPage() {
   return <AuthenticateWithRedirectCallback />;
 }`}
         </SyntaxHighlighter>
 
-        <h3 id="token-route" className="text-xl font-sans mb-2 mt-6">
-          7. Create Token Exchange Route
-        </h3>
-        <p className="mb-4 text-muted-foreground">
-          Create an API route at <code>app/api/auth/token/route.ts</code> for
-          token exchange:
+        <h3 className="text-xl mt-10 mb-4">7. Token Exchange Route</h3>
+        <p className="mb-3 text-gray-300">
+          Create <code>app/api/auth/token/route.ts</code>:
         </p>
         <SyntaxHighlighter language="typescript" style={oneDark}>
           {`import { createAuthCallbackHandler } from "@myauth/next";
 
 export const POST = createAuthCallbackHandler({
-  clientId: process.env.CLIENT_ID!,
-  clientSecret: process.env.CLIENT_SECRET!,
+  clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
+  clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET!,
 });`}
         </SyntaxHighlighter>
       </section>

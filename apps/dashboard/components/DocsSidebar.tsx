@@ -100,15 +100,15 @@ export function DocsSidebar() {
       <SidebarBody className="h-screen fixed">
         <Link
           href={"/"}
-          className="flex mb-5 items-center gap-2 p-4 justify-center "
+          className="flex mb-10 items-center gap-2 p-1 justify-center "
         >
           <Image
             src={"/logo.png"}
             alt="logo"
-            width={200}
-            height={200}
+            width={100}
+            height={100}
             priority
-            style={{ width: "120px", height: "auto" }}
+            style={{ width: "100px", height: "auto" }}
           />
           <Badge variant={"secondary"}>Docs</Badge>
         </Link>
