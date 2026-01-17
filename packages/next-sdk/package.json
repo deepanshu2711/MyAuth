@@ -1,6 +1,6 @@
 {
   "name": "@myauth/next",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Next.js SDK for MyAuth authentication service",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,6 +18,11 @@
     "check-types": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx}\""
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "keywords": [
     "auth",
     "nextjs",
@@ -28,7 +33,7 @@
   "author": "MyAuth Team",
   "license": "ISC",
   "dependencies": {
-    "@myauth/node": "^1.0.0",
+    "@myauth/node": "^1.1.0",
     "dotenv": "^16.0.3"
   },
   "peerDependencies": {
