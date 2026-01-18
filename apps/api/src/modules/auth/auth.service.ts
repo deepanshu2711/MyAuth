@@ -154,12 +154,12 @@ export const getTokens = async ({
 
   await AuthorizationCode.findByIdAndDelete(authorizationCode._id);
 
-  const accessToken = generateAccessToken(
+  const accessToken = await generateAccessToken(
     authorizationCode.userId.toString(),
     clientId,
     String(app.signingKeyId),
   );
-  const refreshToken = generateRefreshToken(
+  const refreshToken = await generateRefreshToken(
     authorizationCode.userId.toString(),
     clientId,
     String(app.signingKeyId),

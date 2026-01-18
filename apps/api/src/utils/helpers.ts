@@ -61,7 +61,20 @@ export const generateRefreshToken = async (
 export const generateKeyPairSyncForSigningKey = () => {
   const { privateKey, publicKey } = generateKeyPairSync("rsa", {
     modulusLength: 2048,
+
+    // 👇 Convert public key to a PEM string
+    publicKeyEncoding: {
+      type: "spki", // Standard format for public keys
+      format: "pem", // Output as string
+    },
+
+    // 👇 Convert private key to a PEM string
+    privateKeyEncoding: {
+      type: "pkcs8", // Standard format for private keys
+      format: "pem", // Output as string
+    },
   });
 
+  // Now both are strings, safe to store in MongoDB
   return { privateKey, publicKey };
 };
