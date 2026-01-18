@@ -80,7 +80,7 @@ export default function Page() {
             <Button variant={"secondary"} onClick={handleClick}>
               Get Started
             </Button>
-            <Link href={"/docs"} className="cursor-pointer">
+            <Link href={"/docs/nextjs"} className="cursor-pointer">
               <Button>Documentation</Button>
             </Link>
           </div>
