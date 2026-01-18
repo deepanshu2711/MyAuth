@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { FeaturesSectionDemo } from "./features";
 import { InfiniteMovingCardsDemo } from "./Testimonials";
 import Example from "./Pricing";
-import Link from "next/link";
 
 interface GridItemProps {
   area: string;
@@ -80,9 +79,7 @@ export default function Page() {
             <Button variant={"secondary"} onClick={handleClick}>
               Get Started
             </Button>
-            <Link href={"/docs"} className="cursor-pointer">
-              <Button>Documentation</Button>
-            </Link>
+            <Button>Documentation</Button>
           </div>
         </div>
       </section>
