@@ -154,13 +154,15 @@ export const getTokens = async ({
 
   await AuthorizationCode.findByIdAndDelete(authorizationCode._id);
 
-  const accessToken = generateAccessToken(
+  const accessToken = await generateAccessToken(
     authorizationCode.userId.toString(),
     clientId,
+    String(app.signingKeyId),
   );
-  const refreshToken = generateRefreshToken(
+  const refreshToken = await generateRefreshToken(
     authorizationCode.userId.toString(),
     clientId,
+    String(app.signingKeyId),
   );
 
   await Session.create({
@@ -183,10 +185,15 @@ export const refreshToken = async ({
   const session = await Session.findOne({ refreshToken });
   if (!session) throw new AppError("Invalid refresh token", 401);
 
-  session.accessToken = generateAccessToken(
+  const app = await App.findOne({ clientId });
+  if (!app) throw new AppError("App does not exists", 404);
+
+  session.accessToken = await generateAccessToken(
     session.userId.toString(),
     clientId,
+    String(app.signingKeyId),
   );
+
   session.expiresAt = new Date(Date.now() + 1000 * 60 * 60);
   await session.save();
 

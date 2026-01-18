@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { errorResponse } from "../utils/responses.js";
-import jwt from "jsonwebtoken";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Session } from "../models/session.model.js";
 import { AppError } from "../utils/appError.js";
 
@@ -38,12 +38,18 @@ export const authMiddleware = async (
     });
     if (!activeSession) throw new AppError("Expired Session", 401);
 
-    const decoded = jwt.verify(token, "refresh-token-secret") as {
-      userId: string;
-      appId: string;
-    };
+    // Verify JWT using JWKS
+    const JWKS = createRemoteJWKSet(
+      new URL("http://localhost:5005/.well-known/jwks.json"),
+    );
+    const { payload } = await jwtVerify(token, JWKS, {
+      issuer: "https://auth.deepxdev.com",
+    });
 
-    req.user = { userId: decoded.userId, appId: decoded.appId };
+    req.user = {
+      userId: payload.userId as string,
+      appId: payload.appId as string,
+    };
     next();
   } catch (err) {
     console.error("Auth middleware error:", err);

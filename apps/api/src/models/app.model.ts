@@ -11,6 +11,11 @@ const appSchema = new Schema(
     clientId: { type: String, required: true },
     clientSecret: { type: String, required: true },
     redirectUris: { type: [String], default: [] },
+
+    signingKeyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "signinkey",
+    },
     status: { type: String, default: "active" },
   },
   { timestamps: true },

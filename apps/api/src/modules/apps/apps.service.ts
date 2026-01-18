@@ -1,6 +1,11 @@
 import { App } from "../../models/app.model.js";
 import { MemberShip } from "../../models/membership.model.js";
-import { generateClientId, generateClientSecret } from "../../utils/helpers.js";
+import { SignInKey } from "../../models/signingkey.model.js";
+import {
+  generateClientId,
+  generateClientSecret,
+  generateKeyPairSyncForSigningKey,
+} from "../../utils/helpers.js";
 import * as AppPipeline from "./pipelines/index.js";
 
 export const registerApp = async ({
@@ -10,16 +15,27 @@ export const registerApp = async ({
 }: {
   name: string;
   ownerId: string;
-  redirectUris: [string];
+  redirectUris: string[];
 }) => {
   const clientId = generateClientId();
   const clientSecret = generateClientSecret();
-  const data = await App.create({
+  const { privateKey, publicKey } = generateKeyPairSyncForSigningKey();
+
+  const signingKey = await SignInKey.create({
+    name: `${name} primary key`,
+    privateKey,
+    publicKey,
+    algorithm: "RS256",
+    isActive: true,
+  });
+
+  await App.create({
     name,
     ownerId,
     redirectUris,
     clientId,
     clientSecret,
+    signingKeyId: signingKey._id,
   });
   return { clientId, clientSecret };
 };
