@@ -76,11 +76,6 @@ export const redirectToGitHubAuth = asyncHandler(
     const { clientId } = req.query;
     const result = await AuthService.redirectToGithubAuth(clientId as string);
 
-    res.cookie("oauth_state", result.state, {
-      httpOnly: true,
-      sameSite: "lax",
-    });
-
     res.redirect(result.redirectUrl);
   },
 );
@@ -93,8 +88,6 @@ export const handleGithubRedirect = asyncHandler(
       state as string,
     );
 
-    console.log("redirectUrl", redirectUrl);
-
-    return successResponse(res, redirectUrl);
+    return res.redirect(redirectUrl.toString());
   },
 );

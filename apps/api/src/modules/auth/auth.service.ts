@@ -272,7 +272,7 @@ export const googleLogin = async (idToken: string, clientId: string) => {
     code,
     clientId,
     userId: globalUser._id,
-    redirectUri: app.redirectUris[0],
+    redirectUri: app.redirectUris[0]!,
     expiresAt: new Date(Date.now() + 10 * 60 * 1000),
   });
 
@@ -287,8 +287,6 @@ export const redirectToGithubAuth = async (clientId: string) => {
     csrf: crypto.randomUUID(),
     clientId,
   });
-
-  console.log("state before sending", state);
 
   const params = new URLSearchParams({
     client_id: process.env.GITHUB_CLIENT_ID!,
@@ -335,8 +333,6 @@ export const githubRedirect = async (code: string, state: string) => {
 
   const email = emails.find((e: any) => e.primary && e.verified)?.email;
 
-  console.log("User fronm github", githubUser, email);
-
   let globalUser = await User.findOne({ email });
   if (!globalUser) {
     globalUser = await User.create({ email });
@@ -367,7 +363,7 @@ export const githubRedirect = async (code: string, state: string) => {
 
   const myAuthCode = crypto.randomBytes(32).toString("hex");
   await AuthorizationCode.create({
-    code,
+    code: myAuthCode,
     clientId: parsedState.clientId,
     userId: globalUser._id,
     redirectUri: app.redirectUris[0],
