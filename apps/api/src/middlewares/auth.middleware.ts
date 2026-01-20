@@ -40,7 +40,7 @@ export const authMiddleware = async (
 
     // Verify JWT using JWKS
     const JWKS = createRemoteJWKSet(
-      new URL("http://localhost:5005/.well-known/jwks.json"),
+      new URL("https://auth-api.deepxdev.com/.well-known/jwks.json"),
     );
     const { payload } = await jwtVerify(token, JWKS, {
       issuer: "https://auth.deepxdev.com",
