@@ -9,6 +9,7 @@ import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
 import api from "../../../lib/api";
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 import Image from "next/image";
+import { AuthService } from "../service";
 
 const Login = () => {
   const searchParams = useSearchParams();
@@ -113,6 +114,7 @@ const Login = () => {
               <button
                 type="button"
                 className="flex text-sm w-full items-center justify-center gap-3 px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-white font-normal hover:bg-white/10 hover:border-white/20 transition-all"
+                onClick={() => AuthService.redirectToGithub(clientId as string)}
               >
                 <svg
                   className="w-5 h-5"

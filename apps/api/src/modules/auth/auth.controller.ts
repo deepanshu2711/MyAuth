@@ -70,3 +70,31 @@ export const verifyGoogleToken = asyncHandler(
     return successResponse(res, redirectUrl);
   },
 );
+
+export const redirectToGitHubAuth = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { clientId } = req.query;
+    const result = await AuthService.redirectToGithubAuth(clientId as string);
+
+    res.cookie("oauth_state", result.state, {
+      httpOnly: true,
+      sameSite: "lax",
+    });
+
+    res.redirect(result.redirectUrl);
+  },
+);
+
+export const handleGithubRedirect = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { code, state } = req.query;
+    const redirectUrl = await AuthService.githubRedirect(
+      code as string,
+      state as string,
+    );
+
+    console.log("redirectUrl", redirectUrl);
+
+    return successResponse(res, redirectUrl);
+  },
+);

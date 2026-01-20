@@ -20,4 +20,7 @@ export const AuthService = {
     const response = await api.post("/auth/register", data);
     return response.data;
   },
+  redirectToGithub(clientId: string) {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github?clientId=${clientId}`;
+  },
 };

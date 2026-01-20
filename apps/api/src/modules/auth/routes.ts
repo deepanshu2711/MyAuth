@@ -13,3 +13,5 @@ authRouter.post("/token", AuthController.getTokens);
 authRouter.post("/logout", authMiddleware, AuthController.logout);
 
 authRouter.post("/google", AuthController.verifyGoogleToken);
+authRouter.get("/github", AuthController.redirectToGitHubAuth);
+authRouter.get("/github/callback", AuthController.handleGithubRedirect);

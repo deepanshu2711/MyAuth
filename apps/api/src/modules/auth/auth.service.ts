@@ -281,3 +281,101 @@ export const googleLogin = async (idToken: string, clientId: string) => {
 
   return redirectUrl;
 };
+
+export const redirectToGithubAuth = async (clientId: string) => {
+  const state = JSON.stringify({
+    csrf: crypto.randomUUID(),
+    clientId,
+  });
+
+  console.log("state before sending", state);
+
+  const params = new URLSearchParams({
+    client_id: process.env.GITHUB_CLIENT_ID!,
+    redirect_uri: process.env.GITHUB_CALLBACK_URL!,
+    scope: "user:email",
+    state,
+  });
+
+  return {
+    redirectUrl: `https://github.com/login/oauth/authorize?${params.toString()}`,
+    state,
+  };
+};
+
+export const githubRedirect = async (code: string, state: string) => {
+  const parsedState = JSON.parse(state as string);
+
+  const app = await App.findOne({ clientId: parsedState.clientId });
+  if (!app) throw new AppError("App does not exists", 404);
+
+  const tokenRes = await fetch("https://github.com/login/oauth/access_token", {
+    method: "POST",
+    headers: { Accept: "application/json" },
+    body: new URLSearchParams({
+      client_id: process.env.GITHUB_CLIENT_ID!,
+      client_secret: process.env.GITHUB_CLIENT_SECRET!,
+      code: code as string,
+    }),
+  });
+
+  const { access_token } = await tokenRes.json();
+
+  const userRes = await fetch("https://api.github.com/user", {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+
+  const githubUser = await userRes.json();
+
+  const emailRes = await fetch("https://api.github.com/user/emails", {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+
+  const emails = await emailRes.json();
+
+  const email = emails.find((e: any) => e.primary && e.verified)?.email;
+
+  console.log("User fronm github", githubUser, email);
+
+  let globalUser = await User.findOne({ email });
+  if (!globalUser) {
+    globalUser = await User.create({ email });
+    await publisher.publishCreateUser({ data: globalUser });
+  }
+
+  const existingMembership = await MemberShip.findOne({
+    userId: globalUser._id,
+    appId: app._id,
+  });
+
+  if (existingMembership) {
+    if (!existingMembership.provider.includes("github")) {
+      await MemberShip.updateOne(
+        { _id: existingMembership._id },
+        {
+          $addToSet: { provider: "github" },
+        },
+      );
+    }
+  } else {
+    await MemberShip.create({
+      userId: globalUser._id,
+      appId: app._id,
+      provider: ["github"],
+    });
+  }
+
+  const myAuthCode = crypto.randomBytes(32).toString("hex");
+  await AuthorizationCode.create({
+    code,
+    clientId: parsedState.clientId,
+    userId: globalUser._id,
+    redirectUri: app.redirectUris[0],
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+  });
+
+  const redirectUrl = new URL(app.redirectUris[0]!);
+  redirectUrl.searchParams.set("code", myAuthCode);
+
+  return redirectUrl;
+};
