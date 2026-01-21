@@ -8,16 +8,19 @@ export const auth = async () => {
   // const API_BASE_URL = "https://auth-api.deepxdev.com";
 
   const token =
-    cookieStore.get("refreshToken")?.value ??
+    cookieStore.get("accessToken")?.value ??
     headerList.get("authorization")?.replace("Bearer ", "");
 
   if (!token) return null;
-  const user = await verifyToken({
-    token,
-    apiBaseUrl: API_BASE_URL,
-  });
 
-  const session = { user, token };
+  try {
+    const user = await verifyToken({
+      token,
+      apiBaseUrl: API_BASE_URL,
+    });
 
-  return session;
+    return { user, token };
+  } catch (err: any) {
+    if (err.response.data.code !== "TOKEN_EXPIRED") return null;
+  }
 };

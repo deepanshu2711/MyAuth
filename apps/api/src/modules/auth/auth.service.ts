@@ -169,7 +169,7 @@ export const getTokens = async ({
     userId: authorizationCode.userId,
     accessToken,
     refreshToken,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14),
   });
 
   return { accessToken, refreshToken };
@@ -182,7 +182,10 @@ export const refreshToken = async ({
   refreshToken: string;
   clientId: string;
 }) => {
-  const session = await Session.findOne({ refreshToken });
+  const session = await Session.findOne({
+    refreshToken,
+    expiresAt: { $gt: new Date() },
+  });
   if (!session) throw new AppError("Invalid refresh token", 401);
 
   const app = await App.findOne({ clientId });
@@ -194,7 +197,6 @@ export const refreshToken = async ({
     String(app.signingKeyId),
   );
 
-  session.expiresAt = new Date(Date.now() + 1000 * 60 * 60);
   await session.save();
 
   return { accessToken: session.accessToken };

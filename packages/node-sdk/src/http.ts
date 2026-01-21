@@ -21,6 +21,10 @@ export const verifyToken = async (data: VerifyTokenType) => {
   return res.data.data;
 };
 
+export const rotateToken = async (data: VerifyTokenType) => {
+  //NOTE: Send request to rotate token here
+};
+
 export const logOut = async (data: LogoutType) => {
   const res = await axios.post(
     `${data.apiBaseUrl}/api/auth/logout`,

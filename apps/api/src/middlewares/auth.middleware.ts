@@ -19,8 +19,8 @@ export const authMiddleware = async (
 ) => {
   try {
     let token: string | undefined;
-    if (req.cookies?.refreshToken) {
-      token = req.cookies.refreshToken;
+    if (req.cookies?.accessToken) {
+      token = req.cookies.accessToken;
     }
     if (!token && req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
@@ -31,7 +31,7 @@ export const authMiddleware = async (
     }
 
     const activeSession = await Session.findOne({
-      refreshToken: token,
+      accessToken: token,
       expiresAt: {
         $gt: new Date(),
       },
@@ -51,8 +51,10 @@ export const authMiddleware = async (
       appId: payload.appId as string,
     };
     next();
-  } catch (err) {
-    console.error("Auth middleware error:", err);
+  } catch (err: any) {
+    if (err.code === "ERR_JWT_EXPIRED") {
+      return res.status(401).json({ code: "TOKEN_EXPIRED" });
+    }
     return errorResponse(res, "Unauthorized", 401);
   }
 };
