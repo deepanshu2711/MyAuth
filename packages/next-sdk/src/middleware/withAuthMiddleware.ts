@@ -21,7 +21,7 @@ export function withAuthMiddleware(clientId: String) {
       await verifyToken({ token, apiBaseUrl });
       return NextResponse.next();
     } catch (e) {
-      console.log("reach this error");
+      console.log("reach this error", e);
       return redirect(req, redirectTo);
     }
   };

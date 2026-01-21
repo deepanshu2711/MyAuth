@@ -1,4 +1,4 @@
-import { verifyToken } from "@myauth/node";
+import { rotateToken, verifyToken } from "@myauth/node";
 import { cookies, headers } from "next/headers.js";
 
 export const auth = async () => {
@@ -22,5 +22,18 @@ export const auth = async () => {
     return { user, token };
   } catch (err: any) {
     if (err.response.data.code !== "TOKEN_EXPIRED") return null;
+
+    const refteshToken = cookieStore.get("refreshToken")?.value;
+    const result = await rotateToken({
+      token: refteshToken as string,
+      apiBaseUrl: API_BASE_URL,
+    });
+    console.log("áccessToken after rotation", result.accessToken);
+    const user = await verifyToken({
+      token: result.accessToken,
+      apiBaseUrl: API_BASE_URL,
+    });
+
+    return { user, token: result.accessToken };
   }
 };

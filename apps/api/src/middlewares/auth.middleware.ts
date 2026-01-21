@@ -26,17 +26,21 @@ export const authMiddleware = async (
       token = req.headers.authorization.split(" ")[1];
     }
 
+    console.log("accessTOken", token);
+
     if (!token) {
       return errorResponse(res, "Unauthorized", 401);
     }
 
-    const activeSession = await Session.findOne({
-      accessToken: token,
-      expiresAt: {
-        $gt: new Date(),
-      },
-    });
-    if (!activeSession) throw new AppError("Expired Session", 401);
+    // const activeSession = await Session.findOne({
+    //   accessToken: token,
+    //   expiresAt: {
+    //     $gt: new Date(),
+    //   },
+    // });
+    // console.log("active session", activeSession);
+    //
+    // if (!activeSession) throw new AppError("Expired Session", 401);
 
     // Verify JWT using JWKS
     const JWKS = createRemoteJWKSet(
@@ -45,6 +49,8 @@ export const authMiddleware = async (
     const { payload } = await jwtVerify(token, JWKS, {
       issuer: "https://auth.deepxdev.com",
     });
+
+    console.log("payload", payload);
 
     req.user = {
       userId: payload.userId as string,

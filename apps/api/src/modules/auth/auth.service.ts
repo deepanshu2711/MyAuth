@@ -13,6 +13,7 @@ import { MemberShip } from "../../models/membership.model.js";
 import { AuthorizationCode } from "../../models/authorizationCode.model.js";
 import { RabbitMQPublisher } from "../../utils/rabbitmq/publisher.js";
 import { OAuthClient } from "../../lib/OAuthClient.js";
+import { createRemoteJWKSet, jwtVerify } from "jose";
 
 const publisher = new RabbitMQPublisher();
 
@@ -177,15 +178,27 @@ export const getTokens = async ({
 
 export const refreshToken = async ({
   refreshToken,
-  clientId,
 }: {
   refreshToken: string;
-  clientId: string;
 }) => {
+  console.log("refreshtoken in refresh token", refreshToken);
+  const JWKS = createRemoteJWKSet(
+    new URL("https://auth-api.deepxdev.com/.well-known/jwks.json"),
+  );
+  const { payload } = await jwtVerify(refreshToken, JWKS, {
+    issuer: "https://auth.deepxdev.com",
+  });
+
+  const clientId = payload.appId as string;
+
+  console.log("clientId in refresh token", clientId);
+
   const session = await Session.findOne({
     refreshToken,
     expiresAt: { $gt: new Date() },
   });
+
+  console.log("session in refresh token", session);
   if (!session) throw new AppError("Invalid refresh token", 401);
 
   const app = await App.findOne({ clientId });
