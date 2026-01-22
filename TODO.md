@@ -1,9 +1,9 @@
-1. Integrate Github OAuth
-2. add public and private SigningKey logic for each app signingKeyId: ObjectId /
+1. Integrate Github OAuth (DONE)
+2. add public and private SigningKey logic for each app signingKeyId: ObjectId / (DONE)
 3. For nextjs integration include everything in @myauth/nextjs (DONE)
 4. Make a pricing section in landing page (DONE)
 5. Implement Email login with OTP on email
-6. webhook logic
+6. webhook logic (NOT IN V1)
 
 PRICING PLANS
 
@@ -134,3 +134,59 @@ isActive: true,
 createdAt,
 rotatedAt
 }
+
+| Area              | MyAuth                       | Clerk                    |
+| ----------------- | ---------------------------- | ------------------------ |
+| Target user       | Backend & full-stack devs    | Frontend / product teams |
+| Philosophy        | Control & correctness        | Speed & convenience      |
+| Hosting           | Self-hosted or managed       | Fully hosted             |
+| Token model       | JWT, rotation, sessions      | Abstracted               |
+| UI                | Minimal / optional           | Heavy, opinionated       |
+| Framework focus   | **Next.js App Router first** | Multi-framework          |
+| Vendor lock-in    | Low                          | High                     |
+| Custom auth flows | Easy                         | Painful                  |
+| Pricing           | Free / OSS-friendly          | Expensive at scale       |
+
+MyAuth is a backend-first, open, self-hostable authentication system for Next.js App Router, while Clerk is a UI-heavy, hosted auth platform.
+
+Short comparison tagline (homepage)
+
+Clerk gives you components.
+MyAuth gives you control.
+
+or
+
+Clerk hides auth.
+MyAuth teaches it.
+
+or
+
+Auth for developers who care what’s running in production.
+
+When should someone choose Clerk?
+
+Be honest (this builds trust):
+
+Choose Clerk if:
+
+You want auth in 10 minutes
+
+You don’t care how it works internally
+
+You’re okay with vendor lock-in
+
+UI matters more than control
+
+When should someone choose MyAuth?
+
+Choose MyAuth if:
+
+You care about auth correctness
+
+You’re building a serious product
+
+You want control over sessions & tokens
+
+You’re using Next.js App Router
+
+You hate magic
