@@ -1,4 +1,4 @@
-import { verifyToken } from "@myauth/node";
+import { rotateToken, verifyToken } from "@myauth/node";
 import { NextResponse, type NextRequest } from "next/server.js";
 
 export function withAuthMiddleware(clientId: String) {
@@ -11,7 +11,7 @@ export function withAuthMiddleware(clientId: String) {
   const apiBaseUrl = API_BASE_URL;
 
   return async function proxy(req: NextRequest) {
-    const token = req.cookies.get("refreshToken")?.value;
+    const token = req.cookies.get("accessToken")?.value;
     console.log("token", token);
     if (!token) {
       return redirect(req, redirectTo);
@@ -20,9 +20,35 @@ export function withAuthMiddleware(clientId: String) {
     try {
       await verifyToken({ token, apiBaseUrl });
       return NextResponse.next();
-    } catch (e) {
+    } catch (e: any) {
       console.log("reach this error", e);
-      return redirect(req, redirectTo);
+      if (e?.response?.data?.code !== "TOKEN_EXPIRED") {
+        return redirect(req, redirectTo);
+      }
+      try {
+        const refreshToken = req.cookies.get("refreshToken")?.value;
+        if (!refreshToken) return redirect(req, redirectTo);
+
+        const result = await rotateToken({
+          token: refreshToken as string,
+          apiBaseUrl: API_BASE_URL,
+        });
+
+        const res = NextResponse.next();
+
+        console.log(
+          "accessToken after rotation in middleware",
+          result.accessToken,
+        );
+        res.cookies.set("accessToken", result.accessToken, {
+          httpOnly: true,
+        });
+        await verifyToken({ token: result.accessToken, apiBaseUrl });
+        return res;
+      } catch (e) {
+        console.log("errror", e);
+        return redirect(req, redirectTo);
+      }
     }
   };
 }
