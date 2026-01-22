@@ -63,26 +63,26 @@ export default function Page() {
 
       {/* HERO SECRION */}
       <section className="px-6 min-h-[50vh] z-10 flex items-center justify-center">
-        <div className="max-w-3xl mx-auto text-center justify-center">
+        <div className="max-w-5xl mx-auto text-center justify-center">
           <Badge>Developer-first authentication</Badge>
-          <h1 className="text-5xl md:text-6xl  mb-6 tracking-tight font-sans">
-            Simple Authentication for{" "}
+          <h1 className="text-5xl md:text-6xl my-6 tracking-tight font-sans">
+            Authentication for developers who care about{" "}
             <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent">
-              Modern Applications
+              what actually runs in production
             </span>
           </h1>
-          <p className="text-xs md:text-sm text-gray-400 mb-10 leading-relaxed">
-            A personal OAuth 2.0 service for my applications.
-            <br />
-            Clean, secure, and straightforward.
+
+          <p className="text-sm md:text-base max-w-3xl mx-auto text-gray-400 mb-10 leading-relaxed">
+            MyAuth is a backend-first authentication system built specifically
+            for Next.js App Router — cookie-first, session-correct, and fully
+            under your control.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant={"secondary"} onClick={handleClick}>
-              Get Started
-            </Button>
             <Link href={"/docs/nextjs"} className="cursor-pointer">
-              <Button>Documentation</Button>
+              <Button variant={"secondary"}>Get started in 5 minutes</Button>
             </Link>
+            <Button onClick={handleClick}>Create Your First Application</Button>
           </div>
         </div>
       </section>
@@ -93,7 +93,7 @@ export default function Page() {
             area="md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
             icon={<Box className="h-4 w-4 text-black dark:text-neutral-400" />}
             title="Authentication done right"
-            description="Built on modern standards with secure defaults, so you can focus on shipping instead of rethinking auth."
+            description="Built on HTTP-only cookies, server-side sessions, and App Router primitives — no client-side token hacks."
           />
 
           <GridItem
@@ -102,14 +102,14 @@ export default function Page() {
               <Settings className="h-4 w-4 text-black dark:text-neutral-400" />
             }
             title="Simple to integrate"
-            description="Drop-in components, flexible APIs, and full control over flows — production-ready in minutes."
+            description="Minimal APIs, server-first helpers, and zero client-side magic — production-ready in minutes."
           />
 
           <GridItem
             area="md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/8]"
             icon={<Lock className="h-4 w-4 text-black dark:text-neutral-400" />}
             title="Security at every layer"
-            description="From encrypted sessions to breach detection and session revocation, your users stay protected."
+            description="Encrypted, revocable sessions with rotation and breach-safe defaults — security that works even when things go wrong."
           />
 
           <GridItem
@@ -117,8 +117,8 @@ export default function Page() {
             icon={
               <Sparkles className="h-4 w-4 text-black dark:text-neutral-400" />
             }
-            title="Designed for conversion"
-            description="Passwordless sign-in, social logins, and optimized flows that reduce friction and boost sign-ups."
+            title="Server-native auth"
+            description="Auth that lives on the server, not in your client bundle — faster, safer, and easier to reason about."
           />
 
           <GridItem
@@ -127,7 +127,7 @@ export default function Page() {
               <Search className="h-4 w-4 text-black dark:text-neutral-400" />
             }
             title="Built to scale"
-            description="Advanced fraud prevention, bot detection, and compliance-ready architecture as your product grows."
+            description="Correct session handling from day one, so growth never breaks authentication guarantees."
           />
         </ul>
       </section>
@@ -137,9 +137,10 @@ export default function Page() {
           Auth That <Cover>Integrates Fast</Cover>
         </h2>
 
-        <p className="my-4 max-w-2xl text-xs md:text-sm text-gray-400">
-          Follow a simple OAuth-style flow to securely authenticate users,
-          manage tokens, and protect your APIs — without reinventing auth.
+        <p className="my-6 max-w-2xl text-xs md:text-sm text-gray-400">
+          Follow a simple, server-first authentication flow designed for Next.js
+          App Router — secure sessions, clean redirects, and no client-side
+          token juggling.
         </p>
         <FeaturesSectionDemo />
       </section>

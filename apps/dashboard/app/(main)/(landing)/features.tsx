@@ -28,42 +28,42 @@ const grid = [
   {
     title: "Create Application",
     description:
-      "Register your application in the dashboard and generate client credentials to get started.",
+      "Register your application and generate environment-scoped credentials with secure defaults.",
   },
   {
     title: "Configure Redirect URI",
     description:
-      "Define the callback URL where users will be redirected after authentication.",
+      "Define strict callback URLs to prevent redirect abuse and ensure safe authentication flows.",
   },
   {
     title: "Configure Scopes & Permissions",
     description:
-      "Select the required scopes and permissions your application needs to access user data securely.",
+      "Explicitly define scopes so sessions and access are never over-privileged.",
   },
   {
     title: "Redirect User to Login",
     description:
-      "Redirect users to the secure MyAuth login page to authenticate their identity.",
+      "Redirect users into a secure, server-managed login flow backed by HTTP-only cookies.",
   },
   {
     title: "Receive Authorization Code",
     description:
-      "After a successful login, users are redirected back with a temporary authorization code.",
+      "After login, receive a short-lived authorization code designed for server-side use only.",
   },
   {
     title: "Validate Authorization Code",
     description:
-      "Verify the received authorization code to ensure it is valid and not expired.",
+      "Validate the authorization code on the server to prevent replay attacks and expired grants.",
   },
   {
-    title: "Exchange Tokens",
+    title: "Establish Secure Session",
     description:
-      "Exchange the authorization code for access and refresh tokens using the token API.",
+      "Exchange the authorization code for a secure, revocable session managed by MyAuth.",
   },
   {
     title: "Authenticate API Requests",
     description:
-      "Use the access token in API requests to securely access protected resources.",
+      "Protect APIs using server-verified sessions — no client-side token storage or leaks.",
   },
 ];
 
