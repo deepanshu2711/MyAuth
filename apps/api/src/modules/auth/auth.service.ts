@@ -191,14 +191,11 @@ export const refreshToken = async ({
 
   const clientId = payload.appId as string;
 
-  console.log("clientId in refresh token", clientId);
-
   const session = await Session.findOne({
     refreshToken,
     expiresAt: { $gt: new Date() },
   });
 
-  console.log("session in refresh token", session);
   if (!session) throw new AppError("Invalid refresh token", 401);
 
   const app = await App.findOne({ clientId });

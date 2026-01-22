@@ -12,7 +12,6 @@ export function withAuthMiddleware(clientId: String) {
 
   return async function proxy(req: NextRequest) {
     const token = req.cookies.get("accessToken")?.value;
-    console.log("token", token);
     if (!token) {
       return redirect(req, redirectTo);
     }
@@ -36,10 +35,6 @@ export function withAuthMiddleware(clientId: String) {
 
         const res = NextResponse.next();
 
-        console.log(
-          "accessToken after rotation in middleware",
-          result.accessToken,
-        );
         res.cookies.set("accessToken", result.accessToken, {
           httpOnly: true,
         });

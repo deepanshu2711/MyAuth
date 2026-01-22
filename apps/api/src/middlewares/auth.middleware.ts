@@ -26,8 +26,6 @@ export const authMiddleware = async (
       token = req.headers.authorization.split(" ")[1];
     }
 
-    console.log("accessTOken", token);
-
     if (!token) {
       return errorResponse(res, "Unauthorized", 401);
     }
@@ -49,8 +47,6 @@ export const authMiddleware = async (
     const { payload } = await jwtVerify(token, JWKS, {
       issuer: "https://auth.deepxdev.com",
     });
-
-    console.log("payload", payload);
 
     req.user = {
       userId: payload.userId as string,
