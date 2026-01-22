@@ -11,6 +11,7 @@ import { FeaturesSectionDemo } from "./features";
 import { InfiniteMovingCardsDemo } from "./Testimonials";
 import Example from "./Pricing";
 import Link from "next/link";
+import Image from "next/image";
 
 interface GridItemProps {
   area: string;
@@ -130,6 +131,42 @@ export default function Page() {
             description="Correct session handling from day one, so growth never breaks authentication guarantees."
           />
         </ul>
+      </section>
+
+      <section className="max-w-7xl mx-auto mt-24 px-6">
+        <div className="flex flex-col md:flex-row justify-between w-full items-center gap-10">
+          {/* Text content */}
+          <div className="flex-1 space-y-6">
+            <h2 className="text-3xl md:text-4xl font-sans tracking-tight text-neutral-900 dark:text-white">
+              Secure authentication, fully under your control
+            </h2>
+            <p className="text-sm md:text-base text-gray-400">
+              MyAuth is a backend-first authentication system built for Next.js
+              App Router. Manage sessions, tokens, and user identities securely
+              — all on your own infrastructure.
+            </p>
+            <p className="text-sm md:text-base text-gray-400">
+              Focus on shipping features, not fixing auth bugs. MyAuth gives you
+              predictable sessions and complete control over your production
+              environment.
+            </p>
+            <p className="text-sm md:text-base text-gray-400">
+              Lightweight, open, and developer-first — authentication your team
+              can trust.
+            </p>
+          </div>
+
+          {/* Image */}
+          <div className="flex-1 flex items-center justify-end">
+            <Image
+              src="/auth.png"
+              alt="Login screen"
+              width={400}
+              height={600}
+              className="h-auto rounded-4xl border shadow-lg"
+            />
+          </div>
+        </div>
       </section>
 
       <section className="flex flex-col items-center max-w-7xl mx-auto mt-24 px-6 rounded-md text-center">
