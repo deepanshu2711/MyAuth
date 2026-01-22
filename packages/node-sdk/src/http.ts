@@ -17,7 +17,14 @@ export const verifyToken = async (data: VerifyTokenType) => {
       Authorization: `Bearer ${data.token}`,
     },
   });
+  return res.data.data;
+};
 
+export const rotateToken = async (data: VerifyTokenType) => {
+  //NOTE: Send request to rotate token here
+  const res = await axios.post(`${data.apiBaseUrl}/api/auth/refresh/token`, {
+    refreshToken: data.token,
+  });
   return res.data.data;
 };
 

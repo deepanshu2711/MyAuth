@@ -34,7 +34,7 @@ export const generateAccessToken = async (
   }
   return jwt.sign({ userId, appId }, signingKey.privateKey, {
     algorithm: "RS256",
-    expiresIn: "15m",
+    expiresIn: "1m",
     issuer: "https://auth.deepxdev.com",
     keyid: signingKey._id.toString(),
   });
@@ -52,7 +52,7 @@ export const generateRefreshToken = async (
 
   return jwt.sign({ userId, appId }, signingKey.privateKey, {
     algorithm: "RS256",
-    expiresIn: "7d",
+    expiresIn: "14d",
     issuer: "https://auth.deepxdev.com",
     keyid: signingKey._id.toString(),
   });

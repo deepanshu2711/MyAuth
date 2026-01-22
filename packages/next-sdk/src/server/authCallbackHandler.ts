@@ -32,6 +32,13 @@ export function createAuthCallbackHandler(config: {
         path: "/",
       });
 
+      res.cookies.set("accessToken", accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        path: "/",
+      });
+
       return res;
     } catch {
       return NextResponse.json({ error: "Invalid code" }, { status: 400 });

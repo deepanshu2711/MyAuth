@@ -35,8 +35,9 @@ export const getTokens = asyncHandler(async (req: Request, res: Response) => {
 
 export const refreshToken = asyncHandler(
   async (req: Request, res: Response) => {
-    const { refreshToken, clientId } = req.body;
-    const data = await AuthService.refreshToken({ refreshToken, clientId });
+    const { refreshToken } = req.body;
+    console.log("refresh token in refresh token controller", refreshToken);
+    const data = await AuthService.refreshToken({ refreshToken });
     return successResponse(res, data);
   },
 );
