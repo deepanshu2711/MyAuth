@@ -210,9 +210,20 @@ export const refreshToken = async ({
     String(app.signingKeyId),
   );
 
+  session.refreshToken = await generateRefreshToken(
+    session.userId.toString(),
+    clientId,
+    String(app.signingKeyId),
+  );
+
+  session.revokedAt = new Date();
+
   await session.save();
 
-  return { accessToken: session.accessToken };
+  return {
+    accessToken: session.accessToken,
+    refreshToken: session.refreshToken,
+  };
 };
 
 export const verify = async ({ userId }: { userId: string }) => {

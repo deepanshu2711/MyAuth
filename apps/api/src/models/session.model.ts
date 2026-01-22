@@ -9,6 +9,10 @@ const sessionSchema = new Schema(
     },
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
+    revokedAt: {
+      type: Date,
+      default: null,
+    },
     expiresAt: { type: Date },
   },
   { timestamps: true },

@@ -43,6 +43,9 @@ export function withAuthMiddleware(clientId: String) {
         res.cookies.set("accessToken", result.accessToken, {
           httpOnly: true,
         });
+        res.cookies.set("refreshToken", result.refreshToken, {
+          httpOnly: true,
+        });
         await verifyToken({ token: result.accessToken, apiBaseUrl });
         return res;
       } catch (e) {
