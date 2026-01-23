@@ -65,7 +65,7 @@ export default function Page() {
       {/* HERO SECRION */}
       <section className="px-6 min-h-[50vh] z-10 flex items-center justify-center">
         <div className="max-w-5xl mx-auto text-center justify-center">
-          <Badge>Developer-first authentication</Badge>
+          <Badge>Next.js App Router · Cookie-first · No magic</Badge>
           <h1 className="text-5xl md:text-6xl my-6 tracking-tight font-sans">
             Authentication for developers who care about{" "}
             <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent">
