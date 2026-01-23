@@ -5,8 +5,24 @@ import { useGetUserAppsSummaryQuery } from "../hooks/query/useGetUserAppsSummary
 import { useRegisterAppMutation } from "../hooks/mutation/useRegisterAppMutation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import {
+  Activity,
+  Calendar,
+  ChartBar,
+  Copy,
+  Network,
+  Plus,
+  Settings,
+  Users,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Dashboard = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -41,89 +57,117 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1  md:grid-cols-3 gap-6 mb-8">
-          <Card className="border bg-transparent text-white border-white/10 ">
-            <CardContent>
-              <div className="text-sm text-gray-400 mb-1 font-sans">
-                Total Applications
-              </div>
-              <div className="text-3xl font-sans">
-                {summary?.data[0]?.totalApps}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border border-white/10 text-white bg-transparent font-sans">
-            <CardContent>
-              <div className="text-sm text-gray-400 mb-1">Total Users</div>
-              <div className="text-3xl font-sans">
-                {summary?.data[0]?.totalUsers}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Card
+            onClick={() => setShowCreateModal(true)}
+            className="bg-white/5 text-white border-white/10 group hover:border-white/20 transition-colors border border-dotted"
+          >
+            <CardContent className="h-full">
+              <div className="items-center border-dashed gap-2 text-gray-600 group-hover:text-gray-300 cursor-pointer flex justify-center h-full">
+                <Plus className="size-4" />
+                <p>Create application</p>
               </div>
             </CardContent>
           </Card>
-          <Card className="border border-white/10 opacity-50 line-through text-white bg-transparent">
-            <CardContent>
-              <div className=" font-sans text-sm text-gray-400 mb-1">
-                API Requests (30d)
-              </div>
-              <div className="text-3xl font-sans">21,920</div>
-            </CardContent>
-          </Card>
-        </div>
 
-        {/* Applications Section */}
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-xl font-sans">Applications</h2>
-          <Button onClick={() => setShowCreateModal(true)}>
-            <Plus /> Create Application
-          </Button>
-        </div>
-
-        {/* Applications Grid */}
-        <div className="grid grid-cols-1 gap-4">
           {userApps?.data?.map((app) => (
             <Card
               key={app._id}
-              className="bg-transparent text-white border-white/10"
+              className="group  relative bg-white/5 text-white border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]"
             >
-              <CardContent>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <Link
-                      href={`/app/${app._id}`}
-                      className="hover:text-blue-500"
-                    >
-                      <h3 className="text-lg font-sans mb-1">{app.name}</h3>
-                    </Link>
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <span>Client ID: {app.clientId}</span>
-                      <span>•</span>
-                      <span className="text-green-500">Active</span>
+              <CardContent className="space-y-4">
+                {/* Header */}
+                <div className="flex items-start justify-between">
+                  <Link
+                    href={`/app/${app._id}`}
+                    className="flex items-start gap-3"
+                  >
+                    <Image
+                      src="/x.png"
+                      width={36}
+                      height={36}
+                      alt="app-logo"
+                      className="rounded-md group-hover:opacity-100 opacity-30"
+                    />
+
+                    <div className="leading-tight">
+                      <h3 className="text-sm font-medium tracking-tight">
+                        {app.name}
+                      </h3>
+
+                      {/* Last activity */}
+                      <p className="mt-1 text-[11px] text-white/40">
+                        Updated {"2 min ago"}
+                      </p>
                     </div>
+                  </Link>
+
+                  {/* Health */}
+                </div>
+
+                {/* Environment + Plan */}
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                    </span>
+                    <span className="text-xs font-medium text-emerald-400">
+                      Healthy
+                    </span>
+                  </div>
+
+                  <Badge className="rounded-full border border-white/10 px-2 py-0.5 text-white/60">
+                    Free Plan
+                  </Badge>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 gap-4 pt-3 border-t border-white/10 text-xs">
+                  <div className="flex items-center gap-1.5 text-white/70">
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center gap-2">
+                        <Users className="size-3.5 text-cyan-400" />
+                        <span>{app.userCount.toLocaleString()}</span>
+                      </TooltipTrigger>
+                      <TooltipContent>Total Users</TooltipContent>
+                    </Tooltip>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-1.5 text-white/70">
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center gap-2">
+                        <Calendar className="size-3.5 text-cyan-400" />
+                        <time>
+                          {new Date(app.createdAt).toLocaleDateString("en-GB", {
+                            day: "numeric",
+                            month: "short",
+                            year: "2-digit",
+                          })}
+                        </time>
+                      </TooltipTrigger>
+                      <TooltipContent>Create Date</TooltipContent>
+                    </Tooltip>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-1.5 text-white/70">
+                    <Tooltip>
+                      <TooltipTrigger className="flex items-center gap-2">
+                        <Activity className="size-3.5 text-emerald-400" />
+                        <span>{10}</span>
+                      </TooltipTrigger>
+                      <TooltipContent>Active sessions</TooltipContent>
+                    </Tooltip>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <div className="text-2xl font-sans">
-                      {app.userCount.toLocaleString()}
-                    </div>
-                    <div className="text-xs text-gray-400">Users</div>
-                  </div>
-                  <div className="opacity-50 line-through">
-                    <div className="text-2xl font-sans">
-                      {/* {app.requests.toLocaleString()} */}
-                      2,400
-                    </div>
-                    <div className="text-xs text-gray-400">Requests (30d)</div>
-                  </div>
-                  <div>
-                    <div className="text-2xl font-sans">
-                      {app.createdAt.slice(0, 10)}
-                    </div>
-                    <div className="text-xs text-gray-400">Created</div>
-                  </div>
-                </div>
+                {/* CTA */}
+                <Link
+                  href={`/app/${app._id}`}
+                  className="inline-flex hover:text-neutral-300 items-center gap-1 text-sm text-neutral-600"
+                >
+                  Go to app →
+                </Link>
               </CardContent>
             </Card>
           ))}
