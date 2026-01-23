@@ -39,6 +39,24 @@ export default async function ProtectedPage() {
 }
 ```
 
+### Getting Current User
+
+Get the current user directly:
+
+```typescript
+import { currentUser } from "@myauth/next";
+
+export default async function UserProfile() {
+  const user = await currentUser();
+
+  if (!user) {
+    return <div>Please log in</div>;
+  }
+
+  return <div>Welcome, {user.email}!</div>;
+}
+```
+
 ### Client-Side Authentication
 
 Wrap your app with the AuthProvider and use the useAuth hook:
@@ -84,6 +102,26 @@ export function MyComponent() {
 }
 ```
 
+### Using the useUser Hook
+
+Access the current user and loading state with a simpler hook:
+
+```tsx
+import { useUser } from "@myauth/next";
+
+export function UserDisplay() {
+  const { user, loading } = useUser();
+
+  if (loading) return <div>Loading...</div>;
+
+  return (
+    <div>
+      {user ? <p>Current user: {user.email}</p> : <p>No user logged in</p>}
+    </div>
+  );
+}
+```
+
 ### Authentication Callback Handler
 
 Handle authentication callbacks in your API routes:
@@ -116,13 +154,15 @@ export default function AuthCallbackPage() {
 ### Server Functions
 
 - `auth()` - Returns the current session or null
+- `currentUser()` - Returns the current user or null
 - `createAuthCallbackHandler(options)` - Creates a handler for auth callbacks
 - `getSessionToken()` - Gets the session token
 
 ### Client Components
 
 - `AuthProvider` - React context provider for authentication
-- `useAuth()` - Hook to access authentication state
+- `useAuth()` - Hook to access authentication state and methods
+- `useUser()` - Hook to access the current user and loading state
 - `AuthenticateWithRedirectCallback` - Component for handling auth redirects
 
 ### Middleware

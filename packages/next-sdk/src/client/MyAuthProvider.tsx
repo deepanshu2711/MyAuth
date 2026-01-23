@@ -23,7 +23,7 @@ export function AuthProvider({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const API_BASE_URL = "http://localhost:5005";
-  //const API_BASE_URL = "https://auth-api.deepxdev.com";
+  // const API_BASE_URL = "https://auth-api.deepxdev.com";
 
   const logout = async () => {
     try {

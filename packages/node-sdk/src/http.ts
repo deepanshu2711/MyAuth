@@ -20,6 +20,18 @@ export const verifyToken = async (data: VerifyTokenType) => {
   return res.data.data;
 };
 
+export const getCurrentuser = async (data: {
+  token: string;
+  apiBaseUrl: string;
+}) => {
+  const res = await axios.get(`${data.apiBaseUrl}/api/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${data.token}`,
+    },
+  });
+  return res.data.data;
+};
+
 export const rotateToken = async (data: VerifyTokenType) => {
   //NOTE: Send request to rotate token here
   const res = await axios.post(`${data.apiBaseUrl}/api/auth/refresh/token`, {
