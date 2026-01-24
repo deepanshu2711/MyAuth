@@ -1,22 +1,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DashboardService } from "../../service";
+import { AppDetailsService } from "../../service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-export const useRegisterAppMutation = () => {
+export const useDeleteAppMutation = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   return useMutation({
-    mutationFn: DashboardService.registerApp,
-    onSuccess: (data) => {
-      toast.success("App Registered Successfully");
+    mutationFn: AppDetailsService.deleteApp,
+    onSuccess: () => {
+      toast.success("App Deleted Successfully");
 
       //Invalidate Queries
       queryClient.invalidateQueries({ queryKey: ["apps_summary"] });
       queryClient.invalidateQueries({ queryKey: ["apps"] });
 
-      //navigate
-      router.push(`/app/${data.data.appId}`);
+      //navigate to dashboard
+      router.push("/dashboard");
     },
   });
 };

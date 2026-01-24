@@ -49,7 +49,7 @@ export const getAppActiveSessions = asyncHandler(
 );
 
 export const deleteApp = asyncHandler(async (req, res) => {
-  const { appId } = req.parmas;
+  const { appId } = req.params;
   const data = await AppService.deleteApp({ appId });
   return successResponse(res, data);
 });

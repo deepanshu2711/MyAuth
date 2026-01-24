@@ -29,7 +29,7 @@ export const registerApp = async ({
     isActive: true,
   });
 
-  await App.create({
+  const app = await App.create({
     name,
     ownerId,
     redirectUris,
@@ -37,7 +37,7 @@ export const registerApp = async ({
     clientSecret,
     signingKeyId: signingKey._id,
   });
-  return { clientId, clientSecret };
+  return { clientId, appId: app._id };
 };
 
 export const getUserApps = async ({ userId }: { userId: string }) => {

@@ -13,6 +13,7 @@ import {
   RefreshCw,
   Upload,
   X,
+  Loader2,
 } from "lucide-react";
 import { useGetAppDetailsQuery } from "../hooks/query/useGetAppDetailsQuery";
 import { useGetAppUsersQuery } from "../hooks/query/useGetAppUsersQuery";
@@ -21,6 +22,7 @@ import { AppActiveSession } from "../types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import WatchingForUsers from "./WatchingForUsers";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +46,7 @@ export default function AppDetails({ appId }: { appId: string }) {
   const { data: appData, isLoading } = useGetAppDetailsQuery(appId);
   const { data: appUsers } = useGetAppUsersQuery(appId);
   const { data: activeSessions } = useGetAppActiveSessionsQuery(appId);
+  const [showWatchingState, setShowWatchingState] = useState(true);
 
   const [copiedItem, setCopiedItem] = useState("");
 
@@ -70,12 +73,32 @@ export default function AppDetails({ appId }: { appId: string }) {
     currentPage * itemsPerPage,
   );
 
-  if (isLoading) return null;
+  const handleUserDetected = () => {
+    setShowWatchingState(false);
+  };
+
+  if (isLoading)
+    return (
+      <div className="min-h-screen flex items-center justify-between">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
   if (!appData?.data?.[0]) return <div>No App Found</div>;
+
+  // Show watching state when no users exist
+  if (showWatchingState && (!appUsers?.data || appUsers.data.length === 0)) {
+    return (
+      <WatchingForUsers
+        appId={appId}
+        clientId={appData.data[0].clientId}
+        onUserDetected={handleUserDetected}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen mt-16 bg-black text-white">
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-7xl mx-auto p-6">
         {/* App Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -103,10 +126,7 @@ export default function AppDetails({ appId }: { appId: string }) {
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button
-                    variant={"destructive"}
-                    // onClick={() => setShowDeleteModal(true)}
-                  >
+                  <Button variant={"destructive"}>
                     <Trash2 className="w-4 h-4" />
                     Delete App
                   </Button>
@@ -130,7 +150,7 @@ export default function AppDetails({ appId }: { appId: string }) {
         </div>
 
         {/* Summary Metrics */}
-        <div className="grid grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-3 gap-6 mb-8">
           <Card className="border border-white/10 bg-transparent text-white transition-colors">
             <CardContent>
               <div className="text-gray-400 text-sm mb-2 font-sans">
@@ -148,15 +168,6 @@ export default function AppDetails({ appId }: { appId: string }) {
               </div>
               <div className="text-3xl font-sans">
                 {activeSessions?.data?.length || 0}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border border-white/10 bg-transparent text-white opacity-50">
-            <CardContent>
-              <div className="text-gray-400 text-sm mb-2">Requests (30d)</div>
-              <div className="text-3xl font-sans line-through">
-                {/* {appData.requests30d.toLocaleString()} */}
-                27,212
               </div>
             </CardContent>
           </Card>
@@ -285,15 +296,23 @@ export default function AppDetails({ appId }: { appId: string }) {
           <CardHeader>
             <div className="flex items-center justify-between mb-6">
               <h2 className=" font-sans">Users</h2>
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 transition-colors"
-                />
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowWatchingState(true)}
+                  className="px-3 py-1 bg-cyan-400/10 text-cyan-400 border border-cyan-400/20 rounded hover:bg-cyan-400/20 transition-colors text-sm"
+                >
+                  Show Setup Guide
+                </button>
+                <div className="relative">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 transition-colors"
+                  />
+                </div>
               </div>
             </div>
           </CardHeader>
@@ -312,7 +331,7 @@ export default function AppDetails({ appId }: { appId: string }) {
                     <th className="text-left opacity-50 line-through py-3 px-4 text-gray-400 text-sm font-normal">
                       Sign-up Date
                     </th>
-                    <th className="text-left py-3 px-4 text-gray-400 opacity-50 line-through text-sm font-normal">
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal opacity-50 line-through">
                       Last Active
                     </th>
                     <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal opacity-50 line-through">
