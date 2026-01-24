@@ -57,121 +57,174 @@ const Dashboard = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card
-            onClick={() => setShowCreateModal(true)}
-            className="bg-white/5 text-white border-white/10 group hover:border-white/20 transition-colors border border-dotted"
-          >
-            <CardContent className="h-full">
-              <div className="items-center border-dashed gap-2 text-gray-600 group-hover:text-gray-300 cursor-pointer flex justify-center h-full">
+        {!isLoading && userApps?.data?.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 text-center space-y-6">
+            <div className="p-4 rounded-full bg-white/5 border border-white/10">
+              <Network className="size-8 text-cyan-400" />
+            </div>
+
+            <div className="space-y-2">
+              <h2 className="text-xl font-sans">
+                Create your first application
+              </h2>
+              <p className="text-sm text-white/50 max-w-md">
+                Register an app to start authenticating users, managing
+                sessions, and securing your APIs in minutes.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={() => setShowCreateModal(true)}
+                className="gap-2"
+              >
                 <Plus className="size-4" />
-                <p>Create application</p>
+                Create application
+              </Button>
+
+              <Link
+                href="/docs/quickstart"
+                className="text-sm text-white/50 hover:text-white transition"
+              >
+                View quickstart →
+              </Link>
+            </div>
+
+            <div className="flex gap-6 pt-6 text-xs text-white/40">
+              <div className="flex items-center gap-2">
+                <Users className="size-3.5 text-cyan-400" />
+                User management
               </div>
-            </CardContent>
-          </Card>
-
-          {userApps?.data?.map((app) => (
+              <div className="flex items-center gap-2">
+                <Settings className="size-3.5 text-cyan-400" />
+                OAuth & tokens
+              </div>
+              <div className="flex items-center gap-2">
+                <ChartBar className="size-3.5 text-cyan-400" />
+                Analytics
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <Card
-              key={app._id}
-              className="group  relative bg-white/5 text-white border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]"
+              onClick={() => setShowCreateModal(true)}
+              className="bg-white/5 text-white border-white/10 group hover:border-white/20 transition-colors border border-dotted"
             >
-              <CardContent className="space-y-4">
-                {/* Header */}
-                <div className="flex items-start justify-between">
-                  <Link
-                    href={`/app/${app._id}`}
-                    className="flex items-start gap-3"
-                  >
-                    <Image
-                      src="/x.png"
-                      width={36}
-                      height={36}
-                      alt="app-logo"
-                      className="rounded-md group-hover:opacity-100 opacity-30"
-                    />
-
-                    <div className="leading-tight">
-                      <h3 className="text-sm font-medium tracking-tight">
-                        {app.name}
-                      </h3>
-
-                      {/* Last activity */}
-                      <p className="mt-1 text-[11px] text-white/40">
-                        Updated {"2 min ago"}
-                      </p>
-                    </div>
-                  </Link>
-
-                  {/* Health */}
+              <CardContent className="h-full">
+                <div className="items-center border-dashed gap-2 text-gray-600 group-hover:text-gray-300 cursor-pointer flex justify-center h-full">
+                  <Plus className="size-4" />
+                  <p>Create application</p>
                 </div>
-
-                {/* Environment + Plan */}
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                    </span>
-                    <span className="text-xs font-medium text-emerald-400">
-                      Healthy
-                    </span>
-                  </div>
-
-                  <Badge className="rounded-full border border-white/10 px-2 py-0.5 text-white/60">
-                    Free Plan
-                  </Badge>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-4 pt-3 border-t border-white/10 text-xs">
-                  <div className="flex items-center gap-1.5 text-white/70">
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center gap-2">
-                        <Users className="size-3.5 text-cyan-400" />
-                        <span>{app.userCount.toLocaleString()}</span>
-                      </TooltipTrigger>
-                      <TooltipContent>Total Users</TooltipContent>
-                    </Tooltip>
-                  </div>
-
-                  <div className="flex items-center justify-center gap-1.5 text-white/70">
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center gap-2">
-                        <Calendar className="size-3.5 text-cyan-400" />
-                        <time>
-                          {new Date(app.createdAt).toLocaleDateString("en-GB", {
-                            day: "numeric",
-                            month: "short",
-                            year: "2-digit",
-                          })}
-                        </time>
-                      </TooltipTrigger>
-                      <TooltipContent>Create Date</TooltipContent>
-                    </Tooltip>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-1.5 text-white/70">
-                    <Tooltip>
-                      <TooltipTrigger className="flex items-center gap-2">
-                        <Activity className="size-3.5 text-emerald-400" />
-                        <span>{app.activeSessionCount}</span>
-                      </TooltipTrigger>
-                      <TooltipContent>Active sessions</TooltipContent>
-                    </Tooltip>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <Link
-                  href={`/app/${app._id}`}
-                  className="inline-flex hover:text-neutral-300 items-center gap-1 text-sm text-neutral-600"
-                >
-                  Go to app →
-                </Link>
               </CardContent>
             </Card>
-          ))}
-        </div>
+
+            {userApps?.data?.map((app) => (
+              <Card
+                key={app._id}
+                className="group  relative bg-white/5 text-white border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]"
+              >
+                <CardContent className="space-y-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between">
+                    <Link
+                      href={`/app/${app._id}`}
+                      className="flex items-start gap-3"
+                    >
+                      <Image
+                        src="/x.png"
+                        width={36}
+                        height={36}
+                        alt="app-logo"
+                        className="rounded-md group-hover:opacity-100 opacity-30"
+                      />
+
+                      <div className="leading-tight">
+                        <h3 className="text-sm font-medium tracking-tight">
+                          {app.name}
+                        </h3>
+
+                        {/* Last activity */}
+                        <p className="mt-1 text-[11px] text-white/40">
+                          Updated {"2 min ago"}
+                        </p>
+                      </div>
+                    </Link>
+
+                    {/* Health */}
+                  </div>
+
+                  {/* Environment + Plan */}
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1.5 mt-1">
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+                      </span>
+                      <span className="text-xs font-medium text-emerald-400">
+                        Healthy
+                      </span>
+                    </div>
+
+                    <Badge className="rounded-full border border-white/10 px-2 py-0.5 text-white/60">
+                      Free Plan
+                    </Badge>
+                  </div>
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-3 gap-4 pt-3 border-t border-white/10 text-xs">
+                    <div className="flex items-center gap-1.5 text-white/70">
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center gap-2">
+                          <Users className="size-3.5 text-cyan-400" />
+                          <span>{app.userCount.toLocaleString()}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>Total Users</TooltipContent>
+                      </Tooltip>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-1.5 text-white/70">
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center gap-2">
+                          <Calendar className="size-3.5 text-cyan-400" />
+                          <time>
+                            {new Date(app.createdAt).toLocaleDateString(
+                              "en-GB",
+                              {
+                                day: "numeric",
+                                month: "short",
+                                year: "2-digit",
+                              },
+                            )}
+                          </time>
+                        </TooltipTrigger>
+                        <TooltipContent>Create Date</TooltipContent>
+                      </Tooltip>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-1.5 text-white/70">
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center gap-2">
+                          <Activity className="size-3.5 text-emerald-400" />
+                          <span>{app.activeSessionCount}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>Active sessions</TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </div>
+
+                  {/* CTA */}
+                  <Link
+                    href={`/app/${app._id}`}
+                    className="inline-flex hover:text-neutral-300 items-center gap-1 text-sm text-neutral-600"
+                  >
+                    Go to app →
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Create Application Modal */}

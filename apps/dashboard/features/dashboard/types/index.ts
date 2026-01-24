@@ -3,6 +3,7 @@ export interface UserApp {
   name: string;
   clientId: string;
   userCount: number;
+  activeSessionCount: number;
   createdAt: string;
   redirectUri: string;
 }
