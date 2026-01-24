@@ -1,6 +1,16 @@
 {
   "name": "dashboard",
   "version": "0.1.0",
+  "description": "MyAuth Dashboard - A web application for managing authentication applications, users, and settings in the MyAuth authentication system",
+  "author": "MyAuth Team",
+  "keywords": [
+    "authentication",
+    "dashboard",
+    "oauth",
+    "nextjs",
+    "react",
+    "typescript"
+  ],
   "type": "module",
   "private": true,
   "scripts": {

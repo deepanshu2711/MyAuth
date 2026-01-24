@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# MyAuth Dashboard
+
+MyAuth Dashboard is a web application for managing authentication applications, users, and settings in the MyAuth authentication system. It provides a comprehensive admin interface for overseeing OAuth applications, user management, and system configuration.
+
+## Features
+
+- **Application Management**: Register and manage third-party applications that integrate with MyAuth
+- **User Management**: View and manage users across all applications
+- **Authentication Settings**: Configure OAuth flows, redirect URIs, and client credentials
+- **Dashboard Analytics**: Monitor application usage and user activity
+- **Admin Controls**: System-wide settings and permissions management
+
+## Tech Stack
+
+- **Framework**: Next.js 16 with App Router
+- **Language**: TypeScript
+- **UI**: React 19 with Tailwind CSS
+- **State Management**: TanStack Query (React Query)
+- **Authentication**: @myauth/next
+- **Styling**: Tailwind CSS with custom components
+- **Icons**: Lucide React, Tabler Icons
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm, yarn, pnpm, or bun
+- MyAuth backend services running
+
+### Installation
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Set up environment variables:
+   Copy `.env.example` to `.env` and configure your settings.
+
+3. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load Inter, a custom Google Font.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint with max warnings 0
+- `npm run check-types` - Run TypeScript type checking
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+apps/dashboard/
+├── app/                    # Next.js app directory
+│   ├── (main)/            # Main app routes
+│   ├── globals.css        # Global styles
+│   └── layout.tsx         # Root layout
+├── components/            # Reusable UI components
+├── features/              # Feature-specific modules
+│   ├── appDetails/        # App details management
+│   └── dashboard/         # Dashboard features
+├── lib/                   # Utility libraries
+└── providers/             # React providers
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Integration Guide
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+For information on integrating MyAuth into third-party applications, see the integration steps documented in `app/layout.tsx`.
 
-## Deploy on Vercel
+## Contributing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Follow the code style guidelines in `AGENTS.md`
+2. Run `npm run lint` and `npm run check-types` before committing
+3. Use conventional commit messages
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+This project is part of the MyAuth authentication system.
