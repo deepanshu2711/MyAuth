@@ -14,6 +14,7 @@ import { AuthorizationCode } from "../../models/authorizationCode.model.js";
 import { RabbitMQPublisher } from "../../utils/rabbitmq/publisher.js";
 import { OAuthClient } from "../../lib/OAuthClient.js";
 import { createRemoteJWKSet, jwtVerify } from "jose";
+import { Types } from "mongoose";
 
 const publisher = new RabbitMQPublisher();
 
@@ -167,6 +168,7 @@ export const getTokens = async ({
   );
 
   await Session.create({
+    appId: new Types.ObjectId(app._id),
     userId: authorizationCode.userId,
     accessToken,
     refreshToken,

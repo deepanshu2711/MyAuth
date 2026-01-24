@@ -154,7 +154,7 @@ const Dashboard = () => {
                     <Tooltip>
                       <TooltipTrigger className="flex items-center gap-2">
                         <Activity className="size-3.5 text-emerald-400" />
-                        <span>{10}</span>
+                        <span>{app.activeSessionCount}</span>
                       </TooltipTrigger>
                       <TooltipContent>Active sessions</TooltipContent>
                     </Tooltip>

@@ -40,6 +40,14 @@ export const getAppDetails = asyncHandler(
   },
 );
 
+export const getAppActiveSessions = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { appId } = req.params;
+    const data = await AppService.getAppActiveSessions({ appId: appId! });
+    return successResponse(res, data);
+  },
+);
+
 export const deleteApp = asyncHandler(async (req, res) => {
   const { appId } = req.parmas;
   const data = await AppService.deleteApp({ appId });

@@ -61,6 +61,11 @@ export const getAppDetails = async ({ appId }: { appId: string }) => {
   return data;
 };
 
+export const getAppActiveSessions = async ({ appId }: { appId: string }) => {
+  const data = await App.aggregate(AppPipeline.getAppActiveSessions(appId));
+  return data;
+};
+
 export const deleteApp = async ({ appId }: { appId: string }) => {
   const data = await App.findByIdAndDelete(appId);
   await MemberShip.deleteMany({ appId });

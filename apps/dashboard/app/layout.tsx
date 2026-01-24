@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-image.png",
+        url: "https://console.deepxdev.com/og-image.png",
         width: 1200,
         height: 630,
         alt: "MyAuth Dashboard",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: "MyAuth Dashboard",
     description:
       "Manage your authentication applications and users with MyAuth Dashboard",
-    images: ["/og-image.png"],
+    images: ["https://console.deepxdev.com/og-image.png"],
     creator: "@DeepanshuS7943",
   },
 };

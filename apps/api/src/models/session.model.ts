@@ -2,6 +2,11 @@ import mongoose, { Schema } from "mongoose";
 
 const sessionSchema = new Schema(
   {
+    appId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "app",
+      required: true,
+    },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",

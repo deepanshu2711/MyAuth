@@ -6,6 +6,7 @@ export const appsRouter = express.Router();
 appsRouter.get("/", AppsController.getApps);
 appsRouter.get("/summary", AppsController.getSummary);
 appsRouter.get("/users/:appId", AppsController.getAppUsers);
+appsRouter.get("/sessions/:appId", AppsController.getAppActiveSessions);
 appsRouter.get("/:appId", AppsController.getAppDetails);
 
 appsRouter.post("/register", AppsController.register);

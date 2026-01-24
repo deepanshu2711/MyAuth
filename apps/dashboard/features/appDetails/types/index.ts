@@ -26,3 +26,18 @@ export interface AppUser {
 export interface AppUsersResponse {
   data: AppUser[];
 }
+
+export interface SessionDetails {
+  _id: string;
+  createdAt: string;
+  expiresAt: string;
+}
+
+export interface AppActiveSession {
+  session: SessionDetails;
+  userDetails: UserDetails;
+}
+
+export interface AppActiveSessionsResponse {
+  data: AppActiveSession[];
+}

@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { useGetAppDetailsQuery } from "../hooks/query/useGetAppDetailsQuery";
 import { useGetAppUsersQuery } from "../hooks/query/useGetAppUsersQuery";
+import { useGetAppActiveSessionsQuery } from "../hooks/query/useGetAppActiveSessionsQuery";
+import { AppActiveSession } from "../types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,17 +37,20 @@ export default function AppDetails({ appId }: { appId: string }) {
   const [showSecret, setShowSecret] = useState(false);
   const [showAddUriModal, setShowAddUriModal] = useState(false);
   const [showRegenerateModal, setShowRegenerateModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newUri, setNewUri] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [copiedItem, setCopiedItem] = useState("");
 
   const { data: appData, isLoading } = useGetAppDetailsQuery(appId);
-  const { data: appUsers, isLoading: isLoadingUsers } =
-    useGetAppUsersQuery(appId);
+  const { data: appUsers } = useGetAppUsersQuery(appId);
+  const { data: activeSessions } = useGetAppActiveSessionsQuery(appId);
 
-  const handleCopy = () => {};
+  const [copiedItem, setCopiedItem] = useState("");
+
+  const handleCopy = (type: string) => {
+    setCopiedItem(type);
+    setTimeout(() => setCopiedItem(""), 2000);
+  };
 
   const filteredUsers =
     appUsers?.data?.filter(
@@ -125,7 +130,7 @@ export default function AppDetails({ appId }: { appId: string }) {
         </div>
 
         {/* Summary Metrics */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-4 gap-6 mb-8">
           <Card className="border border-white/10 bg-transparent text-white transition-colors">
             <CardContent>
               <div className="text-gray-400 text-sm mb-2 font-sans">
@@ -133,6 +138,16 @@ export default function AppDetails({ appId }: { appId: string }) {
               </div>
               <div className="text-3xl font-sans">
                 {appData.data[0].totalCount.toLocaleString()}
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border border-white/10 bg-transparent text-white transition-colors">
+            <CardContent>
+              <div className="text-gray-400 text-sm mb-2 font-sans">
+                Active Sessions
+              </div>
+              <div className="text-3xl font-sans">
+                {activeSessions?.data?.length || 0}
               </div>
             </CardContent>
           </Card>
@@ -200,6 +215,67 @@ export default function AppDetails({ appId }: { appId: string }) {
                 </p>
                 <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Active Sessions Table */}
+        <Card className="border border-white/10 bg-transparent text-white mb-8">
+          <CardHeader>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className=" font-sans">Active Sessions</h2>
+              <div className="text-sm text-gray-400">
+                {activeSessions?.data?.length || 0} active sessions
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                      Session ID
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                      User Email
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                      Created At
+                    </th>
+                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
+                      Expires At
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeSessions?.data?.map((session: AppActiveSession) => (
+                    <tr
+                      key={session.session._id}
+                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
+                    >
+                      <td className="py-3 px-4 text-sm font-mono">
+                        {session.session._id.slice(-8)}
+                      </td>
+                      <td className="py-3 px-4 text-sm">
+                        {session.userDetails.email}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-400">
+                        {new Date(session.session.createdAt).toLocaleString()}
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-400">
+                        {new Date(session.session.expiresAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {(!activeSessions?.data || activeSessions.data.length === 0) && (
+                <div className="text-center py-8 text-gray-400">
+                  No active sessions found
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -345,7 +421,7 @@ export default function AppDetails({ appId }: { appId: string }) {
                   readOnly
                   className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
                 />
-                <Button onClick={() => handleCopy()}>
+                <Button onClick={() => handleCopy("clientId")}>
                   <Copy className="w-4 h-4" />
                   {copiedItem === "clientId" ? "Copied!" : "Copy"}
                 </Button>
@@ -375,7 +451,10 @@ export default function AppDetails({ appId }: { appId: string }) {
                     <Eye className="w-4 h-4" />
                   )}
                 </Button>
-                <Button onClick={() => handleCopy()} disabled={true}>
+                <Button
+                  onClick={() => handleCopy("clientSecret")}
+                  disabled={true}
+                >
                   <Copy className="w-4 h-4" />
                   {copiedItem === "clientSecret" ? "Copied!" : "Copy"}
                 </Button>

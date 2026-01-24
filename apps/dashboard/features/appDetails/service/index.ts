@@ -13,4 +13,10 @@ export const AppDetailsService = {
     );
     return response.data;
   },
+  getAppActiveSessions: async (appId: string) => {
+    const response = await api.get(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/app/sessions/${appId}`,
+    );
+    return response.data;
+  },
 };
