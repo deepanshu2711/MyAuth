@@ -97,7 +97,7 @@ export default function AppDetails({ appId }: { appId: string }) {
   }
 
   return (
-    <div className="min-h-screen mt-16 bg-black text-white">
+    <div className="min-h-screen mt-28 bg-black text-white">
       <div className="max-w-7xl mx-auto p-6">
         {/* App Header */}
         <div className="mb-8">
