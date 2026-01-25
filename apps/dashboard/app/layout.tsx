@@ -15,6 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://console.deepxdev.com"),
   title: "MyAuth Dashboard",
   description:
     "Manage your authentication applications, users, and settings with MyAuth Dashboard. A comprehensive admin interface for the MyAuth authentication system.",

@@ -9,10 +9,12 @@ import {
   Activity,
   Calendar,
   ChartBar,
+  ChevronRight,
   Copy,
   Network,
   Plus,
   Settings,
+  ShieldCheck,
   Users,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,7 +32,10 @@ const Dashboard = () => {
   const [redirectUri, setRedirectUri] = useState("");
 
   //Query
-  const { data: userApps, isLoading } = useGetUserAppsQuery();
+  const { data, isLoading } = useGetUserAppsQuery();
+  const userApps = {
+    data: [],
+  };
   const { data: summary } = useGetUserAppsSummaryQuery();
 
   //Mutations
@@ -58,50 +63,77 @@ const Dashboard = () => {
         </div>
 
         {!isLoading && userApps?.data?.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center space-y-6">
-            <div className="p-4 rounded-full bg-white/5 border border-white/10">
-              <Network className="size-8 text-cyan-400" />
+          <div className="relative w-full rounded-2xl border border-dashed border-zinc-800 bg-zinc-950/50 px-6 py-24 text-center overflow-hidden">
+            {/* Background Visual Effects */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Subtle Grid Pattern */}
+              <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+              {/* Radial Gradient Glow from center */}
+              <div className="absolute left-0 top-0 right-0 h-full w-full bg-gradient-to-b from-transparent via-transparent to-zinc-950" />
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[300px] bg-cyan-500/10 blur-[100px] rounded-full" />
             </div>
 
-            <div className="space-y-2">
-              <h2 className="text-xl font-sans">
-                Create your first application
-              </h2>
-              <p className="text-sm text-white/50 max-w-md">
-                Register an app to start authenticating users, managing
-                sessions, and securing your APIs in minutes.
-              </p>
-            </div>
+            <div className="relative flex flex-col items-center z-10">
+              {/* Icon with Concentric Rings Animation */}
+              <div className="relative mb-8">
+                <div className="absolute inset-0 rounded-full bg-cyan-500/20 blur-xl animate-pulse" />
 
-            <div className="flex items-center gap-3">
-              <Button
-                onClick={() => setShowCreateModal(true)}
-                className="gap-2"
-              >
-                <Plus className="size-4" />
-                Create application
-              </Button>
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-zinc-800 to-zinc-950 border border-zinc-700 shadow-2xl">
+                  <div className="absolute inset-0 rounded-2xl bg-cyan-500/10" />
+                  <Network className="size-10 text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
+                </div>
 
-              <Link
-                href="/docs/quickstart"
-                className="text-sm text-white/50 hover:text-white transition"
-              >
-                View quickstart →
-              </Link>
-            </div>
-
-            <div className="flex gap-6 pt-6 text-xs text-white/40">
-              <div className="flex items-center gap-2">
-                <Users className="size-3.5 text-cyan-400" />
-                User management
+                {/* Decorative decorative rings behind */}
+                <div className="absolute -inset-4 rounded-3xl border border-zinc-800/50 -z-10" />
+                <div className="absolute -inset-8 rounded-[32px] border border-zinc-800/30 -z-20" />
               </div>
-              <div className="flex items-center gap-2">
-                <Settings className="size-3.5 text-cyan-400" />
-                OAuth & tokens
+
+              {/* Text Content */}
+              <div className="max-w-lg space-y-3 mb-8">
+                <h2 className="text-2xl font-semibold tracking-tight text-white">
+                  Create your first application
+                </h2>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  You haven't created any applications yet. Register an app to
+                  start authenticating users, managing sessions, and securing
+                  your APIs in minutes.
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <ChartBar className="size-3.5 text-cyan-400" />
-                Analytics
+
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <Button
+                  onClick={() => setShowCreateModal(true)} // Assuming context exists
+                  className="h-10 px-6 bg-zinc-100 text-zinc-950 hover:bg-white hover:scale-105 transition-all duration-300 font-medium shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                >
+                  <Plus className=" size-4" />
+                  Create Application
+                </Button>
+
+                <Link
+                  href="/docs/quickstart"
+                  className="group flex items-center gap-1 text-sm text-zinc-500 hover:text-cyan-400 transition-colors px-4 py-2"
+                >
+                  Read the Quickstart
+                  <ChevronRight className="size-3 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+
+              {/* Feature Pills (Social Proof) */}
+              <div className="mt-12 flex flex-wrap justify-center gap-3">
+                {[
+                  { icon: Users, text: "User Management" },
+                  { icon: ShieldCheck, text: "OAuth & Security" },
+                  { icon: Activity, text: "Real-time Analytics" },
+                ].map((feature, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-zinc-800 bg-zinc-900/50 text-[11px] font-medium text-zinc-400"
+                  >
+                    <feature.icon className="size-3 text-zinc-500" />
+                    {feature.text}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -120,108 +152,118 @@ const Dashboard = () => {
             </Card>
 
             {userApps?.data?.map((app) => (
-              <Card
+              <Link
                 key={app._id}
-                className="group  relative bg-white/5 text-white border border-white/10 hover:border-white/20 transition-all hover:bg-white/[0.07]"
+                href={`/app/${app._id}`}
+                className="group block h-full"
               >
-                <CardContent className="space-y-4">
-                  {/* Header */}
-                  <div className="flex items-start justify-between">
-                    <Link
-                      href={`/app/${app._id}`}
-                      className="flex items-start gap-3"
-                    >
-                      <Image
-                        src="/x.png"
-                        width={36}
-                        height={36}
-                        alt="app-logo"
-                        className="rounded-md group-hover:opacity-100 opacity-30"
-                      />
+                <Card className="relative pb-0 h-full overflow-hidden bg-zinc-900/40 border-zinc-800/60 hover:border-zinc-700 hover:bg-zinc-900/60 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/50">
+                  {/* Subtle Gradient Overlay on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                      <div className="leading-tight">
-                        <h3 className="text-sm font-medium tracking-tight">
+                  <CardContent className=" space-y-5 relative">
+                    {/* Header: Logo + Status */}
+                    <div className="flex justify-between items-start">
+                      <div className="relative">
+                        <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-zinc-800 to-black p-0.5 shadow-inner">
+                          <div className="h-full w-full rounded-[10px] overflow-hidden bg-zinc-950 flex items-center justify-center">
+                            <Image
+                              src="/x.png"
+                              width={40}
+                              height={40}
+                              alt="app-logo"
+                              className="opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 bg-zinc-950/50 border border-white/5 rounded-full px-2.5 py-1 backdrop-blur-md">
+                        {/* Status Pill */}
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                        </span>
+                        <span className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider">
+                          Healthy
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Main Info */}
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-zinc-100 group-hover:text-white transition-colors tracking-tight">
                           {app.name}
                         </h3>
-
-                        {/* Last activity */}
-                        <p className="mt-1 text-[11px] text-white/40">
-                          Updated {"2 min ago"}
-                        </p>
+                        {/* Arrow that slides in on hover */}
+                        <ChevronRight className="w-4 h-4 text-zinc-500 -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
                       </div>
-                    </Link>
 
-                    {/* Health */}
-                  </div>
-
-                  {/* Environment + Plan */}
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-50" />
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-                      </span>
-                      <span className="text-xs font-medium text-emerald-400">
-                        Healthy
-                      </span>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge
+                          variant="outline"
+                          className="border-zinc-700 text-zinc-400 font-normal text-[10px] px-2 h-5"
+                        >
+                          Free Plan
+                        </Badge>
+                        <span className="text-[11px] text-zinc-500">
+                          Updated 2m ago
+                        </span>
+                      </div>
                     </div>
+                  </CardContent>
 
-                    <Badge className="rounded-full border border-white/10 px-2 py-0.5 text-white/60">
-                      Free Plan
-                    </Badge>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-4 pt-3 border-t border-white/10 text-xs">
-                    <div className="flex items-center gap-1.5 text-white/70">
-                      <Tooltip>
-                        <TooltipTrigger className="flex items-center gap-2">
-                          <Users className="size-3.5 text-cyan-400" />
+                  {/* Footer Stats Grid */}
+                  <div className="px-5 py-3 border-t border-white/5 bg-white/[0.02] flex items-center justify-between text-xs text-zinc-400 relative">
+                    {/* Users */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1.5 hover:text-zinc-200 transition-colors cursor-help">
+                          <Users className="size-3.5 text-indigo-400" />
                           <span>{app.userCount.toLocaleString()}</span>
-                        </TooltipTrigger>
-                        <TooltipContent>Total Users</TooltipContent>
-                      </Tooltip>
-                    </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Total Users</TooltipContent>
+                    </Tooltip>
 
-                    <div className="flex items-center justify-center gap-1.5 text-white/70">
-                      <Tooltip>
-                        <TooltipTrigger className="flex items-center gap-2">
-                          <Calendar className="size-3.5 text-cyan-400" />
-                          <time>
+                    <div className="h-3 w-[1px] bg-zinc-800" />
+
+                    {/* Date */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1.5 hover:text-zinc-200 transition-colors cursor-help">
+                          <Calendar className="size-3.5 text-indigo-400" />
+                          <time className="tabular-nums">
                             {new Date(app.createdAt).toLocaleDateString(
                               "en-GB",
                               {
-                                day: "numeric",
+                                day: "2-digit",
                                 month: "short",
                                 year: "2-digit",
                               },
                             )}
                           </time>
-                        </TooltipTrigger>
-                        <TooltipContent>Create Date</TooltipContent>
-                      </Tooltip>
-                    </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Created on</TooltipContent>
+                    </Tooltip>
 
-                    <div className="flex items-center justify-end gap-1.5 text-white/70">
-                      <Tooltip>
-                        <TooltipTrigger className="flex items-center gap-2">
+                    <div className="h-3 w-[1px] bg-zinc-800" />
+
+                    {/* Active Sessions */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center gap-1.5 hover:text-zinc-200 transition-colors cursor-help">
                           <Activity className="size-3.5 text-emerald-400" />
                           <span>{app.activeSessionCount}</span>
-                        </TooltipTrigger>
-                        <TooltipContent>Active sessions</TooltipContent>
-                      </Tooltip>
-                    </div>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>Active Sessions</TooltipContent>
+                    </Tooltip>
                   </div>
-
-                  {/* CTA */}
-                  <Link
-                    href={`/app/${app._id}`}
-                    className="inline-flex hover:text-neutral-300 items-center gap-1 text-sm text-neutral-600"
-                  >
-                    Go to app →
-                  </Link>
-                </CardContent>
-              </Card>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
