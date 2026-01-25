@@ -362,11 +362,15 @@ export const githubRedirect = async (code: string, state: string) => {
 
   const emails = await emailRes.json();
 
-  const email = emails.find((e: any) => e.primary && e.verified)?.email;
+  const email = emails.find((e: any) => e.primary)?.email;
 
   let globalUser = await User.findOne({ email });
   if (!globalUser) {
-    globalUser = await User.create({ email });
+    globalUser = await User.create({
+      email,
+      name: githubUser.name,
+      avatar: githubUser.avatar_url,
+    });
     await publisher.publishCreateUser({ data: globalUser });
   }
 
