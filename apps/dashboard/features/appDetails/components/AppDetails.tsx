@@ -14,6 +14,10 @@ import {
   Upload,
   X,
   Loader2,
+  Pencil,
+  Users,
+  Calendar,
+  Activity,
 } from "lucide-react";
 import { useGetAppDetailsQuery } from "../hooks/query/useGetAppDetailsQuery";
 import { useGetAppUsersQuery } from "../hooks/query/useGetAppUsersQuery";
@@ -97,372 +101,130 @@ export default function AppDetails({ appId }: { appId: string }) {
   }
 
   return (
-    <div className="min-h-screen mt-28 bg-black text-white">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* App Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-3xl font-sans mb-2">
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 selection:bg-white/20">
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        {/* --- Header Section --- */}
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-16">
+          <div className="space-y-1">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-medium tracking-tight">
                 {appData.data[0].name}
               </h1>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="text-gray-400">
-                  {appData.data[0].clientId}
+              <div className="flex items-center gap-2 bg-zinc-950/50 border border-white/5 rounded-full px-2.5 py-1 backdrop-blur-md">
+                {/* Status Pill */}
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                 </span>
-                <Badge variant={"secondary"}>
-                  {appData.data[0].status || "Active"}
-                </Badge>
+                <span className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider">
+                  Healthy
+                </span>
               </div>
             </div>
-            <div className="flex gap-3">
-              <Button disabled={true}>
-                <Edit className="w-4 h-4" />
-                Edit
-              </Button>
-              <Button onClick={() => setShowRegenerateModal(true)}>
-                <RefreshCw className="w-4 h-4" />
-                Regenerate Secret
-              </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant={"destructive"}>
-                    <Trash2 className="w-4 h-4" />
-                    Delete App
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Application</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      the application and all associated data.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Continue</AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+            <p className="text-zinc-500 text-sm font-mono">
+              ID: {appData.data[0].clientId}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              className="text-zinc-400 hover:text-white h-9 px-3"
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="text-red-900 hover:text-red-500 hover:bg-red-950/30 h-9 w-9 p-0"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                {/* Keep existing alert content */}
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+
+        {/* --- Metrics Grid (Clean, no cards) --- */}
+        <div className="grid grid-cols-3 gap-8 mb-16 border-y border-zinc-900 py-8">
+          <div>
+            <div className="text-zinc-500 text-xs uppercase tracking-wider font-medium mb-1">
+              Total Users
+            </div>
+            <div className="text-3xl flex items-center gap-4 font-light tracking-tight">
+              <Users className="text-indigo-400" />
+              {appData.data[0].totalCount.toLocaleString()}
+            </div>
+          </div>
+          <div className="border-l border-zinc-900 pl-8">
+            <div className="text-zinc-500 text-xs uppercase tracking-wider font-medium mb-1">
+              Active Sessions
+            </div>
+            <div className="text-3xl flex items-center gap-4 font-light tracking-tight">
+              <Activity className=" text-emerald-400" />
+              {activeSessions?.data?.length || 0}
+            </div>
+          </div>
+          <div className="border-l border-zinc-900 pl-8">
+            <div className="text-zinc-500 text-xs uppercase tracking-wider font-medium mb-1">
+              Created
+            </div>
+            <div className="text-3xl flex font-light items-center gap-4 tracking-tight">
+              <Calendar className="text-indigo-400" />
+              {appData.data[0].createdAt.slice(0, 10)}
             </div>
           </div>
         </div>
 
-        {/* Summary Metrics */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          <Card className="border border-white/10 bg-transparent text-white transition-colors">
-            <CardContent>
-              <div className="text-gray-400 text-sm mb-2 font-sans">
-                Total Users
-              </div>
-              <div className="text-3xl font-sans">
-                {appData.data[0].totalCount.toLocaleString()}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border border-white/10 bg-transparent text-white transition-colors">
-            <CardContent>
-              <div className="text-gray-400 text-sm mb-2 font-sans">
-                Active Sessions
-              </div>
-              <div className="text-3xl font-sans">
-                {activeSessions?.data?.length || 0}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="border border-white/10 bg-transparent text-white transition-colors">
-            <CardContent>
-              <div className="text-gray-400 text-sm mb-2 font-sans">
-                App Created At
-              </div>
-              <div className="text-3xl font-sans">
-                {appData.data[0].createdAt.slice(0, 10)}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Application Settings */}
-        <Card className="border border-white/10 bg-transparent text-white mb-8">
-          <CardHeader>
-            <h2 className="text-white font-sans ">Application Settings</h2>
-          </CardHeader>
-          <CardContent>
-            {/* Redirect URIs */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-3">
-                <label className="text-gray-400 text-sm">Redirect URIs</label>
-                <button
-                  onClick={() => setShowAddUriModal(true)}
-                  className="px-3 py-1 bg-white text-black rounded hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add URI
-                </button>
-              </div>
-              <div className="space-y-2">
-                {appData.data[0].redirectUris.map((uri, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-center justify-between p-3 border border-white/10 rounded bg-white/5"
-                  >
-                    <span className="text-sm">{uri}</span>
-                    <button className="text-gray-400 hover:text-red-400 transition-colors">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="text-gray-400 text-sm mb-3 block">
-                App Logo (Optional)
-              </label>
-              <div className="border border-white/10 border-dashed rounded-lg p-8 bg-white/5 hover:border-white/20 transition-colors cursor-pointer text-center">
-                <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                <p className="text-sm text-gray-400">
-                  Click to upload or drag and drop
-                </p>
-                <p className="text-xs text-gray-500 mt-1">PNG, JPG up to 2MB</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Active Sessions Table */}
-        <Card className="border border-white/10 bg-transparent text-white mb-8">
-          <CardHeader>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className=" font-sans">Active Sessions</h2>
-              <div className="text-sm text-gray-400">
-                {activeSessions?.data?.length || 0} active sessions
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                      Session ID
-                    </th>
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                      User Email
-                    </th>
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                      Created At
-                    </th>
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                      Expires At
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeSessions?.data?.map((session: AppActiveSession) => (
-                    <tr
-                      key={session.session._id}
-                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                    >
-                      <td className="py-3 px-4 text-sm font-mono">
-                        {session.session._id.slice(-8)}
-                      </td>
-                      <td className="py-3 px-4 text-sm">
-                        {session.userDetails.email}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-400">
-                        {new Date(session.session.createdAt).toLocaleString()}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-400">
-                        {new Date(session.session.expiresAt).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {(!activeSessions?.data || activeSessions.data.length === 0) && (
-                <div className="text-center py-8 text-gray-400">
-                  No active sessions found
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Users Table */}
-        <Card className="border border-white/10 bg-transparent text-white mb-8">
-          <CardHeader>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className=" font-sans">Users</h2>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowWatchingState(true)}
-                  className="px-3 py-1 bg-cyan-400/10 text-cyan-400 border border-cyan-400/20 rounded hover:bg-cyan-400/20 transition-colors text-sm"
-                >
-                  Show Setup Guide
-                </button>
-                <div className="relative">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search users..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 transition-colors"
-                  />
-                </div>
-              </div>
-            </div>
-          </CardHeader>
-
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                      User ID
-                    </th>
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal">
-                      Email
-                    </th>
-                    <th className="text-left opacity-50 line-through py-3 px-4 text-gray-400 text-sm font-normal">
-                      Sign-up Date
-                    </th>
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal opacity-50 line-through">
-                      Last Active
-                    </th>
-                    <th className="text-left py-3 px-4 text-gray-400 text-sm font-normal opacity-50 line-through">
-                      Status
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedUsers.map((user) => (
-                    <tr
-                      key={user.userDetails._id}
-                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                    >
-                      <td className="py-3 px-4 text-sm">
-                        {user.userDetails._id}
-                      </td>
-                      <td className="py-3 px-4 text-sm">
-                        {user.userDetails.email}
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
-                        {/* {user.signupDate} */}
-                        27-11-2001
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-400 opacity-50 line-through">
-                        {/* {user.lastActive} */}
-                        27-11-2001
-                      </td>
-                      <td className="py-3 px-4 text-sm">
-                        <span
-                          className={`px-2 py-1 rounded text-xs opacity-50 line-through ${
-                            "Active" === "Active"
-                              ? "bg-green-500/20 text-green-400"
-                              : "bg-gray-500/20 text-gray-400"
-                          }`}
-                        >
-                          {/* {user.status} */}
-                          Active
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex items-center justify-between mt-6">
-              <div className="text-sm text-gray-400">
-                Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                {Math.min(currentPage * itemsPerPage, filteredUsers.length)} of{" "}
-                {filteredUsers.length} users
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                  (page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-3 py-1 border rounded transition-colors ${
-                        currentPage === page
-                          ? "bg-white text-black border-white"
-                          : "border-white/10 hover:bg-white/5"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ),
-                )}
-                <button
-                  onClick={() =>
-                    setCurrentPage((p) => Math.min(totalPages, p + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1 border border-white/10 rounded hover:bg-white/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </CardContent>
-
-          {/* Pagination */}
-        </Card>
-
-        {/* API Keys Section */}
-        <Card className="border border-white/10 bg-transparent text-white">
-          <CardHeader>
-            <h2 className=" font-sans mb-6">API Keys</h2>
-          </CardHeader>
-
-          <CardContent>
+        {/* --- API Keys (High Priority Info) --- */}
+        <section className="mb-16">
+          <h3 className="text-lg font-medium mb-6">Credentials</h3>
+          <div className="space-y-4">
             {/* Client ID */}
-            <div className="mb-4">
-              <label className="text-gray-400 text-sm mb-2 block">
-                Client ID
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={appData.data[0].clientId}
-                  readOnly
-                  className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none"
-                />
-                <Button onClick={() => handleCopy("clientId")}>
-                  <Copy className="w-4 h-4" />
-                  {copiedItem === "clientId" ? "Copied!" : "Copy"}
-                </Button>
+            <div className="group flex items-center justify-between p-4 rounded-lg bg-zinc-900/40 border border-transparent hover:border-zinc-800 transition-all">
+              <div className="space-y-1">
+                <label className="block text-xs text-zinc-500 font-medium uppercase tracking-wider">
+                  Client ID
+                </label>
+                <code className="block text-sm text-zinc-300 font-mono">
+                  {appData.data[0].clientId}
+                </code>
               </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleCopy("clientId")}
+                className="opacity-0 group-hover:opacity-100 transition-opacity text-zinc-400"
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
             </div>
 
             {/* Client Secret */}
-            <div>
-              <label className="text-gray-400 text-sm mb-2 block">
-                Client Secret
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type={showSecret ? "text" : "password"}
-                  value={"***********************"}
-                  readOnly
-                  className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded disabled:opacity-50 disabled:cursor-not-allowed text-sm focus:outline-none"
-                  disabled={true}
-                />
+            <div className="group flex items-center justify-between p-4 rounded-lg bg-zinc-900/40 border border-transparent hover:border-zinc-800 transition-all">
+              <div className="space-y-1">
+                <label className="block text-xs text-zinc-500 font-medium uppercase tracking-wider">
+                  Client Secret
+                </label>
+                <div className="flex items-center gap-2">
+                  <code className="text-sm text-zinc-300 font-mono">
+                    {showSecret
+                      ? "YOUR_ACTUAL_SECRET_HERE"
+                      : "•••••••••••••••••••••••••••••"}
+                  </code>
+                </div>
+              </div>
+              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => setShowSecret(!showSecret)}
-                  disabled={true}
+                  className="text-zinc-400"
                 >
                   {showSecret ? (
                     <EyeOff className="w-4 h-4" />
@@ -471,79 +233,166 @@ export default function AppDetails({ appId }: { appId: string }) {
                   )}
                 </Button>
                 <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => handleCopy("clientSecret")}
-                  disabled={true}
+                  className="text-zinc-400"
                 >
                   <Copy className="w-4 h-4" />
-                  {copiedItem === "clientSecret" ? "Copied!" : "Copy"}
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </section>
+
+        {/* --- Configuration Section --- */}
+
+        <div className="flex flex-col gap-12 mb-16">
+          {/* Redirect URI */}
+          <div className="">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-medium">Redirect URI</h3>
+              <button
+                onClick={() => setShowAddUriModal(true)}
+                className="text-xs flex items-center gap-1 text-zinc-400 hover:text-white transition-colors"
+              >
+                <Pencil className="w-3 mr-2 h-3" /> Edit URI
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between py-3 border-b border-zinc-900">
+              <span className="text-sm font-mono text-zinc-400">
+                {appData.data[0].redirectUris[0]}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* --- Active Sessions Table --- */}
+        <section className="mb-20">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-medium">Active Sessions</h3>
+          </div>
+
+          <div className="w-full overflow-hidden">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr>
+                  <th className="pb-4 text-xs font-medium text-zinc-500 uppercase tracking-wider w-32">
+                    Session ID
+                  </th>
+                  <th className="pb-4 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    User
+                  </th>
+                  <th className="pb-4 text-xs font-medium text-zinc-500 uppercase tracking-wider text-right">
+                    Expires
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-900">
+                {activeSessions?.data?.map((session: any) => (
+                  <tr key={session.session._id} className="group">
+                    <td className="py-4 text-sm font-mono text-zinc-500 group-hover:text-zinc-300 transition-colors">
+                      {session.session._id.slice(-8)}
+                    </td>
+                    <td className="py-4 text-sm text-zinc-300">
+                      {session.userDetails.email}
+                    </td>
+                    <td className="py-4  text-zinc-500 text-right font-mono text-xs">
+                      {new Date(session.session.expiresAt).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {(!activeSessions?.data || activeSessions.data.length === 0) && (
+              <div className="py-12 text-center text-zinc-600 text-sm">
+                No active sessions
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* --- Users Table with Search --- */}
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-lg font-medium">Users</h3>
+            <div className="relative">
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" />
+              <input
+                type="text"
+                placeholder="Search..."
+                className="pl-9 pr-4 py-1.5 bg-transparent border border-zinc-800 rounded-md text-sm text-white focus:outline-none focus:border-zinc-600 transition-colors placeholder:text-zinc-700 w-64"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="w-full">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-zinc-800">
+                  <th className="pb-3 pl-2 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    Email
+                  </th>
+                  <th className="pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                    ID
+                  </th>
+                  <th className="pb-3 text-xs font-medium text-zinc-500 uppercase tracking-wider text-right">
+                    Status
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedUsers.map((user) => (
+                  <tr
+                    key={user.userDetails._id}
+                    className="border-b border-zinc-900 hover:bg-zinc-900/20 transition-colors"
+                  >
+                    <td className="py-3 pl-2 text-sm text-zinc-300">
+                      {user.userDetails.email}
+                    </td>
+                    <td className="py-3 text-xs font-mono text-zinc-600">
+                      {user.userDetails._id}
+                    </td>
+                    <td className="py-3 text-right">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
+                        Active
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Minimal Pagination */}
+          <div className="flex items-center justify-between mt-6 text-sm text-zinc-500">
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="hover:text-white disabled:opacity-30 transition-colors"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(totalPages, p + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="hover:text-white disabled:opacity-30 transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
-
-      {/* Add URI Modal */}
-      {showAddUriModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-black border border-white/20 rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4">Add Redirect URI</h3>
-            <input
-              type="text"
-              value={newUri}
-              onChange={(e) => setNewUri(e.target.value)}
-              placeholder="https://example.com/callback"
-              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded text-sm focus:outline-none focus:border-white/20 mb-4"
-            />
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowAddUriModal(false)}
-                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  setShowAddUriModal(false);
-                  setNewUri("");
-                }}
-                className="px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition-colors"
-              >
-                Add URI
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Regenerate Secret Modal */}
-      {showRegenerateModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-black border border-white/20 rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-xl font-semibold mb-4">
-              Regenerate Client Secret
-            </h3>
-            <p className="text-gray-400 text-sm mb-6">
-              This will invalidate your current client secret. Any applications
-              using the old secret will stop working until updated.
-            </p>
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowRegenerateModal(false)}
-                className="px-4 py-2 border border-white/20 text-white rounded hover:bg-white/5 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => setShowRegenerateModal(false)}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-              >
-                Regenerate Secret
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

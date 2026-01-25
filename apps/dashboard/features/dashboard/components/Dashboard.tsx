@@ -32,10 +32,8 @@ const Dashboard = () => {
   const [redirectUri, setRedirectUri] = useState("");
 
   //Query
-  const { data, isLoading } = useGetUserAppsQuery();
-  const userApps = {
-    data: [],
-  };
+  const { data: userApps, isLoading } = useGetUserAppsQuery();
+
   const { data: summary } = useGetUserAppsSummaryQuery();
 
   //Mutations

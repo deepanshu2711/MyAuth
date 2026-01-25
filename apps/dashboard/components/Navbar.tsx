@@ -3,10 +3,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "@myauth/next";
 import { StickyBanner } from "@/components/ui/sticky-banner";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export const Navbar = () => {
-  const { user, logout, token } = useAuth();
-  console.log("user", user, token);
+  const { user } = useAuth();
+  console.log("user", user);
 
   return (
     <nav className="fixed top-0 w-full z-50 bg-black backdrop-blur-sm border-b border-white/10">
@@ -35,6 +36,10 @@ export const Navbar = () => {
           />
           <span className="text-lg font-medium">MyAuth</span>
         </Link>
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
       </div>
     </nav>
   );

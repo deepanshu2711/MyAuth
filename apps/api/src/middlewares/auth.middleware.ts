@@ -30,15 +30,14 @@ export const authMiddleware = async (
       return errorResponse(res, "Unauthorized", 401);
     }
 
-    // const activeSession = await Session.findOne({
-    //   accessToken: token,
-    //   expiresAt: {
-    //     $gt: new Date(),
-    //   },
-    // });
-    // console.log("active session", activeSession);
-    //
-    // if (!activeSession) throw new AppError("Expired Session", 401);
+    const activeSession = await Session.findOne({
+      accessToken: token,
+      expiresAt: {
+        $gt: new Date(),
+      },
+    });
+
+    if (!activeSession) throw new AppError("Expired Session", 401);
 
     // Verify JWT using JWKS
     const JWKS = createRemoteJWKSet(
