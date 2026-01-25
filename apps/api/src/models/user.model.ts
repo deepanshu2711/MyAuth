@@ -5,6 +5,8 @@ const userSchema = new Schema(
   {
     globalUserId: { type: String, unique: true },
     email: { type: String, required: true, trim: true },
+    name: { type: String, trim: true },
+    avatar: { type: String, trim: true },
   },
   { timestamps: true },
 );

@@ -237,8 +237,8 @@ export const me = async ({ userId }: { userId: string }) => {
   return user;
 };
 
-export const logout = async ({ refreshToken }: { refreshToken: string }) => {
-  const session = await Session.findOneAndDelete({ refreshToken });
+export const logout = async ({ accessToken }: { accessToken: string }) => {
+  const session = await Session.findOneAndDelete({ accessToken });
   if (!session) throw new AppError("session not found", 404);
   return;
 };
@@ -264,9 +264,15 @@ export const googleLogin = async (idToken: string, clientId: string) => {
   if (!OAuthUser)
     throw new AppError("Error While getting User Data from OAuth", 400);
 
-  let globalUser = await User.findOne({ email: OAuthUser.email });
+  let globalUser = await User.findOne({
+    email: OAuthUser.email,
+  });
   if (!globalUser) {
-    globalUser = await User.create({ email: OAuthUser.email });
+    globalUser = await User.create({
+      email: OAuthUser.email,
+      avatar: OAuthUser.picture,
+      name: OAuthUser.name,
+    });
     await publisher.publishCreateUser({ data: globalUser });
   }
 

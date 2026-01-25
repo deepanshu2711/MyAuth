@@ -44,7 +44,7 @@ export const logOut = async (data: LogoutType) => {
   const res = await axios.post(
     `${data.apiBaseUrl}/api/auth/logout`,
     {
-      refreshToken: data.token,
+      accessToken: data.token,
     },
     {
       headers: {
