@@ -1,8 +1,9 @@
-import { rotateToken, verifyToken } from "@myauth/node";
+import { verifyToken } from "@myauth/node";
 import { cookies, headers } from "next/headers.js";
 import { config } from "../config.js";
+import type { Session, User } from "../types.js";
 
-export const auth = async () => {
+export const auth = async (): Promise<Session | null> => {
   const cookieStore = await cookies();
   const headerList = await headers();
 
@@ -13,7 +14,7 @@ export const auth = async () => {
   if (!token) return null;
 
   try {
-    const user = await verifyToken({
+    const user: User | null = await verifyToken({
       token,
       apiBaseUrl: config.apiBaseUrl,
     });
