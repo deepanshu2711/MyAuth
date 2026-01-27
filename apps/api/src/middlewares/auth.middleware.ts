@@ -7,7 +7,7 @@ import { AppError } from "../utils/appError.js";
 declare global {
   namespace Express {
     interface Request {
-      user?: { userId: string; appId: string };
+      user?: { userId: string; appId: string; globalUserId: string };
     }
   }
 }
@@ -50,6 +50,7 @@ export const authMiddleware = async (
     req.user = {
       userId: payload.userId as string,
       appId: payload.appId as string,
+      globalUserId: payload.globalUserId as string,
     };
     next();
   } catch (err: any) {
