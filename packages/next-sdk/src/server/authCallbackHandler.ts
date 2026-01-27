@@ -1,16 +1,14 @@
 import { MyAuth } from "@myauth/node";
 import { NextResponse, type NextRequest } from "next/server.js";
+import { config } from "../config.js";
 
-export function createAuthCallbackHandler(config: {
+export function createAuthCallbackHandler(handlerConfig: {
   clientId: string;
   clientSecret: string;
 }) {
-  const API_BASE_URL = "http://localhost:5005";
-  // const API_BASE_URL = "https://auth-api.deepxdev.com";
-
   const myAuth = new MyAuth({
-    ...config,
-    apiBaseUrl: API_BASE_URL,
+    ...handlerConfig,
+    apiBaseUrl: config.apiBaseUrl,
   });
 
   return async function POST(req: NextRequest) {

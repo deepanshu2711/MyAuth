@@ -1,11 +1,10 @@
 import { rotateToken, verifyToken } from "@myauth/node";
 import { cookies, headers } from "next/headers.js";
+import { config } from "../config.js";
 
 export const auth = async () => {
   const cookieStore = await cookies();
   const headerList = await headers();
-  const API_BASE_URL = "http://localhost:5005";
-  // const API_BASE_URL = "https://auth-api.deepxdev.com";
 
   const token =
     cookieStore.get("accessToken")?.value ??
@@ -16,7 +15,7 @@ export const auth = async () => {
   try {
     const user = await verifyToken({
       token,
-      apiBaseUrl: API_BASE_URL,
+      apiBaseUrl: config.apiBaseUrl,
     });
 
     return { user, token };

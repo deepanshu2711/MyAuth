@@ -1,14 +1,10 @@
 import { rotateToken, verifyToken } from "@myauth/node";
 import { NextResponse, type NextRequest } from "next/server.js";
+import { config } from "../config.js";
 
-export function withAuthMiddleware(clientId: String) {
-  const AUTH_PORTAL_BASE_URL = "http://localhost:3001";
-  // const AUTH_PORTAL_BASE_URL = "https://auth.deepxdev.com";
-  //const API_BASE_URL = "https://auth-api.deepxdev.com";
-  const API_BASE_URL = "http://localhost:5005";
-
-  const redirectTo = `${AUTH_PORTAL_BASE_URL}/login?clientId=${clientId}`;
-  const apiBaseUrl = API_BASE_URL;
+export function withAuthMiddleware(clientId: string) {
+  const redirectTo = `${config.authPortalBaseUrl}/login?clientId=${clientId}`;
+  const apiBaseUrl = config.apiBaseUrl;
 
   return async function proxy(req: NextRequest) {
     const token = req.cookies.get("accessToken")?.value;
@@ -30,7 +26,7 @@ export function withAuthMiddleware(clientId: String) {
 
         const result = await rotateToken({
           token: refreshToken as string,
-          apiBaseUrl: API_BASE_URL,
+          apiBaseUrl: config.apiBaseUrl,
         });
 
         const res = NextResponse.next();
