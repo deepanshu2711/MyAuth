@@ -1,6 +1,8 @@
 import crypto, { generateKeyPairSync } from "crypto";
 import jwt from "jsonwebtoken";
 import { SignInKey } from "../models/signingkey.model.js";
+import { User } from "../models/user.model.js";
+import { AppError } from "./appError.js";
 
 export type AsyncRouteHandler = (...args: any[]) => Promise<any> | any;
 
@@ -32,12 +34,18 @@ export const generateAccessToken = async (
   if (!signingKey || !signingKey.isActive) {
     throw new Error("Invalid signing key");
   }
-  return jwt.sign({ userId, appId }, signingKey.privateKey, {
-    algorithm: "RS256",
-    expiresIn: "10m",
-    issuer: "https://auth.deepxdev.com",
-    keyid: signingKey._id.toString(),
-  });
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("user not found", 400);
+  return jwt.sign(
+    { userId, appId, globalUserId: user.globalUserId },
+    signingKey.privateKey,
+    {
+      algorithm: "RS256",
+      expiresIn: "10m",
+      issuer: "https://auth.deepxdev.com",
+      keyid: signingKey._id.toString(),
+    },
+  );
 };
 
 export const generateRefreshToken = async (
@@ -50,12 +58,19 @@ export const generateRefreshToken = async (
     throw new Error("Invalid signing key");
   }
 
-  return jwt.sign({ userId, appId }, signingKey.privateKey, {
-    algorithm: "RS256",
-    expiresIn: "14d",
-    issuer: "https://auth.deepxdev.com",
-    keyid: signingKey._id.toString(),
-  });
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("user not found", 400);
+
+  return jwt.sign(
+    { userId, appId, globalUserId: user.globalUserId },
+    signingKey.privateKey,
+    {
+      algorithm: "RS256",
+      expiresIn: "14d",
+      issuer: "https://auth.deepxdev.com",
+      keyid: signingKey._id.toString(),
+    },
+  );
 };
 
 export const generateKeyPairSyncForSigningKey = () => {
