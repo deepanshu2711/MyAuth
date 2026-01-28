@@ -1,6 +1,7 @@
 import { App } from "../../models/app.model.js";
 import { MemberShip } from "../../models/membership.model.js";
 import { SignInKey } from "../../models/signingkey.model.js";
+import { AppError } from "../../utils/appError.js";
 import {
   generateClientId,
   generateClientSecret,
@@ -64,6 +65,22 @@ export const getAppDetails = async ({ appId }: { appId: string }) => {
 export const getAppActiveSessions = async ({ appId }: { appId: string }) => {
   const data = await App.aggregate(AppPipeline.getAppActiveSessions(appId));
   return data;
+};
+
+export const getAppSecret = async ({
+  appId,
+  userId,
+}: {
+  appId: string;
+  userId: string;
+}) => {
+  const app = await App.findById(appId);
+  if (!app) throw new AppError("App not found", 404);
+
+  if (app.ownerId.toString() !== userId)
+    throw new AppError("App does not belong to this user", 400);
+
+  return app.clientSecret;
 };
 
 export const deleteApp = async ({ appId }: { appId: string }) => {

@@ -8,7 +8,7 @@ appsRouter.get("/summary", AppsController.getSummary);
 appsRouter.get("/users/:appId", AppsController.getAppUsers);
 appsRouter.get("/sessions/:appId", AppsController.getAppActiveSessions);
 appsRouter.get("/:appId", AppsController.getAppDetails);
+appsRouter.get("/get-secret/:appId", AppsController.getAppSecret);
 
 appsRouter.post("/register", AppsController.register);
-
 appsRouter.delete("/:appId", AppsController.deleteApp);

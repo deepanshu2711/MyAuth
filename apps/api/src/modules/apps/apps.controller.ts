@@ -48,6 +48,18 @@ export const getAppActiveSessions = asyncHandler(
   },
 );
 
+export const getAppSecret = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { appId } = req.params;
+    const user = req.user;
+    const data = await AppService.getAppSecret({
+      appId: appId!,
+      userId: user?.userId!,
+    });
+    return successResponse(res, data);
+  },
+);
+
 export const deleteApp = asyncHandler(async (req, res) => {
   const { appId } = req.params;
   const data = await AppService.deleteApp({ appId });
