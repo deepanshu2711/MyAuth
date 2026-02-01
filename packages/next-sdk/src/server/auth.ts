@@ -42,8 +42,9 @@ export const auth = async (): Promise<Session | null> => {
       });
 
       return { user, token: result.accessToken };
-    } catch (err) {}
-    console.log("errror", e);
-    return null;
+    } catch (err) {
+      console.log("errror", e);
+      return null;
+    }
   }
 };

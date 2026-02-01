@@ -5,11 +5,12 @@ import { useState } from "react";
 
 import { useLoginMutation } from "../hooks/mutation/useLoginMutation";
 import Link from "next/link";
-import { GoogleLogin, useGoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import api from "../../../lib/api";
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 import Image from "next/image";
 import { AuthService } from "../service";
+import { useLoginByOTPMutation } from "../hooks/mutation/useLoginByOtpMutation";
 
 const Login = () => {
   const searchParams = useSearchParams();
@@ -17,13 +18,63 @@ const Login = () => {
   const redirected_uri = searchParams.get("redirect_uri");
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password] = useState("");
+  const [showOtp, setShowOtp] = useState(false);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
   const { mutate: login, isPending: isLoading } = useLoginMutation();
+  const { mutate: loginByOtp } = useLoginByOTPMutation();
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginByOtp(
+      { email, clientId: clientId as string },
+      {
+        onSuccess: () => {
+          setShowOtp(true);
+        },
+      },
+    );
+  };
+
+  const handleOtpChange = (index: number, value: string) => {
+    if (value.length <= 1) {
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+
+      if (value && index < 5) {
+        const nextInput = document.getElementById(`otp-${index + 1}`);
+        if (nextInput) {
+          (nextInput as HTMLInputElement).focus();
+        }
+      }
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      if (prevInput) {
+        (prevInput as HTMLInputElement).focus();
+      }
+    }
+  };
+
+  const handleOtpSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Update login mutation to accept OTP
+    login({
+      email,
+      password,
+      clientId: clientId as string,
+      redirect_uri: redirected_uri as string,
+    });
+  };
 
   const googleLogin = useGoogleLogin({
     flow: "auth-code",
-    onSuccess: async ({ code }: any) => {
+    onSuccess: async ({ code }: { code: string }) => {
       const response = await api.post("/auth/google", {
         idToken: code,
         clientId: clientId,
@@ -142,99 +193,150 @@ const Login = () => {
             </div>
 
             {/* Sign-in Form */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                login({
-                  email,
-                  password,
-                  clientId: clientId as string,
-                  redirect_uri: redirected_uri as string,
-                });
-              }}
-              className="space-y-5"
-            >
-              {/* Email Input */}
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-xs font-medium text-slate-300 mb-2"
+            {!showOtp ? (
+              <form onSubmit={handleEmailSubmit} className="space-y-5">
+                {/* Email Input */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-xs font-medium text-slate-300 mb-2"
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-2 py-1 border border-gray-500/50 text-sm rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+
+                {/* Sign In Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading || !email}
+                  className="w-full px-2 py-2 text-sm border border-gray-600 bg-[#846bff] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                 >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-2 py-1 border border-gray-500/50 text-sm  rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
+                  {isLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span>Sending OTP...</span>
+                    </>
+                  ) : (
+                    "Sign In with OTP"
+                  )}
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleOtpSubmit} className="space-y-5">
+                {/* OTP Instructions */}
+                <div className="text-center mb-4">
+                  <p className="text-slate-400 text-sm">
+                    Enter the 6-digit code sent to
+                  </p>
+                  <p className="text-white font-medium">{email}</p>
+                </div>
 
-              {/* Password Input */}
-              {/* <div> */}
-              {/*   <label */}
-              {/*     htmlFor="password" */}
-              {/*     className="block text-xs font-medium text-slate-300 mb-2" */}
-              {/*   > */}
-              {/*     Password */}
-              {/*   </label> */}
-              {/*   <input */}
-              {/*     type="password" */}
-              {/*     id="password" */}
-              {/*     value={password} */}
-              {/*     onChange={(e) => setPassword(e.target.value)} */}
-              {/*     className="w-full px-2 text-sm py-1 border border-gray-500/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all" */}
-              {/*     placeholder="••••••••" */}
-              {/*     required */}
-              {/*   /> */}
-              {/*   <div className="mt-2 text-right"> */}
-              {/*     <a */}
-              {/*       href="#" */}
-              {/*       className="text-xs text-[#846bff]  transition-colors " */}
-              {/*     > */}
-              {/*       Forgot password? */}
-              {/*     </a> */}
-              {/*   </div> */}
-              {/* </div> */}
+                {/* OTP Input Fields */}
+                <div className="flex justify-center gap-2">
+                  {otp.map((digit, index) => (
+                    <input
+                      key={index}
+                      id={`otp-${index}`}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      className="w-10 h-12 text-center text-lg font-semibold border border-gray-500/50 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent transition-all"
+                      placeholder="0"
+                      required
+                    />
+                  ))}
+                </div>
 
-              {/* Sign In Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full px-2 py-2 text-sm border border-gray-600 bg-[#846bff]  text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  "Sign In"
-                )}
-              </button>
-            </form>
+                {/* Resend OTP */}
+                <div className="text-center">
+                  <button
+                    type="button"
+                    className="text-xs text-slate-400 hover:text-white transition-colors"
+                  >
+                    Didn&apos;t receive the code? Resend
+                  </button>
+                </div>
+
+                {/* Verify OTP Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading || otp.some((digit) => digit === "")}
+                  className="w-full px-2 py-2 text-sm border border-gray-600 bg-[#846bff] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-purple-500/50 transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span>Verifying...</span>
+                    </>
+                  ) : (
+                    "Verify OTP"
+                  )}
+                </button>
+
+                {/* Back to Email */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowOtp(false);
+                    setOtp(["", "", "", "", "", ""]);
+                  }}
+                  className="w-full px-2 py-2 text-sm border border-gray-500/50 bg-transparent text-slate-400 font-medium rounded-lg hover:bg-white/5 hover:text-white transition-all"
+                >
+                  Back to Email
+                </button>
+              </form>
+            )}
             {/* Divider */}
             {/* OAuth Buttons */}
           </div>

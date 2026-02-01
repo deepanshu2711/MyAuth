@@ -1,11 +1,13 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import axios from "axios";
 
 import { AppError } from "../../utils/appError.js";
 import { User } from "../../models/user.model.js";
 import { Session } from "../../models/session.model.js";
 import {
   generateAccessToken,
+  generateOTP,
   generateRefreshToken,
 } from "../../utils/helpers.js";
 import { App } from "../../models/app.model.js";
@@ -136,6 +138,46 @@ export const loginUser = async ({
   redirectUrl.searchParams.set("code", code);
 
   return redirectUrl;
+};
+
+export const LoginByOtp = async ({
+  email,
+  clientId,
+}: {
+  email: string;
+  clientId: string;
+}) => {
+  const app = await App.findOne({ clientId });
+  if (!app) throw new AppError("App does not exists", 404);
+
+  const globalUser = await User.findOne({ email });
+  if (!globalUser)
+    throw new AppError("User with this email does not exists", 401);
+
+  const otp = generateOTP();
+
+  //NOTE: send email now form AINS
+  const payload = {
+    projectId: "697cc150381a405e5869a1fb",
+    globalUserId: "USR-1cdb235b",
+    to: [
+      {
+        channel: "email",
+        destination: email,
+      },
+    ],
+    priority: "high",
+    templateId: "697e1e62fcdd615d11101421",
+    variables: {
+      OTP: otp,
+    },
+  };
+
+  const response = await axios.post(
+    "http://localhost:5001/api/v1/notification/send",
+    payload,
+  );
+  return;
 };
 
 export const getTokens = async ({

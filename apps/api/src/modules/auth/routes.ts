@@ -8,7 +8,13 @@ authRouter.get("/me", authMiddleware, AuthController.getCurrentLoggedInUser);
 authRouter.get("/verify", authMiddleware, AuthController.verify);
 
 authRouter.post("/register", AuthController.register);
+
+//NOTE: depreciated
 authRouter.post("/login", AuthController.login);
+
+//NOTE: new login-by-otp
+authRouter.post("/login-by-otp", AuthController.loginByOtp);
+
 authRouter.post("/token", AuthController.getTokens);
 authRouter.post("/refresh/token", AuthController.refreshToken);
 authRouter.post("/logout", authMiddleware, AuthController.logout);

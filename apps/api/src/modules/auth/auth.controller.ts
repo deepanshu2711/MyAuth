@@ -27,6 +27,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   return successResponse(res, redirectUrl);
 });
 
+export const loginByOtp = asyncHandler(async (req: Request, res: Response) => {
+  const { email, clientId } = req.body;
+  await AuthService.LoginByOtp({ email, clientId });
+  return successResponse(res, "email sent successfully to your email address");
+});
+
 export const getTokens = asyncHandler(async (req: Request, res: Response) => {
   const { clientId, clientSecret, code } = req.body;
   const data = await AuthService.getTokens({ clientId, clientSecret, code });
