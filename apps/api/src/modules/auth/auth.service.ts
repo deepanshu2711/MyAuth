@@ -303,8 +303,21 @@ export const refreshToken = async ({
 };
 
 export const verify = async ({ userId }: { userId: string }) => {
-  const user = await User.findById(userId);
+  const cacheKey = `user:${userId}`;
+
+  const cachedUser = await redis.get(cacheKey);
+
+  if (cachedUser) {
+    return JSON.parse(cachedUser);
+  }
+
+  const user = await User.findById(userId).lean();
   if (!user) throw new AppError("user not found", 404);
+
+  await redis.set(cacheKey, JSON.stringify(user), {
+    EX: 60,
+  });
+
   return user;
 };
 

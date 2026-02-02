@@ -1,8 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { errorResponse } from "../utils/responses.js";
 import { createRemoteJWKSet, jwtVerify } from "jose";
-import { Session } from "../models/session.model.js";
-import { AppError } from "../utils/appError.js";
+import { redis } from "../utils/redis.js";
 
 declare global {
   namespace Express {
@@ -38,14 +37,8 @@ export const authMiddleware = async (
       issuer: "https://auth.deepxdev.com",
     });
 
-    const activeSession = await Session.findOne({
-      accessToken: token,
-      expiresAt: {
-        $gt: new Date(),
-      },
-    }).lean();
-
-    if (!activeSession) throw new AppError("Expired Session", 401);
+    const revoked = await redis.get(`revoked:${payload.jti}`);
+    if (revoked) return res.status(401).json({ code: "TOKEN_REVOKED" });
 
     req.user = {
       userId: payload.userId as string,

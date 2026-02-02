@@ -1,4 +1,4 @@
-import crypto, { generateKeyPairSync } from "crypto";
+import crypto, { generateKeyPairSync, randomUUID } from "crypto";
 import jwt from "jsonwebtoken";
 import { SignInKey } from "../models/signingkey.model.js";
 import { User } from "../models/user.model.js";
@@ -36,8 +36,11 @@ export const generateAccessToken = async (
   }
   const user = await User.findById(userId);
   if (!user) throw new AppError("user not found", 400);
+
+  const jti = randomUUID();
+
   return jwt.sign(
-    { userId, appId, globalUserId: user.globalUserId },
+    { userId, appId, globalUserId: user.globalUserId, jti },
     signingKey.privateKey,
     {
       algorithm: "RS256",
@@ -61,8 +64,10 @@ export const generateRefreshToken = async (
   const user = await User.findById(userId);
   if (!user) throw new AppError("user not found", 400);
 
+  const jti = randomUUID();
+
   return jwt.sign(
-    { userId, appId, globalUserId: user.globalUserId },
+    { userId, appId, globalUserId: user.globalUserId, jti },
     signingKey.privateKey,
     {
       algorithm: "RS256",
