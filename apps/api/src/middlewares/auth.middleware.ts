@@ -12,6 +12,10 @@ declare global {
   }
 }
 
+const JWKS = createRemoteJWKSet(
+  new URL("https://auth-api.deepxdev.com/.well-known/jwks.json"),
+);
+
 export const authMiddleware = async (
   req: Request,
   res: Response,
@@ -30,22 +34,18 @@ export const authMiddleware = async (
       return errorResponse(res, "Unauthorized", 401);
     }
 
+    const { payload } = await jwtVerify(token, JWKS, {
+      issuer: "https://auth.deepxdev.com",
+    });
+
     const activeSession = await Session.findOne({
       accessToken: token,
       expiresAt: {
         $gt: new Date(),
       },
-    });
+    }).lean();
 
     if (!activeSession) throw new AppError("Expired Session", 401);
-
-    // Verify JWT using JWKS
-    const JWKS = createRemoteJWKSet(
-      new URL("https://auth-api.deepxdev.com/.well-known/jwks.json"),
-    );
-    const { payload } = await jwtVerify(token, JWKS, {
-      issuer: "https://auth.deepxdev.com",
-    });
 
     req.user = {
       userId: payload.userId as string,
