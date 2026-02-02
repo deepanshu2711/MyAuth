@@ -17,6 +17,8 @@ import { RabbitMQPublisher } from "../../utils/rabbitmq/publisher.js";
 import { OAuthClient } from "../../lib/OAuthClient.js";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Types } from "mongoose";
+import { sendEmail } from "../../utils/sendEmail.js";
+import { redis } from "../../utils/redis.js";
 
 const publisher = new RabbitMQPublisher();
 
@@ -154,30 +156,63 @@ export const LoginByOtp = async ({
   if (!globalUser)
     throw new AppError("User with this email does not exists", 401);
 
+  const membership = await MemberShip.findOne({
+    userId: globalUser._id,
+    appId: app._id,
+  });
+
+  if (!membership) throw new AppError("No account find with this email", 404);
+
   const otp = generateOTP();
 
-  //NOTE: send email now form AINS
-  const payload = {
-    projectId: "697cc150381a405e5869a1fb",
-    globalUserId: "USR-1cdb235b",
-    to: [
-      {
-        channel: "email",
-        destination: email,
-      },
-    ],
-    priority: "high",
-    templateId: "697e1e62fcdd615d11101421",
-    variables: {
-      OTP: otp,
-    },
-  };
+  const key = `otp:login:${clientId}:${email}`;
 
-  const response = await axios.post(
-    "http://localhost:5001/api/v1/notification/send",
-    payload,
-  );
+  await redis.set(key, otp, { expiration: { type: "EX", value: 300 } });
+  await sendEmail({
+    to: email,
+    subject: "Login Otp",
+    text: `Hi, this is your otp: ${otp}`,
+  });
+
   return;
+};
+
+export const verifyOtp = async ({
+  otp,
+  email,
+  clientId,
+}: {
+  otp: string;
+  email: string;
+  clientId: string;
+}) => {
+  const app = await App.findOne({ clientId });
+  if (!app) throw new AppError("App does not exists", 404);
+
+  const globalUser = await User.findOne({ email });
+  if (!globalUser)
+    throw new AppError("User with this email does not exists", 401);
+
+  const key = `otp:login:${clientId}:${email}`;
+  const storedOtp = await redis.get("key");
+  if (!storedOtp) throw new AppError("OTP expired or invalid", 400);
+
+  if (storedOtp !== otp) throw new AppError("Invalid OTP", 400);
+  await redis.del(key);
+
+  const code = crypto.randomBytes(32).toString("hex");
+  await AuthorizationCode.create({
+    code,
+    clientId,
+    userId: globalUser._id,
+    redirectUri: app.redirectUris[0]!,
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+  });
+
+  const redirectUrl = new URL(app.redirectUris[0]!);
+  redirectUrl.searchParams.set("code", code);
+
+  return redirectUrl;
 };
 
 export const getTokens = async ({
