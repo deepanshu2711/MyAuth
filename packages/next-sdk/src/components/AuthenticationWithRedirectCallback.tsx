@@ -25,7 +25,7 @@ export const AuthenticateWithRedirectCallback = () => {
           throw new Error(`Authentication failed: ${response.status}`);
         }
         if (response.status === 200) {
-          router.push("/");
+          window.location.replace("/");
         } else {
           throw new Error("No access token received");
         }
