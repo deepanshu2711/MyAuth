@@ -11,6 +11,15 @@ export const exchangeCode = async (data: ExchangeCodeType) => {
   return res.data.data;
 };
 
+export const getCurrentLoggedInUser = async (data: VerifyTokenType) => {
+  const res = await axios.get(`${data.apiBaseUrl}/api/auth/me`, {
+    headers: {
+      Authorization: `Bearer ${data.token}`,
+    },
+  });
+  return res.data.data;
+};
+
 export const verifyToken = async (data: VerifyTokenType) => {
   const res = await axios.get(`${data.apiBaseUrl}/api/auth/verify`, {
     headers: {

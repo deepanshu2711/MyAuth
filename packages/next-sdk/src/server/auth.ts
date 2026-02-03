@@ -1,4 +1,4 @@
-import { rotateToken, verifyToken } from "@myauth/node";
+import { getCurrentLoggedInUser, rotateToken, verifyToken } from "@myauth/node";
 import { cookies, headers } from "next/headers.js";
 import { config } from "../config.js";
 import type { Session, User } from "../types.js";
@@ -14,7 +14,7 @@ export const auth = async (): Promise<Session | null> => {
   if (!token) return null;
 
   try {
-    const user: User | null = await verifyToken({
+    const user: User | null = await getCurrentLoggedInUser({
       token,
       apiBaseUrl: config.apiBaseUrl,
     });

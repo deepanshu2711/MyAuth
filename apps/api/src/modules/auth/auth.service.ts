@@ -302,16 +302,15 @@ export const refreshToken = async ({
   };
 };
 
-export const verify = async ({ userId }: { userId: string }) => {
+export const me = async ({ userId }: { userId: string }) => {
   const cacheKey = `user:${userId}`;
-
   const cachedUser = await redis.get(cacheKey);
 
   if (cachedUser) {
     return JSON.parse(cachedUser);
   }
 
-  const user = await User.findById(userId).lean();
+  const user = await User.findById(userId);
   if (!user) throw new AppError("user not found", 404);
 
   await redis.set(cacheKey, JSON.stringify(user), {
@@ -321,13 +320,16 @@ export const verify = async ({ userId }: { userId: string }) => {
   return user;
 };
 
-export const me = async ({ userId }: { userId: string }) => {
-  const user = await User.findById(userId);
-  if (!user) throw new AppError("user not found", 404);
-  return user;
-};
-
-export const logout = async ({ accessToken }: { accessToken: string }) => {
+export const logout = async ({
+  accessToken,
+  jti,
+}: {
+  accessToken: string;
+  jti: string;
+}) => {
+  await redis.set(`revoked:${jti}`, "1", {
+    expiration: { type: "EX", value: 602 },
+  });
   const session = await Session.findOneAndDelete({ accessToken });
   if (!session) throw new AppError("session not found", 404);
   return;

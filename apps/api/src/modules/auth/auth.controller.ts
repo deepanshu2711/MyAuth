@@ -48,9 +48,10 @@ export const refreshToken = asyncHandler(
 );
 
 export const verify = asyncHandler(async (req: Request, res: Response) => {
+  //NOTE: verify route should only verify the token and return the payload no db req to get current logged in user
   const user = req.user;
-  const data = await AuthService.verify({ userId: user?.userId! });
-  return successResponse(res, data);
+  //  const data = await AuthService.verify({ userId: user?.userId! });
+  return successResponse(res, user);
 });
 
 export const getCurrentLoggedInUser = async (req: Request, res: Response) => {
@@ -63,8 +64,14 @@ export const getCurrentLoggedInUser = async (req: Request, res: Response) => {
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   const { accessToken } = req.body;
+  const user = req.user;
+
   if (!accessToken) throw new AppError("No accessToken token provided", 400);
-  const data = await AuthService.logout({ accessToken });
+  const data = await AuthService.logout({
+    accessToken,
+    jti: user?.jti as string,
+  });
+
   res.clearCookie("refreshToken");
   res.clearCookie("accessToken");
   return successResponse(res, data);

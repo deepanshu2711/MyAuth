@@ -6,7 +6,12 @@ import { redis } from "../utils/redis.js";
 declare global {
   namespace Express {
     interface Request {
-      user?: { userId: string; appId: string; globalUserId: string };
+      user?: {
+        userId: string;
+        appId: string;
+        globalUserId: string;
+        jti: string;
+      };
     }
   }
 }
@@ -44,6 +49,7 @@ export const authMiddleware = async (
       userId: payload.userId as string,
       appId: payload.appId as string,
       globalUserId: payload.globalUserId as string,
+      jti: payload.jti as string,
     };
     next();
   } catch (err: any) {
