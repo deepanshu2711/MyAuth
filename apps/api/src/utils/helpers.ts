@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import { AppError } from "./appError.js";
 import { App } from "../models/app.model.js";
 import bcrypt from "bcryptjs";
+import type { Request } from "express";
 
 export type AsyncRouteHandler = (...args: any[]) => Promise<any> | any;
 
@@ -129,4 +130,15 @@ export async function verifyClientSecret(
   }
 
   return { valid: true, app };
+}
+
+export function getClientIp(req: Request) {
+  // Express trusted proxy IP
+  let ip = req.ip;
+
+  // Normalize IPv6 localhost / mapped IPv4
+  if (ip === "::1") ip = "127.0.0.1";
+  if (ip?.startsWith("::ffff:")) ip = ip.replace("::ffff:", "");
+
+  return ip;
 }

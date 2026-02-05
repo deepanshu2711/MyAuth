@@ -26,12 +26,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^5.1.0",
+    "geoip-lite": "^1.4.10",
     "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.2",
+    "maxmind": "^5.0.5",
     "mongoose": "^8.19.2",
     "nodemailer": "^7.0.13",
     "redis": "^5.10.0",
-    "tsx": "^4.20.6"
+    "tsx": "^4.20.6",
+    "ua-parser-js": "^2.0.9"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.8",
