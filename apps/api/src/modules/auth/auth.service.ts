@@ -9,6 +9,7 @@ import {
   generateAccessToken,
   generateOTP,
   generateRefreshToken,
+  verifyClientSecret,
 } from "../../utils/helpers.js";
 import { App } from "../../models/app.model.js";
 import { MemberShip } from "../../models/membership.model.js";
@@ -224,7 +225,11 @@ export const getTokens = async ({
   clientSecret: string;
   code: string;
 }) => {
-  const app = await App.findOne({ clientId, clientSecret });
+  const { app, valid, reason } = await verifyClientSecret(
+    clientId,
+    clientSecret,
+  );
+  if (!valid) throw new AppError(reason!, 400);
   if (!app) throw new AppError("App does not exists", 404);
 
   const authorizationCode = await AuthorizationCode.findOne({ code, clientId });

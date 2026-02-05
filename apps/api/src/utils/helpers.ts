@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { SignInKey } from "../models/signingkey.model.js";
 import { User } from "../models/user.model.js";
 import { AppError } from "./appError.js";
+import { App } from "../models/app.model.js";
+import bcrypt from "bcryptjs";
 
 export type AsyncRouteHandler = (...args: any[]) => Promise<any> | any;
 
@@ -109,3 +111,22 @@ export const generateOTP = (length = 6): string => {
 
   return otp;
 };
+
+export async function verifyClientSecret(
+  clientId: string,
+  providedClientSecret: string,
+) {
+  const app = await App.findOne({ clientId });
+
+  if (!app) {
+    return { valid: false, reason: "App not found" };
+  }
+
+  const isValid = await bcrypt.compare(providedClientSecret, app.clientSecret);
+
+  if (!isValid) {
+    return { valid: false, reason: "Invalid client secret" };
+  }
+
+  return { valid: true, app };
+}

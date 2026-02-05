@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcrypt";
 
 const appSchema = new Schema(
   {
@@ -20,5 +21,11 @@ const appSchema = new Schema(
   },
   { timestamps: true },
 );
+
+//use HMAC later
+appSchema.pre("save", async function (next) {
+  if (!this.isModified("clientSecret")) return next();
+  this.clientSecret = await bcrypt.hash(this.clientSecret, 12);
+});
 
 export const App = mongoose.model("app", appSchema);
