@@ -14,6 +14,7 @@ authRouter.post("/login", AuthController.login);
 
 //NOTE: new login-by-otp
 authRouter.post("/login-by-otp", AuthController.loginByOtp);
+authRouter.post("/verify-login-by-otp", AuthController.VerifyLoginByOtp);
 
 authRouter.post("/token", AuthController.getTokens);
 authRouter.post("/refresh/token", AuthController.refreshToken);

@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { AppError } from "./appError.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 interface EmailOptions {
   to: string;
@@ -13,12 +15,14 @@ class EmailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "localhost",
-      port: parseInt(process.env.SMTP_PORT || "587"),
-      secure: process.env.SMTP_SECURE === "true",
+      service: "gmail",
       auth: {
-        user: process.env.SMTP_USER,
+        user: process.env.SMTP_EMAIL,
         pass: process.env.SMTP_PASS,
+      },
+      secure: true,
+      tls: {
+        rejectUnauthorized: false,
       },
     });
   }
@@ -26,7 +30,7 @@ class EmailService {
   async sendEmail(options: EmailOptions) {
     try {
       const mailOptions = {
-        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        from: process.env.SMTP_EMAIL,
         to: options.to,
         subject: options.subject,
         html: options.html,
