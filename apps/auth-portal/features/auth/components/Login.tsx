@@ -11,6 +11,7 @@ import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect
 import Image from "next/image";
 import { AuthService } from "../service";
 import { useLoginByOTPMutation } from "../hooks/mutation/useLoginByOtpMutation";
+import { useVeirfyOtpMutation } from "../hooks/mutation/useVerifyOtpMutation";
 
 const Login = () => {
   const searchParams = useSearchParams();
@@ -22,8 +23,10 @@ const Login = () => {
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
-  const { mutate: login, isPending: isLoading } = useLoginMutation();
-  const { mutate: loginByOtp } = useLoginByOTPMutation();
+  const { mutate: login } = useLoginMutation();
+  const { mutate: loginByOtp, isPending: isLoading } = useLoginByOTPMutation();
+  const { mutate: verifyOtp, isPending: isVeiriyingOtp } =
+    useVeirfyOtpMutation();
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,12 +67,14 @@ const Login = () => {
   const handleOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Update login mutation to accept OTP
-    login({
-      email,
-      password,
-      clientId: clientId as string,
-      redirect_uri: redirected_uri as string,
-    });
+    const otpValue = otp.join("");
+    verifyOtp({ email, clientId: clientId as string, otp: otpValue });
+    // login({
+    //   email,
+    //   password,
+    //   clientId: clientId as string,
+    //   redirect_uri: redirected_uri as string,
+    // });
   };
 
   const googleLogin = useGoogleLogin({

@@ -195,7 +195,7 @@ export const verifyOtp = async ({
     throw new AppError("User with this email does not exists", 401);
 
   const key = `otp:login:${clientId}:${email}`;
-  const storedOtp = await redis.get("key");
+  const storedOtp = await redis.get(key);
   if (!storedOtp) throw new AppError("OTP expired or invalid", 400);
 
   if (storedOtp !== otp) throw new AppError("Invalid OTP", 400);
