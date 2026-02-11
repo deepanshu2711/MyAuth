@@ -9,6 +9,7 @@ import { authMiddleware } from "./middlewares/auth.middleware.js";
 import { SignInKey } from "./models/signingkey.model.js";
 import { pemTOJwk } from "./utils/pemToJwk.js";
 import { trackVisitor } from "./middlewares/trackvisitors.middleware.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
 dotenv.config();
 
 export const app = express();
@@ -53,3 +54,5 @@ app.use("/.well-known/jwks.json", async (req, res) => {
   );
   res.json({ keys: jwks });
 });
+
+app.use(errorMiddleware);
