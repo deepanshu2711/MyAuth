@@ -77,10 +77,13 @@ export const getAppSecret = async ({
   const app = await App.findById(appId);
   if (!app) throw new AppError("App not found", 404);
 
-  if (app.ownerId.toString() !== userId)
-    throw new AppError("App does not belong to this user", 400);
+  if (app.ownerId.toString() !== userId) throw new AppError("Forbidden", 403);
 
-  return app.clientSecret;
+  const clientSecret = generateClientSecret();
+  app.clientSecret = clientSecret;
+  await app.save();
+
+  return clientSecret;
 };
 
 export const deleteApp = async ({ appId }: { appId: string }) => {
