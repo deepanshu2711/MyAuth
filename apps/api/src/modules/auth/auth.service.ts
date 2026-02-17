@@ -275,35 +275,47 @@ export const refreshToken = async ({
 
   const clientId = payload.appId as string;
 
+  console.log("Looking for session with token:", refreshToken);
+  console.log("Token length:", refreshToken.length);
   const session = await Session.findOne({
     refreshToken,
     expiresAt: { $gt: new Date() },
+    revokedAt: null,
   });
+
+  console.log("Found session:", session);
 
   if (!session) throw new AppError("Invalid refresh token", 401);
 
   const app = await App.findOne({ clientId });
   if (!app) throw new AppError("App does not exists", 404);
 
-  session.accessToken = await generateAccessToken(
-    session.userId.toString(),
-    clientId,
-    String(app.signingKeyId),
-  );
-
-  session.refreshToken = await generateRefreshToken(
-    session.userId.toString(),
-    clientId,
-    String(app.signingKeyId),
-  );
-
   session.revokedAt = new Date();
-
   await session.save();
 
+  const accessToken = await generateAccessToken(
+    session.userId.toString(),
+    clientId,
+    String(app.signingKeyId),
+  );
+
+  const newRefreshToken = await generateRefreshToken(
+    session.userId.toString(),
+    clientId,
+    String(app.signingKeyId),
+  );
+
+  await Session.create({
+    userId: session.userId,
+    appId: app._id,
+    accessToken,
+    refreshToken: newRefreshToken,
+    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14),
+  });
+
   return {
-    accessToken: session.accessToken,
-    refreshToken: session.refreshToken,
+    accessToken,
+    refreshToken: newRefreshToken,
   };
 };
 

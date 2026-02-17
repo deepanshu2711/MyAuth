@@ -29,6 +29,7 @@ export const getUserApps = (userId: string) => [
             $expr: {
               $eq: ["$appId", "$$appId"],
             },
+            revokedAt: null,
             expiresAt: { $gt: new Date() },
           },
         },

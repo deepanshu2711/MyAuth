@@ -21,30 +21,32 @@ export const auth = async (): Promise<Session | null> => {
 
     return { user, token };
   } catch (e: any) {
-    if (e?.response?.data?.code !== "TOKEN_EXPIRED") {
-      return null;
-    }
-    try {
-      const refreshToken = cookieStore.get("refreshToken")?.value;
-      if (!refreshToken) return null;
-
-      const result = await rotateToken({
-        token: refreshToken as string,
-        apiBaseUrl: config.apiBaseUrl,
-      });
-
-      cookieStore.set("accessToken", result.accessToken, { httpOnly: true });
-      cookieStore.set("refreshToken", result.refreshToken, { httpOnly: true });
-
-      const user: User | null = await verifyToken({
-        token: result.accessToken,
-        apiBaseUrl: config.apiBaseUrl,
-      });
-
-      return { user, token: result.accessToken };
-    } catch (err) {
-      console.log("errror", e);
-      return null;
-    }
+    return null;
+    // if (e?.response?.data?.code !== "TOKEN_EXPIRED") {
+    //   return null;
+    // }
+    //
+    // try {
+    //   const refreshToken = cookieStore.get("refreshToken")?.value;
+    //   if (!refreshToken) return null;
+    //
+    //   const result = await rotateToken({
+    //     token: refreshToken,
+    //     apiBaseUrl: config.apiBaseUrl,
+    //   });
+    //
+    //   cookieStore.set("accessToken", result.accessToken, { httpOnly: true });
+    //   cookieStore.set("refreshToken", result.refreshToken, { httpOnly: true });
+    //
+    //   const user: User | null = await getCurrentLoggedInUser({
+    //     token: result.accessToken,
+    //     apiBaseUrl: config.apiBaseUrl,
+    //   });
+    //
+    //   return { user, token: result.accessToken };
+    // } catch (err) {
+    //   console.error("Token refresh failed:", err);
+    //   return null;
+    // }
   }
 };

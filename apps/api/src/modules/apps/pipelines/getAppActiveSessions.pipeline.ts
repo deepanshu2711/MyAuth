@@ -40,6 +40,7 @@ export const getAppActiveSessions = (appId: string) => [
         {
           $match: {
             $expr: { $eq: ["$userId", "$$userId"] },
+            revokedAt: null,
             expiresAt: { $gt: new Date() },
           },
         },
