@@ -22,6 +22,7 @@ import {
 import { useGetAppDetailsQuery } from "../hooks/query/useGetAppDetailsQuery";
 import { useGetAppUsersQuery } from "../hooks/query/useGetAppUsersQuery";
 import { useGetAppActiveSessionsQuery } from "../hooks/query/useGetAppActiveSessionsQuery";
+import { useGetAppSecretQuery } from "../hooks/query/useGetAppSecretQuery";
 import { AppActiveSession } from "../types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -41,6 +42,7 @@ import {
 
 export default function AppDetails({ appId }: { appId: string }) {
   const [showSecret, setShowSecret] = useState(false);
+  const [shouldFetchSecret, setShouldFetchSecret] = useState(false);
   const [showAddUriModal, setShowAddUriModal] = useState(false);
   const [showRegenerateModal, setShowRegenerateModal] = useState(false);
   const [newUri, setNewUri] = useState("");
@@ -50,6 +52,10 @@ export default function AppDetails({ appId }: { appId: string }) {
   const { data: appData, isLoading } = useGetAppDetailsQuery(appId);
   const { data: appUsers } = useGetAppUsersQuery(appId);
   const { data: activeSessions } = useGetAppActiveSessionsQuery(appId);
+  const { data: secretData, isLoading: isLoadingSecret } = useGetAppSecretQuery(
+    appId,
+    shouldFetchSecret,
+  );
   const [showWatchingState, setShowWatchingState] = useState(true);
 
   const [copiedItem, setCopiedItem] = useState("");
@@ -57,6 +63,16 @@ export default function AppDetails({ appId }: { appId: string }) {
   const handleCopy = (type: string) => {
     setCopiedItem(type);
     setTimeout(() => setCopiedItem(""), 2000);
+  };
+
+  const handleToggleSecret = () => {
+    if (showSecret) {
+      setShowSecret(false);
+      setShouldFetchSecret(false);
+    } else {
+      setShouldFetchSecret(true);
+      setShowSecret(true);
+    }
   };
 
   const filteredUsers =
@@ -89,6 +105,7 @@ export default function AppDetails({ appId }: { appId: string }) {
     );
   if (!appData?.data?.[0]) return <div>No App Found</div>;
 
+  console.log("appData", appData);
   // Show watching state when no users exist
   if (showWatchingState && (!appUsers?.data || appUsers.data.length === 0)) {
     return (
@@ -214,7 +231,9 @@ export default function AppDetails({ appId }: { appId: string }) {
                 <div className="flex items-center gap-2">
                   <code className="text-sm text-zinc-300 font-mono">
                     {showSecret
-                      ? "YOUR_ACTUAL_SECRET_HERE"
+                      ? isLoadingSecret
+                        ? "Loading..."
+                        : secretData?.data || "•••••••••••••••••••••••••••••"
                       : "•••••••••••••••••••••••••••••"}
                   </code>
                 </div>
@@ -223,10 +242,13 @@ export default function AppDetails({ appId }: { appId: string }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setShowSecret(!showSecret)}
+                  onClick={handleToggleSecret}
+                  disabled={isLoadingSecret}
                   className="text-zinc-400"
                 >
-                  {showSecret ? (
+                  {isLoadingSecret ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : showSecret ? (
                     <EyeOff className="w-4 h-4" />
                   ) : (
                     <Eye className="w-4 h-4" />
@@ -236,6 +258,7 @@ export default function AppDetails({ appId }: { appId: string }) {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleCopy("clientSecret")}
+                  disabled={!showSecret || isLoadingSecret}
                   className="text-zinc-400"
                 >
                   <Copy className="w-4 h-4" />

@@ -7,6 +7,7 @@ import {
   generateClientSecret,
   generateKeyPairSyncForSigningKey,
 } from "../../utils/helpers.js";
+import { redis } from "../../utils/redis.js";
 import * as AppPipeline from "./pipelines/index.js";
 
 export const registerApp = async ({
@@ -74,6 +75,13 @@ export const getAppSecret = async ({
   appId: string;
   userId: string;
 }) => {
+  const cacheKey = `app:${appId}:secret`;
+
+  const cachedSecret = await redis.get(cacheKey);
+  if (cachedSecret) {
+    return cachedSecret;
+  }
+
   const app = await App.findById(appId);
   if (!app) throw new AppError("App not found", 404);
 
@@ -83,6 +91,9 @@ export const getAppSecret = async ({
   app.clientSecret = clientSecret;
   await app.save();
 
+  await redis.set(cacheKey, clientSecret, {
+    EX: 600,
+  });
   return clientSecret;
 };
 

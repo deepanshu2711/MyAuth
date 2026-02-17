@@ -1,8 +1,9 @@
 "use client";
-import React from "react";
-import { Loader2, Trash2 } from "lucide-react";
+import React, { useState } from "react";
+import { Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 import { useRealTimeUserDetection } from "../hooks/useRealTimeUserDetection";
 import { useDeleteAppMutation } from "../hooks/mutation/useDeleteAppMutation";
+import { useGetAppSecretQuery } from "../hooks/query/useGetAppSecretQuery";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomDark as oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,6 +40,33 @@ export default function WatchingForUsers({
 
   const deleteAppMutation = useDeleteAppMutation();
 
+  // State for handling the client secret reveal
+  const [isSecretRevealed, setIsSecretRevealed] = useState(false);
+  const [shouldFetchSecret, setShouldFetchSecret] = useState(false);
+
+  const { data: secretData, isLoading: isLoadingSecret } = useGetAppSecretQuery(
+    appId,
+    shouldFetchSecret,
+  );
+
+  const handleToggleSecret = () => {
+    // If it's already revealed, hide it immediately
+    if (isSecretRevealed) {
+      setIsSecretRevealed(false);
+      setShouldFetchSecret(false);
+      return;
+    }
+
+    // Trigger API call to fetch the secret
+    setShouldFetchSecret(true);
+    setIsSecretRevealed(true);
+  };
+
+  const clientSecret =
+    isSecretRevealed && secretData?.data
+      ? secretData.data
+      : "*******************";
+
   return (
     <div className="min-h-screen mt-24 bg-black text-white">
       <div className="max-w-4xl mx-auto px-6 py-16">
@@ -46,7 +74,7 @@ export default function WatchingForUsers({
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant={"destructive"}>
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4 mr-2" />
                 Delete App
               </Button>
             </AlertDialogTrigger>
@@ -132,13 +160,32 @@ export default function WatchingForUsers({
                   npm install @myauth/next
                 </SyntaxHighlighter>
 
-                <h3 className="text-xl mt-8 mb-4">3. Environment Variables</h3>
+                {/* --- UPDATED SECTION 3 START --- */}
+                <div className="flex items-center justify-between mt-8 mb-4">
+                  <h3 className="text-xl">3. Environment Variables</h3>
+                  <Button
+                    size="sm"
+                    onClick={handleToggleSecret}
+                    disabled={isLoadingSecret}
+                    className="text-black bg-white hover:bg-gray-200"
+                  >
+                    {isLoadingSecret ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : isSecretRevealed ? (
+                      <EyeOff className="w-4 h-4 mr-2" />
+                    ) : (
+                      <Eye className="w-4 h-4 mr-2" />
+                    )}
+                    {isSecretRevealed ? "Hide Secret" : "Reveal Secret"}
+                  </Button>
+                </div>
+
                 <p className="mt-4 text-gray-300">
                   These credentials identify your application to MyAuth and are
                   used during secure server-side token exchanges.
                 </p>
 
-                <ul className="list-disc list-inside text-gray-300 mt-2">
+                <ul className="list-disc list-inside text-gray-300 mt-2 mb-4">
                   <li>
                     <code>CLIENT_ID</code> – Safe to expose to the browser
                   </li>
@@ -149,10 +196,9 @@ export default function WatchingForUsers({
                 </ul>
 
                 <SyntaxHighlighter language="bash" style={oneDark}>
-                  {`NEXT_PUBLIC_CLIENT_ID=your_client_id_here
-NEXT_PUBLIC_CLIENT_SECRET=your_client_secret_here
-`}
+                  {`NEXT_PUBLIC_CLIENT_ID=${clientId}\nNEXT_PUBLIC_CLIENT_SECRET=${clientSecret}`}
                 </SyntaxHighlighter>
+                {/* --- UPDATED SECTION 3 END --- */}
               </section>
 
               <section className="mb-12">
@@ -176,16 +222,27 @@ NEXT_PUBLIC_CLIENT_SECRET=your_client_secret_here
                   Middleware is recommended for coarse-grained access control.
                 </p>
 
+                <p className="mt-4 text-gray-300">
+                  Create a{" "}
+                  <code className="bg-gray-800 px-2 py-1 rounded">
+                    proxy.ts
+                  </code>{" "}
+                  file in the root of your project and add the following:
+                </p>
+
                 <SyntaxHighlighter language="typescript" style={oneDark}>
-                  {`import { withAuthMiddleware } from "@myauth/next";
+                  {`// proxy.ts
+import { withAuthMiddleware } from "@myauth/next";
+import { NextResponse } from "next/server";
 
-export default withAuthMiddleware({
-  clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
-});
 
+export default withAuthMiddleware(process.env.NEXT_PUBLIC_CLIENT_ID!);
+
+// Protect selected routes
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*"],
-};`}
+  matcher: ["/dashboard/:path*", "/app/:path*"],
+};
+`}
                 </SyntaxHighlighter>
               </section>
 
@@ -212,20 +269,38 @@ export const config = {
                   <li>Client components never read cookies directly</li>
                 </ul>
 
+                <p className="mt-4 text-gray-300">
+                  Update your{" "}
+                  <code className="bg-gray-800 px-2 py-1 rounded">
+                    app/layout.tsx
+                  </code>{" "}
+                  file:
+                </p>
+
                 <SyntaxHighlighter language="typescript" style={oneDark}>
                   {`// app/layout.tsx
-import { AuthProvider } from "@myauth/next";
-import { auth } from "@myauth/next"; 
+import { AuthProvider, auth } from "@myauth/next";
+import type { ReactNode } from "react";
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata = {
+  title: "My App",
+  description: "Authenticated Next.js App",
+};
+
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  // Runs on the server
   const session = await auth();
 
   return (
     <html lang="en">
       <body>
-        <AuthProvider 
-           initialSession={session}           
-           clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
+        <AuthProvider
+          initialSession={session}
+          clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
         >
           {children}
         </AuthProvider>
@@ -247,8 +322,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <li>Redirects the user back to your app</li>
                 </ul>
 
+                <p className="mt-4 text-gray-300">
+                  Create a{" "}
+                  <code className="bg-gray-800 px-2 py-1 rounded">
+                    app/callback/page.tsx
+                  </code>{" "}
+                  file and add the following:
+                </p>
+
                 <SyntaxHighlighter language="typescript" style={oneDark}>
-                  {`import { AuthenticateWithRedirectCallback } from "@myauth/next";
+                  {`// app/callback/page.tsx
+import { AuthenticateWithRedirectCallback } from "@myauth/next";
 
 export default function CallbackPage() {
   return <AuthenticateWithRedirectCallback />;
@@ -265,13 +349,23 @@ export default function CallbackPage() {
                   Your client secret is never exposed to the browser.
                 </p>
 
+                <p className="mt-4 text-gray-300">
+                  Create a{" "}
+                  <code className="bg-gray-800 px-2 py-1 rounded">
+                    app/api/auth/token/route.ts
+                  </code>{" "}
+                  file and add the following:
+                </p>
+
                 <SyntaxHighlighter language="typescript" style={oneDark}>
-                  {`import { createAuthCallbackHandler } from "@myauth/next";
+                  {`// app/api/auth/token/route.ts
+import { createAuthCallbackHandler } from "@myauth/next";
 
 export const POST = createAuthCallbackHandler({
   clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
   clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET!,
-});`}
+});
+`}
                 </SyntaxHighlighter>
               </section>
             </div>

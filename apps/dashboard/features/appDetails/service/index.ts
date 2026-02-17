@@ -19,6 +19,12 @@ export const AppDetailsService = {
     );
     return response.data;
   },
+  getAppSecret: async (appId: string) => {
+    const response = await api.get(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/app/get-secret/${appId}`,
+    );
+    return response.data;
+  },
   deleteApp: async (appId: string) => {
     const response = await api.delete(
       `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/app/${appId}`,
