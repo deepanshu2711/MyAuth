@@ -80,7 +80,7 @@ export default function Docs() {
 
         <SyntaxHighlighter language="bash" style={oneDark}>
           {`NEXT_PUBLIC_CLIENT_ID=your_client_id_here
-NEXT_PUBLIC_CLIENT_SECRET=your_client_secret_here
+CLIENT_SECRET=your_client_secret_here
 `}
         </SyntaxHighlighter>
       </section>
@@ -196,7 +196,7 @@ export default function CallbackPage() {
 
 export const POST = createAuthCallbackHandler({
   clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
-  clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET!,
+  clientSecret: process.env.CLIENT_SECRET!,
 });`}
         </SyntaxHighlighter>
       </section>

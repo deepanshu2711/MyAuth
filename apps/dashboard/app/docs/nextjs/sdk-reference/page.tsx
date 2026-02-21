@@ -98,7 +98,7 @@ export default withAuthMiddleware(process.env.NEXT_PUBLIC_CLIENT_ID!);`}
         <SyntaxHighlighter language="typescript" style={oneDark}>
           {`export const POST = createAuthCallbackHandler({
   clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
-  clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET!,
+  clientSecret: process.env.CLIENT_SECRET!,
 });`}
         </SyntaxHighlighter>
       </section>

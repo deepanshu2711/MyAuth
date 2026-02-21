@@ -196,7 +196,7 @@ export default function WatchingForUsers({
                 </ul>
 
                 <SyntaxHighlighter language="bash" style={oneDark}>
-                  {`NEXT_PUBLIC_CLIENT_ID=${clientId}\nNEXT_PUBLIC_CLIENT_SECRET=${clientSecret}`}
+                  {`NEXT_PUBLIC_CLIENT_ID=${clientId}\nCLIENT_SECRET=${clientSecret}`}
                 </SyntaxHighlighter>
                 {/* --- UPDATED SECTION 3 END --- */}
               </section>
@@ -363,7 +363,7 @@ import { createAuthCallbackHandler } from "@myauth/next";
 
 export const POST = createAuthCallbackHandler({
   clientId: process.env.NEXT_PUBLIC_CLIENT_ID!,
-  clientSecret: process.env.NEXT_PUBLIC_CLIENT_SECRET!,
+  clientSecret: process.env.CLIENT_SECRET!,
 });
 `}
                 </SyntaxHighlighter>
