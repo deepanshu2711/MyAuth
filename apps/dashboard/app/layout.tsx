@@ -16,15 +16,19 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://console.deepxdev.com"),
-  title: "MyAuth Dashboard",
+  title: {
+    default: "MyAuth | Developer-First Next.js Authentication",
+    template: "%s | MyAuth",
+  },
   description:
-    "Manage your authentication applications, users, and settings with MyAuth Dashboard. A comprehensive admin interface for the MyAuth authentication system.",
+    "Secure your Next.js applications with MyAuth, a developer-first OAuth 2.0 authentication service. Enjoy cookie-first, server-native auth with zero magic.",
   keywords: [
-    "authentication",
-    "dashboard",
-    "oauth",
+    "Next.js authentication",
+    "OAuth 2.0 service",
+    "developer-first auth",
+    "server-native authentication",
+    "App Router auth",
     "user management",
-    "app management",
   ],
   authors: [{ name: "Deepanshu Saini" }],
   icons: {
@@ -32,24 +36,25 @@ export const metadata: Metadata = {
     shortcut: "/x.png",
   },
   openGraph: {
-    title: "MyAuth Dashboard",
+    title: "MyAuth | Developer-First Next.js Authentication",
     description:
-      "Manage your authentication applications and users with MyAuth Dashboard",
+      "Secure your Next.js applications with MyAuth, a developer-first OAuth 2.0 authentication service. Enjoy cookie-first, server-native auth with zero magic.",
     type: "website",
+    siteName: "MyAuth",
     images: [
       {
         url: "https://console.deepxdev.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "MyAuth Dashboard",
+        alt: "MyAuth - Server-native Next.js Authentication",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MyAuth Dashboard",
+    title: "MyAuth | Developer-First Next.js Authentication",
     description:
-      "Manage your authentication applications and users with MyAuth Dashboard",
+      "Secure your Next.js applications with MyAuth, a developer-first OAuth 2.0 authentication service. Enjoy cookie-first, server-native auth with zero magic.",
     images: ["https://console.deepxdev.com/og-image.png"],
     creator: "@DeepanshuS7943",
   },
