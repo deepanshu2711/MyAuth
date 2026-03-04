@@ -11,4 +11,5 @@ appsRouter.get("/:appId", AppsController.getAppDetails);
 appsRouter.get("/get-secret/:appId", AppsController.getAppSecret);
 
 appsRouter.post("/register", AppsController.register);
+appsRouter.put("/redirect-uri/:appId", AppsController.updateRedirectUri);
 appsRouter.delete("/:appId", AppsController.deleteApp);

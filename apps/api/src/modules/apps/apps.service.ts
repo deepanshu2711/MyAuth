@@ -102,3 +102,18 @@ export const deleteApp = async ({ appId }: { appId: string }) => {
   await MemberShip.deleteMany({ appId });
   return data;
 };
+
+export const updateRedirectUri = async ({
+  appId,
+  redirectUri,
+}: {
+  appId: string;
+  redirectUri: string;
+}) => {
+  const data = await App.findByIdAndUpdate(
+    appId,
+    { redirectUris: [redirectUri] },
+    { new: true },
+  );
+  return data;
+};

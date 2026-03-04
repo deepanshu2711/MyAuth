@@ -31,4 +31,11 @@ export const AppDetailsService = {
     );
     return response.data;
   },
+  updateRedirectUri: async (appId: string, redirectUri: string) => {
+    const response = await api.put(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/app/redirect-uri/${appId}`,
+      { redirectUri },
+    );
+    return response.data;
+  },
 };

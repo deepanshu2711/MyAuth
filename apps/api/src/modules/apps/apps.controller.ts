@@ -65,3 +65,10 @@ export const deleteApp = asyncHandler(async (req, res) => {
   const data = await AppService.deleteApp({ appId });
   return successResponse(res, data);
 });
+
+export const updateRedirectUri = asyncHandler(async (req, res) => {
+  const { appId } = req.params;
+  const { redirectUri } = req.body;
+  const data = await AppService.updateRedirectUri({ appId, redirectUri });
+  return successResponse(res, data);
+});

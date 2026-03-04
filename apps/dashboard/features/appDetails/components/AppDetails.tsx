@@ -28,6 +28,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import WatchingForUsers from "./WatchingForUsers";
+import { useDeleteAppMutation } from "../hooks/mutation/useDeleteAppMutation";
+import { useUpdateRedirectUriMutation } from "../hooks/mutation/useUpdateRedirectUriMutation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -56,6 +58,8 @@ export default function AppDetails({ appId }: { appId: string }) {
     appId,
     shouldFetchSecret,
   );
+  const deleteAppMutation = useDeleteAppMutation();
+  const updateRedirectUriMutation = useUpdateRedirectUriMutation();
   const [showWatchingState, setShowWatchingState] = useState(true);
 
   const [copiedItem, setCopiedItem] = useState("");
@@ -144,13 +148,13 @@ export default function AppDetails({ appId }: { appId: string }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              className="text-zinc-400 hover:text-white h-9 px-3"
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Edit
-            </Button>
+            {/* <Button */}
+            {/*   variant="ghost" */}
+            {/*   className="text-zinc-400 hover:text-white h-9 px-3" */}
+            {/* > */}
+            {/*   <Edit className="w-4 h-4 mr-2" /> */}
+            {/*   Edit */}
+            {/* </Button> */}
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
@@ -161,7 +165,27 @@ export default function AppDetails({ appId }: { appId: string }) {
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
-                {/* Keep existing alert content */}
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete Application</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the application and all associated data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => deleteAppMutation.mutate(appId)}
+                    disabled={deleteAppMutation.isPending}
+                    className="bg-red-600 hover:bg-red-700 text-white"
+                  >
+                    {deleteAppMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Continue"
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           </div>
@@ -221,50 +245,6 @@ export default function AppDetails({ appId }: { appId: string }) {
                 <Copy className="w-4 h-4" />
               </Button>
             </div>
-
-            {/* Client Secret */}
-            <div className="group flex items-center justify-between p-4 rounded-lg bg-zinc-900/40 border border-transparent hover:border-zinc-800 transition-all">
-              <div className="space-y-1">
-                <label className="block text-xs text-zinc-500 font-medium uppercase tracking-wider">
-                  Client Secret
-                </label>
-                <div className="flex items-center gap-2">
-                  <code className="text-sm text-zinc-300 font-mono">
-                    {showSecret
-                      ? isLoadingSecret
-                        ? "Loading..."
-                        : secretData?.data || "•••••••••••••••••••••••••••••"
-                      : "•••••••••••••••••••••••••••••"}
-                  </code>
-                </div>
-              </div>
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleToggleSecret}
-                  disabled={isLoadingSecret}
-                  className="text-zinc-400"
-                >
-                  {isLoadingSecret ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : showSecret ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleCopy("clientSecret")}
-                  disabled={!showSecret || isLoadingSecret}
-                  className="text-zinc-400"
-                >
-                  <Copy className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -289,6 +269,56 @@ export default function AppDetails({ appId }: { appId: string }) {
               </span>
             </div>
           </div>
+
+          {showAddUriModal && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+              <div className="bg-zinc-950 border border-zinc-800 rounded-lg p-6 w-full max-w-md mx-4">
+                <h3 className="text-lg font-medium mb-4">Edit Redirect URI</h3>
+                <input
+                  type="text"
+                  value={newUri}
+                  onChange={(e) => setNewUri(e.target.value)}
+                  placeholder="https://your-app.com/callback"
+                  className="w-full px-4 py-2 bg-zinc-900 border border-zinc-800 rounded-md text-sm text-white focus:outline-none focus:border-zinc-600 placeholder:text-zinc-700 mb-4"
+                  defaultValue={appData.data[0].redirectUris[0]}
+                />
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setShowAddUriModal(false);
+                      setNewUri("");
+                    }}
+                    className="text-zinc-400"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (newUri) {
+                        updateRedirectUriMutation.mutate(
+                          { appId, redirectUri: newUri },
+                          {
+                            onSuccess: () => {
+                              setShowAddUriModal(false);
+                              setNewUri("");
+                            },
+                          },
+                        );
+                      }
+                    }}
+                    disabled={!newUri || updateRedirectUriMutation.isPending}
+                  >
+                    {updateRedirectUriMutation.isPending ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      "Save"
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* --- Active Sessions Table --- */}
@@ -419,3 +449,4 @@ export default function AppDetails({ appId }: { appId: string }) {
     </div>
   );
 }
+//sh_nfqL63rsJni5RX10aPaKUSZEwieJ7GSsjFsutJ7h2ws
