@@ -22,13 +22,11 @@ export const Navbar = () => {
       <div className="relative flex w-full flex-col overflow-y-auto">
         <StickyBanner className="bg-gradient-to-b from-blue-500 to-blue-600">
           <p className="mx-0 max-w-[90%] text-white font-sans drop-shadow-md">
-            <span className="font-semibold">MyAuth is currently in beta.</span>{" "}
-            <span className="font-bold text-white/95">V1 launches March 1</span>
-            , bringing{" "}
-            <span className="font-semibold">
-              correct, backend-first authentication
-            </span>{" "}
-            to the <span className="font-semibold">Next.js App Router</span>.
+            <span className="font-semibold">MyAuth</span> brings{" "}
+            <span className="font-semibold">backend-first authentication</span>{" "}
+            to the <span className="font-semibold">Next.js App Router</span>.{" "}
+            Secure HttpOnly cookie sessions. No client-side token leaks. Built
+            for developers who want authentication done right.
           </p>
         </StickyBanner>
       </div>
