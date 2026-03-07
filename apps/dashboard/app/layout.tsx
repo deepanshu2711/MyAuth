@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "../providers";
-import { MainLayout } from "../layouts/MainLayout";
 import { auth } from "@myauth/next";
 
 const geistSans = localFont({
@@ -71,6 +71,20 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} bg-black`}>
         <Providers initialSession={session}>{children}</Providers>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-VTLV7LHP0K`}
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-VTLV7LHP0K');
+          `}
+        </Script>
       </body>
     </html>
   );
