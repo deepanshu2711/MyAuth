@@ -3,6 +3,7 @@ export { AuthProvider } from "./client/MyAuthProvider.js";
 export { useAuth } from "./client/useAuth.js";
 export { auth } from "./server/auth.js";
 export { AuthenticateWithRedirectCallback } from "./components/AuthenticationWithRedirectCallback.js";
+export { UserButton } from "./components/UserButton.js";
 export { createAuthCallbackHandler } from "./server/authCallbackHandler.js";
 export { getSessionToken } from "./internal/session.js";
 export { currentUser } from "./server/currentUser.js";
