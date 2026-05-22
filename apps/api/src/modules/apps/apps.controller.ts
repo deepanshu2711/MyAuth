@@ -2,18 +2,40 @@ import type { Request, Response } from "express";
 
 import { asyncHandler } from "../../utils/helpers.js";
 import * as AppService from "./apps.service.js";
+import { AppError } from "../../utils/appError.js";
 import { successResponse } from "../../utils/responses.js";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const { name, redirectUris } = req.body;
+  const { name, redirectUris } = req.body ?? {};
+  if (typeof name !== "string" || !name.trim()) {
+    throw new AppError("App name is required", 400);
+  }
+  if (
+    !Array.isArray(redirectUris) ||
+    redirectUris.length === 0 ||
+    !redirectUris.every(isValidRedirectUri)
+  ) {
+    throw new AppError("redirectUris must be a non-empty array of valid URLs", 400);
+  }
+
   const user = req.user;
   const data = await AppService.registerApp({
-    name,
+    name: name.trim(),
     ownerId: user?.userId!,
-    redirectUris,
+    redirectUris: redirectUris.map((uri) => uri.trim()),
   });
   return successResponse(res, data);
 });
+
+function isValidRedirectUri(value: unknown): value is string {
+  if (typeof value !== "string" || !value.trim()) return false;
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export const getApps = asyncHandler(async (req: Request, res: Response) => {
   const user = req.user;
