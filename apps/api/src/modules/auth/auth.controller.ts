@@ -62,13 +62,13 @@ export const verify = asyncHandler(async (req: Request, res: Response) => {
   return successResponse(res, user);
 });
 
-export const getCurrentLoggedInUser = async (req: Request, res: Response) => {
+export const getCurrentLoggedInUser = asyncHandler(async (req: Request, res: Response) => {
   const user = req.user;
   const data = await AuthService.me({
     userId: user?.userId!,
   });
   return successResponse(res, data);
-};
+});
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   const { accessToken } = req.body;
