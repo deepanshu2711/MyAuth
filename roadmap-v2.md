@@ -46,7 +46,7 @@
 ### 1. Webhooks & Events (designed in `TODO.md`)
 
 - App settings → **Webhooks** tab: configure URL + select events
-- Async delivery via existing **RabbitMQ** infrastructure (delivery worker)
+- Async delivery via **RabbitMQ** (delivery worker). Note: the previous RabbitMQ publishers/connection were removed in commit `45d1c68` — Phase 1 reintroduces RabbitMQ as the webhook transport (a fresh, webhook-focused setup, not a restoration of the old user-sync exchange)
 - HMAC-signed payloads with a per-webhook secret (`whsec_…`)
 - Retry with backoff + delivery log (success/failure, last attempt)
 - Events: `user.created`, `user.updated`, `user.deleted`, `user.login`, `user.logout`, `password.changed`, `email.verified`
@@ -78,7 +78,7 @@
 
 - **MFA via TOTP** (authenticator app) — enroll, verify, recovery codes
 - **Audit logs** — security-relevant events per app, retention by plan
-- **Rate limiting** — Redis-backed, per-app/per-plan (also powers billing limits)
+- **Rate limiting** — Redis-backed, per-app/per-plan (also powers billing limits). Migrate the existing in-memory `express-rate-limit` OTP limiter (`apps/api/src/middlewares/rateLimit.middleware.ts`) to the Redis-backed limiter as part of Phase 1
 - **Signing key rotation UI** — create/rotate/retire keys; JWKS serves old + new during the overlap window
 - **IP allowlisting** (Pro) for app API access
 
@@ -134,15 +134,20 @@ useOrganizationList(); // new — switch orgs
 
 ## 🗓️ V2 Roadmap (6 Phases, ~16 weeks)
 
+### Phase 0 — Pre-work (before Phase 1)
+
+- Reintroduce RabbitMQ connection + publisher for the webhook delivery exchange (old user-sync code was removed; build a fresh setup focused on webhooks). Remove the now-dead `amqplib` / `@types/amqp` entries from `apps/api/package.json` if they aren't going to be reused as-is, then re-add the version Phase 1 actually needs
+- Update `CLAUDE.md`: the `Event-Driven Sync (RabbitMQ)` section and `apps/dashboard-backend` references are stale (`dashboard-backend` no longer exists under `apps/`)
+
 ### Phase 1 — Webhooks & Rate Limiting (Week 1–3)
 
 **Goal:** Developers can react to auth events; foundation for plan limits.
 
 - `Webhook` model + settings UI
 - Delivery worker on RabbitMQ, HMAC signing, retries, delivery log
-- Redis-backed rate limiter (used later by billing)
+- Redis-backed rate limiter (used later by billing); migrate existing in-memory OTP limiter onto it
 
-_Lowest risk, reuses existing RabbitMQ/Redis — good momentum starter._
+_Reuses Redis (already a dep) and rebuilds the RabbitMQ pipeline — momentum starter once Phase 0 is done._
 
 ---
 
@@ -237,6 +242,7 @@ V2 is **successful** if:
 
 ## ✅ Status
 
+- [ ] Phase 0 pre-work (RabbitMQ reintroduction, CLAUDE.md cleanup)
 - [ ] Webhooks & rate limiting
 - [ ] Organizations & teams
 - [ ] RBAC & permissions
