@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import axios from "axios";
 
 import { AppError } from "../../utils/appError.js";
 import { User } from "../../models/user.model.js";
@@ -20,6 +19,13 @@ import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Types } from "mongoose";
 import { sendEmail } from "../../utils/sendEmail.js";
 import { redis } from "../../utils/redis.js";
+import {
+  ACCESS_TOKEN_EXPIRY_MS,
+  AUTH_CODE_EXPIRY_MS,
+  OTP_EXPIRY_SECONDS,
+  REDIS_CACHE_TTL_SECONDS,
+  TOKEN_REVOCATION_TTL_SECONDS,
+} from "../../utils/constants.js";
 
 const publisher = new RabbitMQPublisher();
 
@@ -78,7 +84,7 @@ export const registerUser = async ({
     clientId,
     userId: globalUser._id,
     redirectUri: redirect_uri,
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    expiresAt: new Date(Date.now() + AUTH_CODE_EXPIRY_MS),
   });
 
   const redirectUrl = new URL(redirect_uri);
@@ -134,7 +140,7 @@ export const loginUser = async ({
     clientId,
     userId: globalUser._id,
     redirectUri: redirect_uri,
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    expiresAt: new Date(Date.now() + AUTH_CODE_EXPIRY_MS),
   });
 
   const redirectUrl = new URL(redirect_uri);
@@ -168,7 +174,7 @@ export const LoginByOtp = async ({
 
   const key = `otp:login:${clientId}:${email}`;
 
-  await redis.set(key, otp, { expiration: { type: "EX", value: 300 } });
+  await redis.set(key, otp, { expiration: { type: "EX", value: OTP_EXPIRY_SECONDS } });
   await sendEmail({
     to: email,
     subject: "Login Otp",
@@ -207,7 +213,7 @@ export const verifyOtp = async ({
     clientId,
     userId: globalUser._id,
     redirectUri: app.redirectUris[0]!,
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    expiresAt: new Date(Date.now() + AUTH_CODE_EXPIRY_MS),
   });
 
   const redirectUrl = new URL(app.redirectUris[0]!);
@@ -254,7 +260,7 @@ export const getTokens = async ({
     userId: authorizationCode.userId,
     accessToken,
     refreshToken,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14),
+    expiresAt: new Date(Date.now() + ACCESS_TOKEN_EXPIRY_MS),
   });
 
   return { accessToken, refreshToken };
@@ -310,7 +316,7 @@ export const refreshToken = async ({
     appId: app._id,
     accessToken,
     refreshToken: newRefreshToken,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14),
+    expiresAt: new Date(Date.now() + ACCESS_TOKEN_EXPIRY_MS),
   });
 
   return {
@@ -331,7 +337,7 @@ export const me = async ({ userId }: { userId: string }) => {
   if (!user) throw new AppError("user not found", 404);
 
   await redis.set(cacheKey, JSON.stringify(user), {
-    EX: 60,
+    EX: REDIS_CACHE_TTL_SECONDS,
   });
 
   return user;
@@ -345,7 +351,7 @@ export const logout = async ({
   jti: string;
 }) => {
   await redis.set(`revoked:${jti}`, "1", {
-    expiration: { type: "EX", value: 602 },
+    expiration: { type: "EX", value: TOKEN_REVOCATION_TTL_SECONDS },
   });
   const session = await Session.findOneAndDelete({ accessToken });
   if (!session) throw new AppError("session not found", 404);
@@ -413,7 +419,7 @@ export const googleLogin = async (idToken: string, clientId: string) => {
     clientId,
     userId: globalUser._id,
     redirectUri: app.redirectUris[0]!,
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    expiresAt: new Date(Date.now() + AUTH_CODE_EXPIRY_MS),
   });
 
   const redirectUrl = new URL(app.redirectUris[0]!);
@@ -511,7 +517,7 @@ export const githubRedirect = async (code: string, state: string) => {
     clientId: parsedState.clientId,
     userId: globalUser._id,
     redirectUri: app.redirectUris[0],
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    expiresAt: new Date(Date.now() + AUTH_CODE_EXPIRY_MS),
   });
 
   const redirectUrl = new URL(app.redirectUris[0]!);
