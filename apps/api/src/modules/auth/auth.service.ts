@@ -13,7 +13,6 @@ import {
 import { App } from "../../models/app.model.js";
 import { MemberShip } from "../../models/membership.model.js";
 import { AuthorizationCode } from "../../models/authorizationCode.model.js";
-import { RabbitMQPublisher } from "../../utils/rabbitmq/publisher.js";
 import { OAuthClient } from "../../lib/OAuthClient.js";
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { Types } from "mongoose";
@@ -26,8 +25,6 @@ import {
   REDIS_CACHE_TTL_SECONDS,
   TOKEN_REVOCATION_TTL_SECONDS,
 } from "../../utils/constants.js";
-
-const publisher = new RabbitMQPublisher();
 
 export const registerUser = async ({
   email,
@@ -46,7 +43,6 @@ export const registerUser = async ({
   let globalUser = await User.findOne({ email });
   if (!globalUser) {
     globalUser = await User.create({ email });
-    await publisher.publishCreateUser({ data: globalUser });
   }
 
   const existingMembership = await MemberShip.findOne({
@@ -174,7 +170,9 @@ export const LoginByOtp = async ({
 
   const key = `otp:login:${clientId}:${email}`;
 
-  await redis.set(key, otp, { expiration: { type: "EX", value: OTP_EXPIRY_SECONDS } });
+  await redis.set(key, otp, {
+    expiration: { type: "EX", value: OTP_EXPIRY_SECONDS },
+  });
   await sendEmail({
     to: email,
     subject: "Login Otp",
@@ -388,7 +386,6 @@ export const googleLogin = async (idToken: string, clientId: string) => {
       avatar: OAuthUser.picture,
       name: OAuthUser.name,
     });
-    await publisher.publishCreateUser({ data: globalUser });
   }
 
   const existingMembership = await MemberShip.findOne({
@@ -486,7 +483,6 @@ export const githubRedirect = async (code: string, state: string) => {
       name: githubUser.name,
       avatar: githubUser.avatar_url,
     });
-    await publisher.publishCreateUser({ data: globalUser });
   }
 
   const existingMembership = await MemberShip.findOne({
