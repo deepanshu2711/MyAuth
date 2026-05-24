@@ -25,6 +25,8 @@ import {
   REDIS_CACHE_TTL_SECONDS,
   TOKEN_REVOCATION_TTL_SECONDS,
 } from "../../utils/constants.js";
+import { publish } from "../../utils/rabbitmq/publisher.js";
+import { EXCHANGES, ROUTING_KEYS } from "../../utils/rabbitmq/constants.js";
 
 export const registerUser = async ({
   email,
@@ -380,11 +382,19 @@ export const googleLogin = async (idToken: string, clientId: string) => {
   let globalUser = await User.findOne({
     email: OAuthUser.email,
   });
+
   if (!globalUser) {
     globalUser = await User.create({
       email: OAuthUser.email,
       avatar: OAuthUser.picture,
       name: OAuthUser.name,
+    });
+
+    //NOTE: PUBLISH THE EVENT TO RABBITMQ
+    await publish({
+      exchange: EXCHANGES.AUTH_EVENT,
+      routingKey: ROUTING_KEYS.USER_CREATED,
+      payload: globalUser,
     });
   }
 
