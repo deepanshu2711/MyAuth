@@ -10,6 +10,7 @@ import { SignInKey } from "./models/signingkey.model.js";
 import { pemTOJwk } from "./utils/pemToJwk.js";
 import { trackVisitor } from "./middlewares/trackvisitors.middleware.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { webHookRouter } from "./modules/webhooks/webhooks.routes.js";
 dotenv.config();
 
 export const app = express();
@@ -40,6 +41,7 @@ app.use(trackVisitor);
 
 app.use("/api/auth", authRouter);
 app.use("/api/app", authMiddleware, appsRouter);
+app.use("/api/webhook", authMiddleware, webHookRouter);
 
 app.use("/.well-known/jwks.json", async (req, res) => {
   const keys = await SignInKey.find({ isActive: true });
