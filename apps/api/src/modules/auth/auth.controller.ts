@@ -17,6 +17,10 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
+  // Set deprecation headers
+  res.setHeader("Deprecation", "true");
+  res.setHeader("Sunset", "Sun, 01 Jun 2026 00:00:00 GMT");
+
   const { email, password, clientId, redirect_uri } = req.body;
   const redirectUrl = await AuthService.loginUser({
     email,
@@ -24,7 +28,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     clientId: clientId as string,
     redirect_uri: redirect_uri as string,
   });
-  return successResponse(res, redirectUrl);
+
+  // Add deprecation warning to response
+  return res.status(200).json({
+    success: true,
+    data: redirectUrl,
+    warning: "This endpoint is deprecated. Please migrate to POST /api/auth/login-by-otp",
+  });
 });
 
 export const loginByOtp = asyncHandler(async (req: Request, res: Response) => {
