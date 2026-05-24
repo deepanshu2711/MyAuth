@@ -29,8 +29,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     redirect_uri: redirect_uri as string,
   });
 
-  // Using the successResponse to response and identify the deprecation in headers
-  return successResponse(res, redirectUrl);
+  // Preserve deprecation signaling in both headers and the JSON body
+  return successResponse(res, {
+    redirectUrl,
+    warning:
+      "This endpoint is deprecated and will be removed after Sun, 01 Jun 2026 00:00:00 GMT. Please migrate to the supported authentication flow.",
+  });
 });
 
 export const loginByOtp = asyncHandler(async (req: Request, res: Response) => {
