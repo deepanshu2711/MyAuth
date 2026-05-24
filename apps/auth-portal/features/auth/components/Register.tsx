@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useRegisterMutation } from "../hooks/mutation/useRegisterMutation";
 import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
+import { useGoogleLogin } from "@react-oauth/google";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -64,6 +65,20 @@ const Register = () => {
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    flow: "auth-code",
+    onSuccess: async ({ code }: { code: string }) => {
+      const response = await api.post("auth/google", {
+        idToken: code,
+        clientId: clientId,
+        redirected_uri: redirected_uri,
+      });
+
+      window.location.href = response.data.data;
+    },
+    onError: () => console.log("Login failed"),
+  })
+  
   return (
     <div className="min-h-screen  flex flex-col items-center justify-center p-1 relative overflow-hidden">
       <BackgroundRippleEffect />
@@ -93,7 +108,7 @@ const Register = () => {
 
             <div className="flex items-center gap-3 mt-6">
               <button
-                // onClick={() => googleLogin()}
+                 onClick={() => googleLogin()}
                 type="button"
                 className="flex text-sm w-full items-center justify-center gap-3 px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-white font-normal hover:bg-white/10 hover:border-white/20 transition-all"
               >
