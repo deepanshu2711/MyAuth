@@ -30,7 +30,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   });
 
   // Using the successResponse to response and identify the deprecation in headers
-  return successResponse(res, redirectUrl);
+  return successResponse(res, redirectUrl, "");
 });
 
 export const loginByOtp = asyncHandler(async (req: Request, res: Response) => {
