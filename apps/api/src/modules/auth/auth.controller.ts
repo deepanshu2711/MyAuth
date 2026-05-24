@@ -29,12 +29,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     redirect_uri: redirect_uri as string,
   });
 
-  // Add deprecation warning to response
-  return res.status(200).json({
-    success: true,
-    data: redirectUrl,
-    warning: "This endpoint is deprecated. Please migrate to POST /api/auth/login-by-otp",
-  });
+  // Using the successResponse to response and identify the deprecation in headers
+  return successResponse(res, redirectUrl);
 });
 
 export const loginByOtp = asyncHandler(async (req: Request, res: Response) => {
