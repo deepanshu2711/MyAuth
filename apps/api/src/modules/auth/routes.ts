@@ -1,14 +1,14 @@
 import express from "express";
 import * as AuthController from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { otpLimiter } from "../../middlewares/rateLimit.middleware.js";
+import { otpLimiter, registerLimiter } from "../../middlewares/rateLimit.middleware.js";
 
 export const authRouter = express.Router();
 
 authRouter.get("/me", authMiddleware, AuthController.getCurrentLoggedInUser);
 authRouter.get("/verify", authMiddleware, AuthController.verify);
 
-authRouter.post("/register", otpLimiter, AuthController.register);
+authRouter.post("/register", registerLimiter, AuthController.register);
 
 //NOTE: depreciated
 authRouter.post("/login", AuthController.login);
