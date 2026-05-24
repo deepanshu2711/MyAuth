@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import { authRouter } from "./modules/auth/routes.js";
 import { appsRouter } from "./modules/apps/apps.routes.js";
+import { healthRouter } from "./modules/health/health.routes.js";
 import { authMiddleware } from "./middlewares/auth.middleware.js";
 import { SignInKey } from "./models/signingkey.model.js";
 import { pemTOJwk } from "./utils/pemToJwk.js";
@@ -39,6 +40,7 @@ app.use(cookieParser());
 
 app.use(trackVisitor);
 
+app.use("/api/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/app", authMiddleware, appsRouter);
 app.use("/api/webhook", authMiddleware, webHookRouter);
