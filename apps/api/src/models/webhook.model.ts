@@ -25,6 +25,7 @@ const WebHookSchema = new Schema(
           enum: ["user.created", "user.updated", "user.deleted"],
         },
       ],
+      required: true,
       validate: {
         validator: (v: string[]) => v.length > 0,
         message: "At least one event is required",
