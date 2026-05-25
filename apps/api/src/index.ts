@@ -2,12 +2,18 @@ import dotenv from "dotenv";
 import { app } from "./app.js";
 import { connectDB } from "./db.js";
 import { seedConsoleApp } from "./seeders/consoleApp.seeder.js";
+import { rabbitmq } from "./utils/rabbitmq/rabbitmq.js";
+import { setupRabbitMQ } from "./utils/rabbitmq/setup.js";
+import { startWebhookWorker } from "./workers/webhook.worker.js";
 
 dotenv.config();
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, async () => {
   console.log(`Backend running on ${process.env.PORT} port`);
-  connectDB();
+  await connectDB();
+  await rabbitmq.connect();
+  await setupRabbitMQ();
+  await startWebhookWorker();
   // seedConsoleApp();
 });
 
