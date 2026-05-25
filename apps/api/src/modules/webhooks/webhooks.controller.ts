@@ -45,7 +45,8 @@ export const updateWebhook = asyncHandler(
 export const deleteWebhook = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const data = await WebHookService.deleteWebhook({ id: id! });
+    const userId = req?.user?.userId;
+    const data = await WebHookService.deleteWebhook({ id: id!, userId: userId! });
     return successResponse(res, data);
   },
 );

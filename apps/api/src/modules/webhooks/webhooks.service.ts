@@ -28,8 +28,8 @@ export const create = async ({
   url: string;
   events: ("user.created" | "user.updated" | "user.deleted")[];
 }) => {
-  const existinWebhook = await WebHook.findOne({ _id: appId, url: url });
-  if (!existinWebhook) throw new AppError("Webhook already exists.", 400);
+  const existingWebhook = await WebHook.findOne({ appId, url });
+  if (existingWebhook) throw new AppError("Webhook already exists.", 400);
 
   const secret = generateWebhookSecret();
   const webhook = await WebHook.create({ name, appId, url, events, secret });
@@ -70,7 +70,22 @@ export const update = async ({
   return webhook;
 };
 
-export const deleteWebhook = async ({ id }: { id: string }) => {
-  const webhook = await WebHook.findByIdAndDelete(id);
+export const deleteWebhook = async ({
+  id,
+  userId,
+}: {
+  id: string;
+  userId: string;
+}) => {
+  const webhook = await WebHook.findById(id);
+  if (!webhook) throw new AppError("Webhook not found.", 404);
+
+  const existingApp = await App.findOne({
+    _id: webhook.appId,
+    ownerId: userId,
+  });
+  if (!existingApp) throw new AppError("Application not found.", 404);
+
+  await WebHook.findByIdAndDelete(id);
   return webhook;
 };

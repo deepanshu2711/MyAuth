@@ -394,7 +394,7 @@ export const googleLogin = async (idToken: string, clientId: string) => {
     await publish({
       exchange: EXCHANGES.AUTH_EVENT,
       routingKey: ROUTING_KEYS.USER_CREATED,
-      payload: globalUser,
+      payload: { user: globalUser, appId: app._id },
     });
   }
 

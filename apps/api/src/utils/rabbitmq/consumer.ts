@@ -2,7 +2,7 @@ import { rabbitmq } from "./rabbitmq.js";
 
 export async function consume(
   queue: string,
-  handler: (data: any) => Promise<void>,
+  handler: (data: any, routingKey: string) => Promise<void>,
 ) {
   const channel = rabbitmq.getChannel();
 
@@ -12,7 +12,7 @@ export async function consume(
     try {
       const data = JSON.parse(msg.content.toString());
 
-      await handler(data);
+      await handler(data, msg.fields.routingKey);
 
       channel.ack(msg);
     } catch (error) {
