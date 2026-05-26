@@ -22,7 +22,7 @@ const WebHookSchema = new Schema(
       type: [
         {
           type: String,
-          enum: ["user.created", "user.updated", "user.deleted"],
+          enum: ["user.created", "user.updated", "user.deleted", "user.login"],
         },
       ],
       required: function (this: { isNew: boolean }) {

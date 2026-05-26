@@ -390,13 +390,20 @@ export const googleLogin = async (idToken: string, clientId: string) => {
       name: OAuthUser.name,
     });
 
-    //NOTE: PUBLISH THE EVENT TO RABBITMQ
+    //NOTE: PUBLISH THE EVENT TO RABBITMQ FOR USER.CREATED
     await publish({
       exchange: EXCHANGES.AUTH_EVENT,
       routingKey: ROUTING_KEYS.USER_CREATED,
       payload: { user: globalUser, appId: app._id },
     });
   }
+
+  //NOTE: PUBLISH THE EVENT TO RABBITMQ FOR USER.LOGIN
+  await publish({
+    exchange: EXCHANGES.AUTH_EVENT,
+    routingKey: ROUTING_KEYS.USER_LOGIN,
+    payload: { user: globalUser, appId: app._id },
+  });
 
   const existingMembership = await MemberShip.findOne({
     userId: globalUser._id,
