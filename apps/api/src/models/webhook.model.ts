@@ -25,8 +25,17 @@ const WebHookSchema = new Schema(
           enum: ["user.created", "user.updated", "user.deleted"],
         },
       ],
+      required: function (this: { isNew: boolean }) {
+        return this.isNew;
+      },
       validate: {
-        validator: (v: string[]) => v.length > 0,
+        validator: function (
+          this: { isModified: (path: string) => boolean; isNew: boolean },
+          v?: string[],
+        ) {
+          if (!this.isNew && !this.isModified("events")) return true;
+          return Array.isArray(v) && v.length > 0;
+        },
         message: "At least one event is required",
       },
     },
