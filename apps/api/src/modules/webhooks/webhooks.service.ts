@@ -19,15 +19,20 @@ export const getWebhookByAppId = async ({
 
 export const create = async ({
   appId,
+  userId,
   name,
   url,
   events,
 }: {
   appId: string;
+  userId: string;
   name: string;
   url: string;
   events: ("user.created" | "user.updated" | "user.deleted")[];
 }) => {
+  const existingApp = await App.findOne({ _id: appId, ownerId: userId });
+  if (!existingApp) throw new AppError("Application not found.", 404);
+
   const existingWebhook = await WebHook.findOne({ appId, url });
   if (existingWebhook) throw new AppError("Webhook already exists.", 400);
 
