@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import type { Channel, connect } from "amqplib";
 import amqp from "amqplib";
 
