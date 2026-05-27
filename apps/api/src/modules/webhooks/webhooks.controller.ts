@@ -19,7 +19,14 @@ export const getAppWebhooks = asyncHandler(
 export const createWebhook = asyncHandler(
   async (req: Request, res: Response) => {
     const { name, url, appId, events } = req.body;
-    const data = await WebHookService.create({ name, url, events, appId });
+    const userId = req?.user?.userId;
+    const data = await WebHookService.create({
+      name,
+      url,
+      events,
+      appId,
+      userId: userId!,
+    });
     return successResponse(res, data);
   },
 );
@@ -46,7 +53,10 @@ export const deleteWebhook = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = req?.user?.userId;
-    const data = await WebHookService.deleteWebhook({ id: id!, userId: userId! });
+    const data = await WebHookService.deleteWebhook({
+      id: id!,
+      userId: userId!,
+    });
     return successResponse(res, data);
   },
 );
