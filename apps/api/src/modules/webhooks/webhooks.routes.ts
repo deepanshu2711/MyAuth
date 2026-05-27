@@ -6,4 +6,4 @@ export const webHookRouter = express.Router();
 webHookRouter.get("/:appId", WebHookController.getAppWebhooks);
 webHookRouter.post("/", WebHookController.createWebhook);
 webHookRouter.patch("/:id", WebHookController.updateWebhook);
-webHookRouter.delete("/", WebHookController.deleteWebhook);
+webHookRouter.delete("/:id", WebHookController.deleteWebhook);
