@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export const Footer = () => {
   return (
-    <footer className="border-t bg-black  border-white/10 py-12  px-6 ">
+    <footer className="border-t bg-black border-white/10 py-10 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <Image
@@ -11,10 +11,10 @@ export const Footer = () => {
             width={200}
             height={200}
             priority
-            style={{ width: "120px", height: "auto" }}
+            className="h-auto w-28 sm:w-[120px]"
           />
 
-          <div className="flex gap-8 text-sm text-gray-400">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-gray-400 sm:gap-x-8">
             <a href="#" className="hover:text-white transition-colors">
               Documentation
             </a>

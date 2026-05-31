@@ -114,11 +114,11 @@ function classNames(...classes) {
 
 export default function Example() {
   return (
-    <div className="bg-transparent pt-20">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <div className="w-full bg-transparent pt-16 sm:pt-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-base/7 font-sans text-cyan-600">Plans</h2>
-          <p className="mt-2 text-4xl font-sans tracking-tight text-balance text-neutral-900 sm:text-4xl dark:text-white">
+          <p className="mt-2 text-3xl font-sans tracking-tight text-balance text-neutral-900 sm:text-4xl dark:text-white">
             Simple plans, transparent limits
           </p>
         </div>
@@ -127,15 +127,17 @@ export default function Example() {
           the platform is production-hardened.
         </p>
 
-        <div className="isolate mx-auto  grid max-w-md grid-cols-1 gap-y-8 sm:mt-10 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div className="isolate mx-auto mt-8 grid max-w-sm grid-cols-1 gap-y-8 sm:mt-10 sm:max-w-md lg:mx-0 lg:max-w-none lg:grid-cols-3">
           {tiers.map((tier, tierIdx) => (
             <div
               key={tier.id}
               className={classNames(
                 tier.mostPopular ? "lg:z-10 lg:rounded-b-none" : "lg:mt-8",
-                tierIdx === 0 ? "-mr-px lg:rounded-r-none" : "",
-                tierIdx === tiers.length - 1 ? "-ml-px lg:rounded-l-none" : "",
-                "flex flex-col justify-between rounded-3xl bg-transparent p-8 inset-ring inset-ring-gray-200 xl:p-10",
+                tierIdx === 0 ? "lg:-mr-px lg:rounded-r-none" : "",
+                tierIdx === tiers.length - 1
+                  ? "lg:-ml-px lg:rounded-l-none"
+                  : "",
+                "flex flex-col justify-between rounded-3xl bg-transparent p-6 inset-ring inset-ring-gray-200 sm:p-8 xl:p-10",
               )}
             >
               <div>
@@ -176,7 +178,7 @@ export default function Example() {
               <Button
                 aria-describedby={tier.id}
                 variant={tier.mostPopular ? "secondary" : "default"}
-                className="mt-8"
+                className="mt-8 w-full"
               >
                 {tier.cta}
               </Button>

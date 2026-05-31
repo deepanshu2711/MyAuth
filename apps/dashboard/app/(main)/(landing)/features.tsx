@@ -3,18 +3,18 @@ import { useId } from "react";
 
 export function FeaturesSectionDemo() {
   return (
-    <div className="">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 md:gap-2 max-w-7xl mx-auto">
+    <div className="w-full">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-2 lg:grid-cols-4 max-w-7xl mx-auto">
         {grid.map((feature) => (
           <div
             key={feature.title}
-            className="relative bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-6 rounded-3xl overflow-hidden"
+            className="relative bg-gradient-to-b dark:from-neutral-900 from-neutral-100 dark:to-neutral-950 to-white p-5 rounded-3xl overflow-hidden sm:p-6"
           >
             <Grid size={20} />
-            <p className="text-base font-bold text-neutral-800 dark:text-white relative z-20">
+            <p className="text-sm font-bold text-neutral-800 dark:text-white relative z-20 sm:text-base">
               {feature.title}
             </p>
-            <p className="text-neutral-600 dark:text-neutral-400 mt-4 text-base font-normal relative z-20">
+            <p className="text-neutral-600 dark:text-neutral-400 mt-4 text-sm font-normal relative z-20 sm:text-base">
               {feature.description}
             </p>
           </div>
@@ -67,7 +67,7 @@ const grid = [
   },
 ];
 
-const DEFAULT_PATTERN = [
+const DEFAULT_PATTERN: [number, number][] = [
   [7, 1],
   [8, 2],
   [9, 3],
@@ -79,7 +79,7 @@ export const Grid = ({
   pattern,
   size,
 }: {
-  pattern?: number[][];
+  pattern?: [number, number][];
   size?: number;
 }) => {
   const p = pattern ?? DEFAULT_PATTERN;
@@ -100,7 +100,22 @@ export const Grid = ({
   );
 };
 
-export function GridPattern({ width, height, x, y, squares, ...props }: any) {
+type GridPatternProps = React.SVGProps<SVGSVGElement> & {
+  width: number;
+  height: number;
+  x: string;
+  y: string;
+  squares?: [number, number][];
+};
+
+export function GridPattern({
+  width,
+  height,
+  x,
+  y,
+  squares,
+  ...props
+}: GridPatternProps) {
   const patternId = useId();
 
   return (
@@ -125,7 +140,7 @@ export function GridPattern({ width, height, x, y, squares, ...props }: any) {
       />
       {squares && (
         <svg x={x} y={y} className="overflow-visible">
-          {squares.map(([x, y]: any, idx: number) => (
+          {squares.map(([x, y], idx) => (
             <rect
               strokeWidth="0"
               key={idx}
