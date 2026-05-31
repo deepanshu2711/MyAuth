@@ -7,6 +7,7 @@ import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect
 import { useGoogleLogin } from "@react-oauth/google";
 import Link from "next/link";
 import Image from "next/image";
+import api from "../../../lib/api";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -68,10 +69,10 @@ const Register = () => {
   const googleLogin = useGoogleLogin({
     flow: "auth-code",
     onSuccess: async ({ code }: { code: string }) => {
-      const response = await api.post("auth/google", {
+      const response = await api.post("/auth/google", {
         idToken: code,
         clientId: clientId,
-        redirected_uri: redirected_uri,
+        redirect_uri: redirected_uri,
       });
 
       window.location.href = response.data.data;
