@@ -5,7 +5,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Navbar />
-      <div className="mb-40 mt-16">{children}</div>
+      <main className="mb-24 pt-32 sm:pt-28">{children}</main>
       <Footer />
     </>
   );

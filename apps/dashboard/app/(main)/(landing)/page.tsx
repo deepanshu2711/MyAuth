@@ -59,14 +59,16 @@ export default function Page() {
   };
 
   return (
-    <div className="bg-black text-white gap-10 flex flex-col items-center justify-center">
+    <div className="bg-black text-white gap-10 flex w-full flex-col items-center justify-center overflow-x-hidden">
       <BackgroundRippleEffect />
 
       {/* HERO SECRION */}
-      <section className="px-6 min-h-[50vh] z-10 flex items-center justify-center">
-        <div className="max-w-5xl mx-auto text-center justify-center">
-          <Badge>Next.js App Router · Cookie-first · No magic</Badge>
-          <h1 className="text-5xl md:text-6xl my-6 tracking-tight font-sans">
+      <section className="z-10 flex w-full items-center justify-center px-4 py-8 sm:px-6 md:min-h-[50vh]">
+        <div className="mx-auto max-w-5xl text-center justify-center">
+          <Badge className="max-w-full whitespace-normal px-3 py-1 text-center leading-tight sm:whitespace-nowrap">
+            Next.js App Router · Cookie-first · No magic
+          </Badge>
+          <h1 className="my-6 font-sans text-4xl leading-tight tracking-tight sm:text-5xl md:text-6xl">
             Authentication for developers who care about{" "}
             <span className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 bg-clip-text text-transparent">
               what actually runs in production
@@ -80,15 +82,28 @@ export default function Page() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href={"/docs/nextjs"} className="cursor-pointer">
-              <Button variant={"secondary"}>Get started in 5 minutes</Button>
+            <Link
+              href={"/docs/nextjs"}
+              className="w-full cursor-pointer sm:w-auto"
+            >
+              <Button
+                variant={"secondary"}
+                className="w-full whitespace-normal sm:w-auto sm:whitespace-nowrap"
+              >
+                Get started in 5 minutes
+              </Button>
             </Link>
-            <Button onClick={handleClick}>Create Your First Application</Button>
+            <Button
+              onClick={handleClick}
+              className="w-full whitespace-normal sm:w-auto sm:whitespace-nowrap"
+            >
+              Create Your First Application
+            </Button>
           </div>
         </div>
       </section>
 
-      <section className="max-w-7xl mt-0 px-6">
+      <section className="w-full max-w-7xl mt-0 px-4 sm:px-6">
         <ul className="grid grid-cols-1 grid-rows-none gap-4 md:grid-cols-12 md:grid-rows-3 lg:gap-4 xl:max-h-[34rem] xl:grid-rows-2">
           <GridItem
             area="md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
@@ -133,10 +148,10 @@ export default function Page() {
         </ul>
       </section>
 
-      <section className="max-w-7xl mx-auto mt-24 px-6">
+      <section className="w-full max-w-7xl mx-auto mt-16 px-4 sm:mt-24 sm:px-6">
         <div className="flex flex-col md:flex-row justify-between w-full items-center gap-10">
           {/* Text content */}
-          <div className="flex-1 space-y-6">
+          <div className="w-full flex-1 space-y-6">
             <h2 className="text-3xl md:text-4xl font-sans tracking-tight text-neutral-900 dark:text-white">
               Secure authentication, fully under your control
             </h2>
@@ -157,19 +172,19 @@ export default function Page() {
           </div>
 
           {/* Image */}
-          <div className="flex-1 flex items-center justify-end">
+          <div className="flex w-full flex-1 items-center justify-center md:justify-end">
             <Image
               src="/auth.png"
               alt="Login screen"
               width={400}
               height={600}
-              className="h-auto rounded-4xl border shadow-lg"
+              className="h-auto w-full max-w-sm rounded-4xl border shadow-lg"
             />
           </div>
         </div>
       </section>
 
-      <section className="flex flex-col items-center max-w-7xl mx-auto mt-24 px-6 rounded-md text-center">
+      <section className="flex w-full flex-col items-center max-w-7xl mx-auto mt-16 px-4 rounded-md text-center sm:mt-24 sm:px-6">
         <h2 className="text-3xl md:text-4xl font-sans tracking-tight text-neutral-900 dark:text-white">
           Auth That <Cover>Integrates Fast</Cover>
         </h2>
@@ -184,7 +199,7 @@ export default function Page() {
 
       <Example />
 
-      <section className="flex flex-col items-center max-w-7xl mx-auto mt-24 px-6 rounded-md text-center">
+      <section className="flex w-full flex-col items-center max-w-7xl mx-auto mt-16 px-4 rounded-md text-center sm:mt-24 sm:px-6">
         <h2 className="text-3xl md:text-4xl font-sans tracking-tight text-neutral-900 dark:text-white">
           Join the community
         </h2>
