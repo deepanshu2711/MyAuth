@@ -21,6 +21,8 @@ export async function startWebhookWorker() {
       timestamp: Date.now(),
     };
 
+    const now = new Date();
+
     const results = await Promise.allSettled(
       webhooks.map(async (webhook) => {
         const body = JSON.stringify(payload);
@@ -41,12 +43,23 @@ export async function startWebhookWorker() {
       }),
     );
 
-    results.forEach((result, index) => {
-      if (result.status === "fulfilled") {
-        console.log(`Webhook ${webhooks[index]?._id} delivered successfully`);
-      } else {
-        console.error(`Webhook ${webhooks[index]?._id} failed`, result.reason);
-      }
-    });
+    await Promise.all(
+      results.map(async (result, index) => {
+        const webhook = webhooks[index];
+
+        if (!webhook) return;
+
+        if (result.status === "fulfilled") {
+          return WebHook.findByIdAndUpdate(webhook._id, {
+            lastTriggerAt: now,
+            lastSuccessAt: now,
+          });
+        }
+
+        return WebHook.findByIdAndUpdate(webhook._id, {
+          lastTriggerAt: now,
+        });
+      }),
+    );
   });
 }

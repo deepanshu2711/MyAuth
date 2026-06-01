@@ -500,7 +500,18 @@ export const githubRedirect = async (code: string, state: string) => {
       name: githubUser.name,
       avatar: githubUser.avatar_url,
     });
+    await publish({
+      exchange: EXCHANGES.AUTH_EVENT,
+      routingKey: ROUTING_KEYS.USER_CREATED,
+      payload: { user: globalUser, appId: app._id },
+    });
   }
+
+  await publish({
+    exchange: EXCHANGES.AUTH_EVENT,
+    routingKey: ROUTING_KEYS.USER_LOGIN,
+    payload: { user: globalUser, appId: app._id },
+  });
 
   const existingMembership = await MemberShip.findOne({
     userId: globalUser._id,

@@ -48,9 +48,13 @@ const WebHookSchema = new Schema(
       default: true,
     },
 
-    //NOTE: add last trigger at
-    //last success at
-    //failure count
+    lastTriggerAt: {
+      type: Date,
+    },
+
+    lastSuccessAt: {
+      type: Date,
+    },
   },
   { timestamps: true },
 );
