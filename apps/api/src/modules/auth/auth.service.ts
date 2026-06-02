@@ -12,6 +12,7 @@ import {
 } from "../../utils/helpers.js";
 import { App } from "../../models/app.model.js";
 import { MemberShip } from "../../models/membership.model.js";
+import { OrgServices } from "../organizations/organization.service.js";
 import { AuthorizationCode } from "../../models/authorizationCode.model.js";
 import { OAuthClient } from "../../lib/OAuthClient.js";
 import { createRemoteJWKSet, jwtVerify } from "jose";
@@ -45,6 +46,7 @@ export const registerUser = async ({
   let globalUser = await User.findOne({ email });
   if (!globalUser) {
     globalUser = await User.create({ email });
+    await OrgServices.ensurePersonalOrg(globalUser._id.toString(), email);
   }
 
   const existingMembership = await MemberShip.findOne({
@@ -390,6 +392,12 @@ export const googleLogin = async (idToken: string, clientId: string) => {
       name: OAuthUser.name,
     });
 
+    //NOTE: Create the personal Org if not existed
+    await OrgServices.ensurePersonalOrg(
+      globalUser._id.toString(),
+      OAuthUser.email,
+    );
+
     //NOTE: PUBLISH THE EVENT TO RABBITMQ FOR USER.CREATED
     await publish({
       exchange: EXCHANGES.AUTH_EVENT,
@@ -500,6 +508,7 @@ export const githubRedirect = async (code: string, state: string) => {
       name: githubUser.name,
       avatar: githubUser.avatar_url,
     });
+    await OrgServices.ensurePersonalOrg(globalUser._id.toString(), email);
     await publish({
       exchange: EXCHANGES.AUTH_EVENT,
       routingKey: ROUTING_KEYS.USER_CREATED,
