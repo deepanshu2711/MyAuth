@@ -9,6 +9,10 @@ const appSchema = new Schema(
       ref: "user",
       required: true,
     },
+    orgId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+    },
     clientId: { type: String, required: true },
     clientSecret: { type: String, required: true },
     secretRotationAt: Date,
