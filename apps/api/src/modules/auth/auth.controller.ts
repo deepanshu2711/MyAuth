@@ -33,7 +33,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   return res.status(200).json({
     success: true,
     data: redirectUrl,
-    warning: "This endpoint is deprecated. Please migrate to POST /api/auth/login-by-otp",
+    warning:
+      "This endpoint is deprecated. Please migrate to POST /api/auth/login-by-otp",
   });
 });
 
@@ -72,13 +73,15 @@ export const verify = asyncHandler(async (req: Request, res: Response) => {
   return successResponse(res, user);
 });
 
-export const getCurrentLoggedInUser = asyncHandler(async (req: Request, res: Response) => {
-  const user = req.user;
-  const data = await AuthService.me({
-    userId: user?.userId!,
-  });
-  return successResponse(res, data);
-});
+export const getCurrentLoggedInUser = asyncHandler(
+  async (req: Request, res: Response) => {
+    const user = req.user;
+    const data = await AuthService.me({
+      userId: user?.userId!,
+    });
+    return successResponse(res, data);
+  },
+);
 
 export const logout = asyncHandler(async (req: Request, res: Response) => {
   const { accessToken } = req.body;
