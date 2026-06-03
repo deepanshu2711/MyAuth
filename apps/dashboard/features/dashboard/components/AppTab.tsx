@@ -1,6 +1,7 @@
 import { AlertTriangle, ChevronRight, Plus, Users } from "lucide-react";
 import Image from "next/image";
 import { GetOrgAppsResponse } from "../types";
+import { useRouter } from "next/navigation";
 
 interface ApplicationTabProps {
   orgApps: GetOrgAppsResponse[];
@@ -10,6 +11,7 @@ export const ApplicationTab = ({
   orgApps,
   setShowCreateModal,
 }: ApplicationTabProps) => {
+  const router = useRouter();
   return (
     <div className="fade-in">
       <div className="flex items-center justify-between mb-6">
@@ -37,6 +39,7 @@ export const ApplicationTab = ({
         {orgApps &&
           orgApps.map((app) => (
             <div
+              onClick={() => router.push(`/app/${app._id}`)}
               key={app._id}
               style={{
                 background: "#111113",
