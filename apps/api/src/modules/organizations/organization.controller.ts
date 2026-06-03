@@ -18,8 +18,15 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
-  console.log("userId", userId);
   const data = await OrgServices.getAllUserOrgs(userId!);
+
+  return successResponse(res, data);
+});
+
+export const getOgrApps = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const { id: orgId } = req.params;
+  const data = await OrgServices.getOrgApps(orgId!, userId!);
 
   return successResponse(res, data);
 });

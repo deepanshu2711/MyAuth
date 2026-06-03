@@ -33,4 +33,10 @@ export const DashboardService = {
     );
     return response.data;
   },
+  getOrgApps: async (orgId: string) => {
+    const response = await api.get(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/organization/${orgId}/apps`,
+    );
+    return response.data.data;
+  },
 };

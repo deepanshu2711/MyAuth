@@ -35,3 +35,12 @@ export interface GetUserOrgsResponse {
   userId: string;
   org: Org;
 }
+
+export interface GetOrgAppsResponse {
+  clientId: string;
+  name: string;
+  orgId: string;
+  status: string;
+  _id: string;
+  createdAt: string;
+}

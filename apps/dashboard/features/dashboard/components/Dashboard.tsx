@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Plus,
   Settings,
@@ -39,6 +39,7 @@ import {
 import Image from "next/image";
 import { useGetAllUserOrgsQuery } from "../hooks/query/useGetAllUserOrgsQuery";
 import { OrgSwitcher } from "./OrgSwitcher";
+import { useGetOrgAppsQuery } from "../hooks/query/useGetOrgAppsQuery";
 
 const MOCK_APPS = [
   {
@@ -177,8 +178,14 @@ export default function App() {
   const [mobileNav, setMobileNav] = useState(false);
   const [settingsTab, setSettingsTab] = useState("general");
 
-  const { data: orgsData, isLoading: isOrgLoading } = useGetAllUserOrgsQuery();
-  console.log("orgsData", orgsData);
+  const { data: orgsData } = useGetAllUserOrgsQuery();
+  const [selectedOrg, setSelectedOrg] = useState();
+  const currentOrg = selectedOrg ?? orgsData?.find((i) => i.org.isPersonal);
+  console.log("current org", currentOrg);
+
+  const { data: orgApps } = useGetOrgAppsQuery(currentOrg?.orgId!);
+
+  console.log("orgApps", orgApps);
 
   const handleCreateApp = () => {
     if (!appName.trim()) return;
@@ -264,7 +271,13 @@ export default function App() {
       >
         <div className=" mx-auto flex items-center justify-between h-14">
           {/* Left: Logo + Org */}
-          {orgsData && <OrgSwitcher orgs={orgsData!} />}
+          {orgsData && currentOrg && (
+            <OrgSwitcher
+              orgs={orgsData!}
+              selectedOrg={currentOrg}
+              setSelectedOrg={setSelectedOrg}
+            />
+          )}
 
           {/* Right */}
           <div className="flex items-center gap-2">
@@ -311,7 +324,7 @@ export default function App() {
               <div>
                 <h1 className="text-xl font-semibold">Applications</h1>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  {apps.length} apps in this workspace
+                  {orgApps?.length} apps in this workspace
                 </p>
               </div>
             </div>
@@ -329,112 +342,77 @@ export default function App() {
                 <span className="text-sm">Create application</span>
               </button>
 
-              {apps.map((app) => (
-                <div
-                  key={app.id}
-                  style={{
-                    background: "#111113",
-                    border: "1px solid rgba(255,255,255,0.07)",
-                  }}
-                  className="app-card rounded-xl overflow-hidden cursor-pointer hover:border-zinc-700 group"
-                  onClick={() =>
-                    setSelectedApp(selectedApp?.id === app.id ? null : app)
-                  }
-                >
-                  {/* Top accent bar */}
-                  <div className="h-0.5 bg-gradient-to-r from-cyan-500 via-cyan-500/50 to-transparent" />
-
-                  <div className="p-5">
-                    {/* Slug */}
-                    <div className="mono text-[10px] text-zinc-600 mb-4 truncate">
-                      {app.slug}
-                    </div>
-
-                    {/* Logo + Name */}
-                    <div className="flex items-start justify-between mb-3">
-                      <Image
-                        src="/x.png"
-                        width={40}
-                        height={40}
-                        alt="app-logo"
-                      />
-                      {/* <div className="h-9 w-9 rounded-lg bg-zinc-800 flex items-center justify-center text-xs font-bold text-zinc-400 border border-white/5"> */}
-                      {/*   {app.name[0]} */}
-                      {/* </div> */}
-                      <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-400 transition-colors mt-1" />
-                    </div>
-
-                    <h3 className="text-sm font-semibold text-zinc-100 mb-2">
-                      {app.name}
-                    </h3>
-
-                    {/* Status badge */}
-                    {app.env === "production" ? (
-                      <div className="inline-flex items-center gap-1.5 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2 py-0.5">
-                        <span className="relative flex h-1.5 w-1.5">
-                          <span className="ping-dot relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                        </span>
-                        Production
-                      </div>
-                    ) : (
-                      <div className="inline-flex items-center gap-1.5 text-[10px] font-medium opacity-25 text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5">
-                        <AlertTriangle className="w-2.5 h-2.5" />
-                        No Production Env
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Footer */}
+              {orgApps &&
+                orgApps.map((app) => (
                   <div
+                    key={app._id}
                     style={{
-                      borderTop: "1px solid rgba(255,255,255,0.05)",
-                      background: "rgba(255,255,255,0.02)",
+                      background: "#111113",
+                      border: "1px solid rgba(255,255,255,0.07)",
                     }}
-                    className="px-5 py-2.5 flex items-center justify-between"
+                    className="app-card rounded-xl overflow-hidden cursor-pointer hover:border-zinc-700 group"
                   >
-                    <span className="text-[10px] text-zinc-600">
-                      Updated {app.updated}
-                    </span>
-                    <div className="flex items-center gap-3 text-[10px] text-zinc-600">
-                      <span className="flex items-center gap-1">
-                        <Users className="w-3 h-3 text-cyan-500" />
-                        {app.users.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
+                    {/* Top accent bar */}
+                    <div className="h-0.5 bg-gradient-to-r from-cyan-500 via-cyan-500/50 to-transparent" />
 
-                  {/* Expanded detail */}
-                  {selectedApp?.id === app.id && (
+                    <div className="p-5">
+                      {/* Slug */}
+                      <div className="mono text-[10px] text-zinc-600 mb-4 truncate">
+                        {app.clientId}
+                      </div>
+
+                      {/* Logo + Name */}
+                      <div className="flex items-start justify-between mb-3">
+                        <Image
+                          src="/x.png"
+                          width={40}
+                          height={40}
+                          alt="app-logo"
+                        />
+                        <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-400 transition-colors mt-1" />
+                      </div>
+
+                      <h3 className="text-sm font-semibold text-zinc-100 mb-2">
+                        {app.name}
+                      </h3>
+
+                      {/* Status badge */}
+                      {app.status === "active" ? (
+                        <div className="inline-flex items-center gap-1.5 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2 py-0.5">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="ping-dot relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                          </span>
+                          Active
+                        </div>
+                      ) : (
+                        <div className="inline-flex items-center gap-1.5 text-[10px] font-medium opacity-25 text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5">
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          Inactive
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Footer */}
                     <div
-                      style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
-                      className="px-5 py-4 space-y-3 fade-in"
+                      style={{
+                        borderTop: "1px solid rgba(255,255,255,0.05)",
+                        background: "rgba(255,255,255,0.02)",
+                      }}
+                      className="px-5 py-2.5 flex items-center justify-between"
                     >
-                      <p className="text-[11px] text-zinc-500 font-medium uppercase tracking-wider">
-                        Quick Actions
-                      </p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {[
-                          { icon: Key, label: "API Keys" },
-                          { icon: Webhook, label: "Webhooks" },
-                          { icon: Users, label: "Users" },
-                          { icon: BarChart3, label: "Analytics" },
-                        ].map((action) => (
-                          <button
-                            key={action.label}
-                            style={{
-                              border: "1px solid rgba(255,255,255,0.07)",
-                            }}
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
-                          >
-                            <action.icon className="w-3.5 h-3.5" />
-                            {action.label}
-                          </button>
-                        ))}
+                      <span className="text-[10px] text-zinc-600">
+                        Created {app.createdAt.slice(0, 10)}
+                      </span>
+                      <div className="flex items-center gap-3 text-[10px] text-zinc-600">
+                        <span className="flex items-center gap-1">
+                          <Users className="w-3 h-3 text-cyan-500" />
+                          {/* {app.users.toLocaleString()} */}
+                          1289
+                        </span>
                       </div>
                     </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                ))}
             </div>
           </div>
         )}

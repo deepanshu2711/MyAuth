@@ -6,10 +6,18 @@ import { Button } from "@/components/ui/button";
 import { GetUserOrgsResponse } from "../types";
 import { CreateOrgDialog } from "./CreateOrgDialog";
 
-export const OrgSwitcher = ({ orgs }: { orgs: GetUserOrgsResponse[] }) => {
+interface OrgSwitcherProps {
+  orgs: GetUserOrgsResponse[];
+  selectedOrg: GetUserOrgsResponse;
+  setSelectedOrg: (selectedOrg: GetUserOrgsResponse) => void;
+}
+export const OrgSwitcher = ({
+  orgs,
+  selectedOrg,
+  setSelectedOrg,
+}: OrgSwitcherProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedOrg, setSelectedOrg] = useState(orgs[0]);
   const dropdownRef = useRef(null);
 
   const handleCreateWorkspace = () => {
