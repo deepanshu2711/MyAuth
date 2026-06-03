@@ -20,4 +20,17 @@ export const DashboardService = {
     );
     return response.data;
   },
+  getAllUserOrgs: async () => {
+    const response = await api.get(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/organization`,
+    );
+    return response.data.data;
+  },
+  createOrg: async (name: string) => {
+    const response = await api.post(
+      `${process.env.NEXT_PUBLIC_AUTH_BACKEND}/api/organization`,
+      { name: name },
+    );
+    return response.data;
+  },
 };

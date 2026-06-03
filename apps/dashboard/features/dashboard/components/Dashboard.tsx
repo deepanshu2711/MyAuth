@@ -37,6 +37,8 @@ import {
   X,
 } from "lucide-react";
 import Image from "next/image";
+import { useGetAllUserOrgsQuery } from "../hooks/query/useGetAllUserOrgsQuery";
+import { OrgSwitcher } from "./OrgSwitcher";
 
 const MOCK_APPS = [
   {
@@ -175,6 +177,9 @@ export default function App() {
   const [mobileNav, setMobileNav] = useState(false);
   const [settingsTab, setSettingsTab] = useState("general");
 
+  const { data: orgsData, isLoading: isOrgLoading } = useGetAllUserOrgsQuery();
+  console.log("orgsData", orgsData);
+
   const handleCreateApp = () => {
     if (!appName.trim()) return;
     const newApp = {
@@ -259,24 +264,7 @@ export default function App() {
       >
         <div className=" mx-auto flex items-center justify-between h-14">
           {/* Left: Logo + Org */}
-          <div className="flex items-center gap-3">
-            <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-cyan-600 to-cyan-800 flex items-center justify-center text-xs font-bold shadow-lg shadow-cyan-900/40">
-              {orgName[0]}
-            </div>
-            <button className="flex items-center gap-1.5 text-sm font-medium hover:text-zinc-300 transition-colors">
-              {orgName}
-              {/* <span */}
-              {/*   style={{ */}
-              {/*     background: "rgba(139,92,246,0.15)", */}
-              {/*     border: "1px solid rgba(139,92,246,0.3)", */}
-              {/*   }} */}
-              {/*   className="text-[10px] font-medium text-cyan-400 px-1.5 py-0.5 rounded-full" */}
-              {/* > */}
-              {/*   {plan} */}
-              {/* </span> */}
-              <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />
-            </button>
-          </div>
+          {orgsData && <OrgSwitcher orgs={orgsData!} />}
 
           {/* Right */}
           <div className="flex items-center gap-2">
@@ -354,7 +342,7 @@ export default function App() {
                   }
                 >
                   {/* Top accent bar */}
-                  <div className="h-0.5 bg-gradient-to-r from-cyan-600 via-cyan-500/50 to-transparent" />
+                  <div className="h-0.5 bg-gradient-to-r from-cyan-500 via-cyan-500/50 to-transparent" />
 
                   <div className="p-5">
                     {/* Slug */}

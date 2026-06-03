@@ -1,6 +1,7 @@
 import { Toaster } from "sonner";
 import { TanstackQueryProvider } from "./TanstackQueryProvider";
 import { AuthProvider } from "@myauth/next";
+import { ThemeProvider } from "./theme-provider";
 
 export const Providers = ({
   children,
@@ -16,7 +17,7 @@ export const Providers = ({
         clientId={process.env.NEXT_PUBLIC_CLIENT_ID!}
         initialSession={initialSession}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </AuthProvider>
     </TanstackQueryProvider>
   );

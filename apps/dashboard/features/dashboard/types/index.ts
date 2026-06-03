@@ -20,3 +20,18 @@ export interface UserAppSummary {
 export interface GetUserAppsSummaryResponse {
   data: UserAppSummary[];
 }
+
+export interface Org {
+  createdAt: string;
+  isPersonal: boolean;
+  name: string;
+  ownerId: string;
+  _id: string;
+}
+
+export interface GetUserOrgsResponse {
+  orgId: string;
+  role: "owner" | "member" | "admin";
+  userId: string;
+  org: Org;
+}

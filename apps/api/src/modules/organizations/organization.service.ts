@@ -6,6 +6,11 @@ import { getUserOrgs } from "./pipelines/getAllUserOrgs.pipeline.js";
 export const OrgServices = {
   create: async (payload: CreateOrgInput) => {
     const data = await Organization.create(payload);
+    await OrgMembership.create({
+      orgId: data._id,
+      userId: payload.ownerId,
+      role: "owner",
+    });
     return data;
   },
   getAllUserOrgs: async (userId: string) => {
@@ -20,7 +25,7 @@ export const OrgServices = {
     if (existing) return existing;
 
     const org = await Organization.create({
-      name: email ? email.split("@")[0] : "Personal",
+      name: "Personal",
       ownerId: userId,
       isPersonal: true,
     });
