@@ -40,6 +40,10 @@ import Image from "next/image";
 import { useGetAllUserOrgsQuery } from "../hooks/query/useGetAllUserOrgsQuery";
 import { OrgSwitcher } from "./OrgSwitcher";
 import { useGetOrgAppsQuery } from "../hooks/query/useGetOrgAppsQuery";
+import { ApplicationTab } from "./AppTab";
+import { GetUserOrgsResponse } from "../types";
+import { useRegisterAppMutation } from "../hooks/mutation/useRegisterAppMutation";
+import { useGetOrgTeamQuery } from "../hooks/query/useGetOrgTeamQuery";
 
 const MOCK_APPS = [
   {
@@ -179,29 +183,32 @@ export default function App() {
   const [settingsTab, setSettingsTab] = useState("general");
 
   const { data: orgsData } = useGetAllUserOrgsQuery();
-  const [selectedOrg, setSelectedOrg] = useState();
+  const [selectedOrg, setSelectedOrg] = useState<GetUserOrgsResponse>();
   const currentOrg = selectedOrg ?? orgsData?.find((i) => i.org.isPersonal);
-  console.log("current org", currentOrg);
 
   const { data: orgApps } = useGetOrgAppsQuery(currentOrg?.orgId!);
+  const { data: orgTeam } = useGetOrgTeamQuery(currentOrg?.orgId!);
 
-  console.log("orgApps", orgApps);
+  console.log("orgTeam", orgTeam);
+
+  const { mutate: registerApp, isPending: isCreatingApp } =
+    useRegisterAppMutation();
 
   const handleCreateApp = () => {
-    if (!appName.trim()) return;
-    const newApp = {
-      id: apps.length + 1,
-      name: appName,
-      slug: `${appName.toLowerCase().replace(/\s+/g, "-")}-${Math.floor(Math.random() * 99)}.authcore.dev`,
-      env: null,
-      updated: "just now",
-      users: 0,
-      sessions: 0,
-    };
-    setApps([...apps, newApp]);
-    setAppName("");
-    setRedirectUri("");
-    setShowCreateModal(false);
+    registerApp(
+      {
+        name: appName,
+        redirectUris: [redirectUri],
+        orgId: currentOrg?.orgId!,
+      },
+      {
+        onSuccess: () => {
+          setAppName("");
+          setRedirectUri("");
+          setShowCreateModal(false);
+        },
+      },
+    );
   };
 
   const handleInvite = () => {
@@ -318,103 +325,11 @@ export default function App() {
       {/* Main */}
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8">
         {/* ── APPLICATIONS ── */}
-        {activeTab === "applications" && (
-          <div className="fade-in">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-xl font-semibold">Applications</h1>
-                <p className="text-xs text-zinc-500 mt-0.5">
-                  {orgApps?.length} apps in this workspace
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {/* Create card */}
-              <button
-                onClick={() => setShowCreateModal(true)}
-                style={{ border: "1px dashed rgba(255,255,255,0.1)" }}
-                className="rounded-xl p-6 flex flex-col items-center justify-center gap-2 text-zinc-600 hover:text-zinc-400 hover:border-zinc-700 transition-all min-h-[160px] group"
-              >
-                <div className="h-9 w-9 rounded-lg border border-dashed border-zinc-700 group-hover:border-zinc-500 flex items-center justify-center transition-colors">
-                  <Plus className="w-4 h-4" />
-                </div>
-                <span className="text-sm">Create application</span>
-              </button>
-
-              {orgApps &&
-                orgApps.map((app) => (
-                  <div
-                    key={app._id}
-                    style={{
-                      background: "#111113",
-                      border: "1px solid rgba(255,255,255,0.07)",
-                    }}
-                    className="app-card rounded-xl overflow-hidden cursor-pointer hover:border-zinc-700 group"
-                  >
-                    {/* Top accent bar */}
-                    <div className="h-0.5 bg-gradient-to-r from-cyan-500 via-cyan-500/50 to-transparent" />
-
-                    <div className="p-5">
-                      {/* Slug */}
-                      <div className="mono text-[10px] text-zinc-600 mb-4 truncate">
-                        {app.clientId}
-                      </div>
-
-                      {/* Logo + Name */}
-                      <div className="flex items-start justify-between mb-3">
-                        <Image
-                          src="/x.png"
-                          width={40}
-                          height={40}
-                          alt="app-logo"
-                        />
-                        <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-zinc-400 transition-colors mt-1" />
-                      </div>
-
-                      <h3 className="text-sm font-semibold text-zinc-100 mb-2">
-                        {app.name}
-                      </h3>
-
-                      {/* Status badge */}
-                      {app.status === "active" ? (
-                        <div className="inline-flex items-center gap-1.5 text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2 py-0.5">
-                          <span className="relative flex h-1.5 w-1.5">
-                            <span className="ping-dot relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                          </span>
-                          Active
-                        </div>
-                      ) : (
-                        <div className="inline-flex items-center gap-1.5 text-[10px] font-medium opacity-25 text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5">
-                          <AlertTriangle className="w-2.5 h-2.5" />
-                          Inactive
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Footer */}
-                    <div
-                      style={{
-                        borderTop: "1px solid rgba(255,255,255,0.05)",
-                        background: "rgba(255,255,255,0.02)",
-                      }}
-                      className="px-5 py-2.5 flex items-center justify-between"
-                    >
-                      <span className="text-[10px] text-zinc-600">
-                        Created {app.createdAt.slice(0, 10)}
-                      </span>
-                      <div className="flex items-center gap-3 text-[10px] text-zinc-600">
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3 text-cyan-500" />
-                          {/* {app.users.toLocaleString()} */}
-                          1289
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          </div>
+        {activeTab === "applications" && orgApps && (
+          <ApplicationTab
+            orgApps={orgApps}
+            setShowCreateModal={setShowCreateModal}
+          />
         )}
 
         {/* ── TEAM ── */}
@@ -424,7 +339,7 @@ export default function App() {
               <div>
                 <h1 className="text-xl font-semibold">Team</h1>
                 <p className="text-xs text-zinc-500 mt-0.5">
-                  {members.length} members · {plan} plan
+                  {orgTeam?.length} members
                 </p>
               </div>
               <button
@@ -441,19 +356,19 @@ export default function App() {
               {[
                 {
                   label: "Total Members",
-                  value: members.length,
+                  value: orgTeam?.length,
                   icon: Users,
                   color: "text-violet-400",
                 },
                 {
                   label: "Active",
-                  value: members.filter((m) => m.status === "active").length,
+                  value: orgTeam?.length,
                   icon: Activity,
                   color: "text-emerald-400",
                 },
                 {
                   label: "Pending",
-                  value: members.filter((m) => m.status === "pending").length,
+                  value: 0,
                   icon: Mail,
                   color: "text-amber-400",
                 },
@@ -493,87 +408,77 @@ export default function App() {
                 <span className="col-span-2">Status</span>
               </div>
 
-              {members.map((member, i) => (
-                <div
-                  key={member.id}
-                  style={{
-                    borderBottom:
-                      i < members.length - 1
-                        ? "1px solid rgba(255,255,255,0.04)"
-                        : "none",
-                  }}
-                  className="px-5 py-4 grid grid-cols-12 items-center hover:bg-white/[0.02] transition-colors group"
-                >
-                  {/* Avatar + Info */}
-                  <div className="col-span-5 flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center text-xs font-semibold shrink-0">
-                      {member.avatar}
+              {orgTeam &&
+                orgTeam?.map((member, i) => (
+                  <div
+                    key={member._id}
+                    style={{
+                      borderBottom:
+                        i < members.length - 1
+                          ? "1px solid rgba(255,255,255,0.04)"
+                          : "none",
+                    }}
+                    className="px-5 py-4 grid grid-cols-12 items-center hover:bg-white/[0.02] transition-colors group"
+                  >
+                    {/* Avatar + Info */}
+                    <div className="col-span-5 flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center text-xs font-semibold shrink-0">
+                        <Image
+                          src={member.user.avatar}
+                          width={40}
+                          height={40}
+                          alt="avatar"
+                          className="rounded-full"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-zinc-100">
+                          {member.user.name}
+                        </p>
+                        <p className="text-[11px] text-zinc-500">
+                          {member.user.email}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-zinc-100">
-                        {member.name}
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        {member.email}
-                      </p>
+
+                    {/* Role */}
+                    <div className="col-span-3 hidden md:block">
+                      <select
+                        value={member.role}
+                        style={{
+                          background: "transparent",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          color: "inherit",
+                        }}
+                        className={`text-xs px-2 py-1 rounded-md cursor-pointer`}
+                      >
+                        {["Admin", "Developer", "Viewer"].map((r) => (
+                          <option
+                            key={r}
+                            value={r}
+                            style={{ background: "#1a1a1b" }}
+                          >
+                            {r}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                  </div>
 
-                  {/* Role */}
-                  <div className="col-span-3 hidden md:block">
-                    <select
-                      value={member.role}
-                      onChange={(e) =>
-                        setMembers(
-                          members.map((m) =>
-                            m.id === member.id
-                              ? { ...m, role: e.target.value }
-                              : m,
-                          ),
-                        )
-                      }
-                      style={{
-                        background: "transparent",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        color: "inherit",
-                      }}
-                      className={`text-xs px-2 py-1 rounded-md cursor-pointer ${ROLE_COLORS[member.role]}`}
-                    >
-                      {["Admin", "Developer", "Viewer"].map((r) => (
-                        <option
-                          key={r}
-                          value={r}
-                          style={{ background: "#1a1a1b" }}
-                        >
-                          {r}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Joined */}
-                  <span className="col-span-2 hidden md:block text-xs text-zinc-500">
-                    {member.joined}
-                  </span>
-
-                  {/* Status */}
-                  <div className="col-span-2 flex items-center justify-between">
-                    <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${member.status === "active" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}
-                    >
-                      {member.status}
+                    {/* Joined */}
+                    <span className="col-span-2 hidden md:block text-xs text-zinc-500">
+                      {member.createdAt.slice(0, 10)}
                     </span>
-                    <button
-                      onClick={() =>
-                        setMembers(members.filter((m) => m.id !== member.id))
-                      }
-                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/10 rounded transition-all"
-                    >
-                      <Trash2 className="w-3 h-3 text-red-500" />
-                    </button>
+
+                    {/* Status */}
+                    <div className="col-span-2 flex items-center justify-between">
+                      <span
+                        className={`text-[10px] font-medium px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-400 border-emerald-500/20`}
+                      >
+                        Active
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
         )}
@@ -1040,14 +945,24 @@ export default function App() {
             <div className="flex gap-2 mt-6">
               <button
                 onClick={handleCreateApp}
-                className="flex-1 py-2.5 bg-white text-black text-sm font-semibold rounded-lg hover:bg-zinc-100 transition-colors"
+                disabled={isCreatingApp}
+                className="flex-1 py-2.5 bg-white text-black text-sm font-semibold rounded-lg hover:bg-zinc-100 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                Create Application
+                {isCreatingApp ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    Creating...
+                  </div>
+                ) : (
+                  "Create Application"
+                )}
               </button>
+
               <button
                 onClick={() => setShowCreateModal(false)}
+                disabled={isCreatingApp}
                 style={{ border: "1px solid rgba(255,255,255,0.1)" }}
-                className="flex-1 py-2.5 text-sm text-zinc-400 rounded-lg hover:bg-white/4 transition-colors"
+                className="flex-1 py-2.5 text-sm text-zinc-400 rounded-lg hover:bg-white/4 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>

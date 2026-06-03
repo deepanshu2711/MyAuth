@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 
 import { GetUserOrgsResponse } from "../types";
 import { CreateOrgDialog } from "./CreateOrgDialog";
+import Image from "next/image";
 
 interface OrgSwitcherProps {
   orgs: GetUserOrgsResponse[];
@@ -32,9 +33,7 @@ export const OrgSwitcher = ({
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 rounded-lg p-1.5 pr-2 hover:bg-zinc-800/50 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-600/50"
       >
-        <div className="h-7 w-7 rounded-md bg-gradient-to-br from-cyan-600 to-cyan-800 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-cyan-900/40">
-          <Building2 className="size-4" />
-        </div>
+        <Image src="/x.png" width={25} height={25} alt="app-logo" />
 
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-zinc-100">

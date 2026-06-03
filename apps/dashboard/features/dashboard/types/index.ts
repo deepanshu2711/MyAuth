@@ -44,3 +44,21 @@ export interface GetOrgAppsResponse {
   _id: string;
   createdAt: string;
 }
+
+export interface User {
+  _id: string;
+  email: string;
+  name: string;
+  avatar: string;
+  createdAt: string;
+  globalUserId: string;
+}
+
+export interface GetOrgTeamResponse {
+  _id: string;
+  userId: string;
+  orgId: string;
+  role: "owner" | "member" | "admin";
+  createdAt: string;
+  user: User;
+}

@@ -30,3 +30,11 @@ export const getOgrApps = asyncHandler(async (req: Request, res: Response) => {
 
   return successResponse(res, data);
 });
+
+export const getOgrTeam = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const { id: orgId } = req.params;
+  const data = await OrgServices.getOrgTeam(orgId!, userId!);
+
+  return successResponse(res, data);
+});

@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { App } from "../../models/app.model.js";
 import { AppError } from "../../utils/appError.js";
 import { Organization } from "./models/organization.model.js";
@@ -49,6 +50,32 @@ export const OrgServices = {
       { orgId },
       { name: 1, status: 1, orgId: 1, clientId: 1, createdAt: 1 },
     );
+    return data;
+  },
+  getOrgTeam: async (orgId: string, userId: string) => {
+    const isMember = await OrgMembership.findOne({ orgId, userId });
+    if (!isMember)
+      throw new AppError("You are not a part of this Organization", 400);
+
+    const data = await OrgMembership.aggregate([
+      {
+        $match: {
+          orgId: new Types.ObjectId(orgId),
+        },
+      },
+      {
+        $lookup: {
+          localField: "userId",
+          foreignField: "_id",
+          from: "users",
+          as: "user",
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+    ]);
+
     return data;
   },
 };
