@@ -380,7 +380,7 @@ function CredentialsView({ clientId, redirectUri, onUpdateRedirectUri }: any) {
               </div>
               <div className="text-[13px] font-mono text-zinc-500">
                 {showSecret
-                  ? "sk_live_9xKp2mQnLrT8vH4cBfYjUeWsZdAo"
+                  ? "thisissomedummysecret_edited"
                   : "••••••••••••••••••••••••••••••••"}
               </div>
             </div>
@@ -393,7 +393,7 @@ function CredentialsView({ clientId, redirectUri, onUpdateRedirectUri }: any) {
               </button>
               <button
                 onClick={() =>
-                  handleCopy("sk_live_9xKp2mQnLrT8vH4cBfYjUeWsZdAo", "secret")
+                  handleCopy("thisissomedummysecret_edited", "secret")
                 }
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] text-[12px] text-zinc-300 transition-all"
               >
