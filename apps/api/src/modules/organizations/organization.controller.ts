@@ -5,11 +5,11 @@ import { OrgServices } from "./organization.service.js";
 import { successResponse } from "../../utils/responses.js";
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
-  const { name, isPersonal } = req.body;
+  const { name } = req.body;
   const ownerId = req.user?.userId;
   const data = await OrgServices.create({
     name,
-    isPersonal,
+    isPersonal: false,
     ownerId: ownerId!,
   });
 
@@ -19,6 +19,22 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
 export const getAll = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const data = await OrgServices.getAllUserOrgs(userId!);
+
+  return successResponse(res, data);
+});
+
+export const getOgrApps = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const { id: orgId } = req.params;
+  const data = await OrgServices.getOrgApps(orgId!, userId!);
+
+  return successResponse(res, data);
+});
+
+export const getOgrTeam = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const { id: orgId } = req.params;
+  const data = await OrgServices.getOrgTeam(orgId!, userId!);
 
   return successResponse(res, data);
 });

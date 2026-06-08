@@ -6,7 +6,7 @@ import { AppError } from "../../utils/appError.js";
 import { successResponse } from "../../utils/responses.js";
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const { name, redirectUris } = req.body ?? {};
+  const { name, redirectUris, orgId } = req.body ?? {};
   if (typeof name !== "string" || !name.trim()) {
     throw new AppError("App name is required", 400);
   }
@@ -15,7 +15,10 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     redirectUris.length === 0 ||
     !redirectUris.every(isValidRedirectUri)
   ) {
-    throw new AppError("redirectUris must be a non-empty array of valid URLs", 400);
+    throw new AppError(
+      "redirectUris must be a non-empty array of valid URLs",
+      400,
+    );
   }
 
   const user = req.user;
@@ -23,6 +26,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     name: name.trim(),
     ownerId: user?.userId!,
     redirectUris: redirectUris.map((uri) => uri.trim()),
+    orgId,
   });
   return successResponse(res, data);
 });

@@ -1,7 +1,9 @@
+import { Types } from "mongoose";
+
 export const getUserOrgs = (userId: string) => [
   {
     $match: {
-      userId: userId,
+      userId: new Types.ObjectId(userId),
     },
   },
   {

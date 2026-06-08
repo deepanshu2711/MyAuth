@@ -14,10 +14,12 @@ export const registerApp = async ({
   name,
   ownerId,
   redirectUris,
+  orgId,
 }: {
   name: string;
   ownerId: string;
   redirectUris: string[];
+  orgId: string;
 }) => {
   const clientId = generateClientId();
   const clientSecret = generateClientSecret();
@@ -38,6 +40,7 @@ export const registerApp = async ({
     clientId,
     clientSecret,
     signingKeyId: signingKey._id,
+    orgId,
   });
   return { clientId, appId: app._id };
 };
