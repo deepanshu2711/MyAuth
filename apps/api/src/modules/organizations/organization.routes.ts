@@ -8,3 +8,5 @@ orgRoutes.post("/", OrgController.create);
 
 orgRoutes.get("/:id/apps", OrgController.getOgrApps);
 orgRoutes.get("/:id/team", OrgController.getOgrTeam);
+
+// orgRoutes.post("/:id/invite");
