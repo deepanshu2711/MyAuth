@@ -14,11 +14,11 @@ Turborepo + npm workspaces. Node 18+ required, `npm@11` as package manager.
 - `api` — Core auth server (Express 5, MongoDB, Redis, RabbitMQ). Runs on `PORT` env var. Exposes `/.well-known/jwks.json` for public key discovery.
 - `auth-portal` — Login/register UI for end users (Next.js, port 3001). Sends users through the auth flow.
 - `dashboard` — Developer console for managing apps, viewing users/sessions (Next.js, default port 3000). Uses `@myauth/next` to authenticate developers.
-- `dashboard-backend` — Express API serving the dashboard. Consumes RabbitMQ events from `api` to sync users.
+- `nest-api` — Early-stage NestJS API (Nest 11, Jest configured). Currently scaffolds an `apps` module (CRUD for registered apps). Not yet wired into the RabbitMQ event sync.
 
 **Packages** (`packages/`):
 - `next-sdk` → published as `@myauth/next` — Next.js SDK (client hooks, server functions, middleware, callback handler)
-- `node-sdk` → published as `@myauth/node` — Node.js SDK used by `next-sdk` internally and by `dashboard-backend`
+- `node-sdk` → published as `@myauth/node` — Node.js SDK used by `next-sdk` internally
 - `sdk` — Base/shared utilities
 - `ui` → `@repo/ui` — Shared React components
 - `eslint-config`, `typescript-config`, `tailwind-config` — Shared tooling configs
@@ -34,11 +34,11 @@ npm run check-types  # TypeScript type checking
 npm run format       # Prettier format
 
 # Per-app dev (from apps/<name>/)
-npm run dev          # api/dashboard-backend: tsx watch; Next.js apps: next dev
-npm run build        # api/dashboard-backend: tsc; Next.js: next build
+npm run dev          # api: tsx watch; nest-api: nest start --watch; Next.js apps: next dev
+npm run build        # api: tsc; nest-api: nest build; Next.js: next build
 ```
 
-There is no test framework configured. Validate changes with `npm run lint` and `npm run check-types`.
+`nest-api` has Jest configured (`npm run test`, `npm run test:e2e`). Other apps have no test framework — validate those with `npm run lint` and `npm run check-types`.
 
 ## Auth Flow Architecture
 
@@ -59,10 +59,14 @@ There is no test framework configured. Validate changes with `npm run lint` and 
 - `Session` — stores token pair per user/app; TTL index on `expiresAt`; `revokedAt` for explicit logout
 - `AuthorizationCode` — short-lived one-time code for the OAuth exchange
 - `SignInKey` — RSA key pair (PEM strings) per app; `isActive` flag
+- `Organization` — org container (`name`, `ownerId`, `isPersonal`); under `apps/api/src/modules/organizations/`
+- `OrgMembership` — links a User to an `Organization` with `role` (`owner`/`admin`/`member`); distinct from `MemberShip` above, which is app-level access, not org-level
+- `Invitation` — pending org invite (`orgId`, `inviteByUserId`, `email`, `role`, `token`, `status`, `expiresAt` defaulting to +7 days)
+- `Webhook` — fires on `user.login`; tracks `lastSuccessAt`/`lastTriggerAt`
 
 ## Event-Driven Sync (RabbitMQ)
 
-When `api` creates or updates a global `User`, it publishes to a `user_exchange` (topic) with routing keys `user.create` / `user.update`. `dashboard-backend` consumes these via `user_exchange` to keep its own user replica in sync. This is the only cross-service communication path.
+When `api` creates or updates a global `User`, it publishes to a `user_exchange` (topic) with routing keys `user.create` / `user.update`. There is currently no consumer of this exchange in the codebase (the former `dashboard-backend` consumer was removed and `nest-api` does not yet consume it) — don't assume any service is kept in sync via this path right now.
 
 ## Code Conventions
 
@@ -74,15 +78,20 @@ When `api` creates or updates a global `User`, it publishes to a `user_exchange`
 
 ## Environment Variables
 
-Key vars (see `.env.example` for SMTP subset):
+Key vars (see each app's `.env.example`):
 
 | Variable | Used by | Purpose |
 |---|---|---|
-| `PORT` | api, dashboard-backend | Server port |
-| `MONGO_URI` | api, dashboard-backend | MongoDB connection |
-| `RABBITMQ_URL` | api, dashboard-backend | RabbitMQ broker |
-| `GOOGLE_CLIENT_ID` | api | Google OAuth |
+| `PORT` | api | Server port |
+| `MONGO_URI` | api | MongoDB connection |
+| `RABBITMQ_URL` | api | RabbitMQ broker |
 | `ALLOWED_ORIGINS` | api | Comma-separated CORS origins |
-| `ALLOWED_ORIGIN` | dashboard-backend | Single CORS origin |
-| `NEXT_PUBLIC_CLIENT_ID` | dashboard | Public client ID for middleware |
-| `CLIENT_ID` / `CLIENT_SECRET` | dashboard | Server-side token exchange |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | api | Google OAuth |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` / `GITHUB_CALLBACK_URL` | api | GitHub OAuth |
+| `REDIS_URL` / `REDIS_PORT` / `REDIS_USERNAME` / `REDIS_PASSWORD` | api | Redis connection |
+| `SMTP_EMAIL` / `SMTP_PASS` | api | OTP/email delivery |
+| `NEXT_PUBLIC_CLIENT_ID` / `CLIENT_SECRET` | dashboard | OAuth client credentials |
+| `NEXT_PUBLIC_AUTH_BACKEND` | dashboard | Base URL of `api` |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` / `NEXT_PUBLIC_API_URL` | auth-portal | Google OAuth + `api` base URL |
+
+`nest-api` has no `.env.example` yet.

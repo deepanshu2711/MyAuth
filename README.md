@@ -251,6 +251,10 @@ Choose a different solution if:
 - [SDK Reference](https://myauth.com/docs/nextjs/sdk-reference)
 - [API Reference](https://myauth.com/docs/api)
 
+## Contributing
+
+MyAuth is open source and welcomes contributions. See [CONTRIBUTING.md](./CONTRIBUTING.md) for local setup, conventions, and how to open a PR. Please also read our [Code of Conduct](./CODE_OF_CONDUCT.md).
+
 ## Support
 
 - GitHub Issues: https://github.com/myauth/myauth/issues
