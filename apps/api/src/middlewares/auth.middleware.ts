@@ -17,7 +17,7 @@ declare global {
 }
 
 const JWKS = createRemoteJWKSet(
-  new URL("https://auth-api.deepxdev.com/.well-known/jwks.json"),
+  new URL(process.env.JWKS_URL as string),
 );
 
 export const authMiddleware = async (

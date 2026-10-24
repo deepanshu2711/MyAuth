@@ -21,6 +21,7 @@ export const getCurrentLoggedInUser = async (data: VerifyTokenType) => {
 };
 
 export const verifyToken = async (data: VerifyTokenType) => {
+  console.log("data", data)
   const res = await axios.get(`${data.apiBaseUrl}/api/auth/verify`, {
     headers: {
       Authorization: `Bearer ${data.token}`,

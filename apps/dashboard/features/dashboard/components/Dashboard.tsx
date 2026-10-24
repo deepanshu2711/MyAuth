@@ -546,7 +546,7 @@ export default function App() {
                         className="w-full px-3 py-2 rounded-lg text-sm mb-3"
                       />
                       <button
-                        onClick={() => {}}
+                        onClick={() => { }}
                         className="text-xs font-medium bg-white text-black px-4 py-2 rounded-lg hover:bg-zinc-100 transition-colors"
                       >
                         Save Changes
