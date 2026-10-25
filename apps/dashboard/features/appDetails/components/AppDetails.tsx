@@ -144,8 +144,9 @@ const AVATAR_COLORS = [
 function getInitials(name: string) {
   const parts = name.trim().split(" ");
   return parts.length > 1
-    ? (parts[0][0] + parts[1][0]).toUpperCase()
-    : name[0].toUpperCase();
+    // @ts-expect-error type error
+    ? (parts[0][0] + parts[1][0])?.toUpperCase()
+    : name[0]?.toUpperCase();
 }
 
 // ─── Shared UI Components ─────────────────────────────────────────────────────
@@ -276,9 +277,8 @@ function OverviewView({ totalUsers, activeSessions, createdAt, users }: any) {
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold text-white ${
-                          AVATAR_COLORS[i % AVATAR_COLORS.length]
-                        }`}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold text-white ${AVATAR_COLORS[i % AVATAR_COLORS.length]
+                          }`}
                       >
                         {getInitials(user.name)}
                       </div>
@@ -535,9 +535,8 @@ function UsersView({ users }: { users: User[] }) {
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold text-white ${
-                          AVATAR_COLORS[i % AVATAR_COLORS.length]
-                        }`}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-semibold text-white ${AVATAR_COLORS[i % AVATAR_COLORS.length]
+                          }`}
                       >
                         {getInitials(user.name)}
                       </div>
@@ -817,11 +816,10 @@ export default function AppDetailsDashboard({
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`relative pb-3 text-[13px] font-medium transition-colors ${
-                activeTab === tab.id
-                  ? "text-zinc-50"
-                  : "text-zinc-400 hover:text-zinc-200"
-              }`}
+              className={`relative pb-3 text-[13px] font-medium transition-colors ${activeTab === tab.id
+                ? "text-zinc-50"
+                : "text-zinc-400 hover:text-zinc-200"
+                }`}
             >
               {tab.label}
               {activeTab === tab.id && (

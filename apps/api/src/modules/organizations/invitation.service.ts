@@ -1,7 +1,7 @@
 import { OrgMembership } from "./models/orgMembership.model.js";
 import { AppError } from "../../utils/appError.js";
 import { Invitation } from "./models/invitation.model.js";
-import { createInvitationToken } from "../../utils/helpers.js";
+//import { createInvitationToken } from "../../utils/helpers.js";
 import { Organization } from "./models/organization.model.js";
 
 export const InvitationService = {
@@ -41,7 +41,8 @@ export const InvitationService = {
     if (existingInvite)
       throw new AppError("An invitation is already pending for this user", 400);
 
-    const token = createInvitationToken();
+    //    const token = createInvitationToken();
+    const token = "this si static for now"
     const invitation = await Invitation.create({
       email,
       inviteByUserId,

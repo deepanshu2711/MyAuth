@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+.next
+**/.next
+dist
+**/dist
+build
+**/build
+out
+**/out
+coverage
+**/coverage
+.turbo
+**/.turbo
+
+# Local environment files (runtime values are passed by docker-compose)
+.env
+**/.env
+.env.*
+**/.env.*
+
+# Git and editor files
+.git
+**/.git
+.vscode
+.idea
+.DS_Store
+
+# Logs
+*.log
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

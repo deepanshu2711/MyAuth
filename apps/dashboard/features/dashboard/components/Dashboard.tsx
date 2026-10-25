@@ -44,6 +44,7 @@ import { ApplicationTab } from "./AppTab";
 import { GetUserOrgsResponse } from "../types";
 import { useRegisterAppMutation } from "../hooks/mutation/useRegisterAppMutation";
 import { useGetOrgTeamQuery } from "../hooks/query/useGetOrgTeamQuery";
+import { strict } from "assert";
 
 const MOCK_APPS = [
   {
@@ -214,15 +215,15 @@ export default function App() {
   const handleInvite = () => {
     if (!inviteEmail.trim()) return;
     const name = inviteEmail.split("@")[0];
-    const initials = name.slice(0, 2).toUpperCase();
+    const initials = name?.slice(0, 2).toUpperCase();
     setMembers([
       ...members,
       {
         id: members.length + 1,
-        name,
+        name: name as string,
         email: inviteEmail,
         role: inviteRole,
-        avatar: initials,
+        avatar: initials as string,
         joined: "just now",
         status: "pending",
       },
@@ -231,7 +232,7 @@ export default function App() {
     setShowInviteModal(false);
   };
 
-  const copyToClipboard = (text, key) => {
+  const copyToClipboard = (text: string, key: any) => {
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
     setTimeout(() => setCopiedKey(null), 1500);

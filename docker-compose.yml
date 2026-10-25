@@ -1,0 +1,74 @@
+name: myauth
+
+# The three apps are configured to talk to each other over localhost
+# (for example the SDK uses http://localhost:5005 and the browser is sent
+# to http://localhost:3001). Host networking keeps those URLs working
+# inside the containers as well as in the browser.
+#
+# Ports used:
+#   API           -> http://localhost:5005
+#   Dashboard     -> http://localhost:3000
+#   Auth portal   -> http://localhost:3001
+#
+# Note: host networking is supported on Linux. On Docker Desktop, enable
+# host networking in Docker settings (or run the apps without Docker).
+services:
+  api:
+    image: myauth-api:local
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - path: apps/api/.env
+        format: raw
+    network_mode: host
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:5005/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  dashboard:
+    image: myauth-dashboard:local
+    build:
+      context: .
+      dockerfile: apps/dashboard/Dockerfile
+      args:
+        NEXT_PUBLIC_AUTH_BACKEND: ${NEXT_PUBLIC_AUTH_BACKEND:-http://localhost:5005}
+        NEXT_PUBLIC_CLIENT_ID: ${NEXT_PUBLIC_CLIENT_ID:-}
+        # Only used at build time by the Dockerfile; the real value is
+        # provided at runtime by apps/dashboard/.env.
+        CLIENT_SECRET: ${CLIENT_SECRET:-}
+    env_file:
+      - path: apps/dashboard/.env
+        format: raw
+    environment:
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    network_mode: host
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  auth-portal:
+    image: myauth-auth-portal:local
+    build:
+      context: .
+      dockerfile: apps/auth-portal/Dockerfile
+      args:
+        NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:5005/api}
+    env_file:
+      - path: apps/auth-portal/.env
+        format: raw
+    environment:
+      PORT: "3001"
+      HOSTNAME: "0.0.0.0"
+    network_mode: host
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
